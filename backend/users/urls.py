@@ -6,6 +6,4 @@ urlpatterns = [
 	path('create', views.addUser),
 	path('read/<str:pk>', views.addUser),
 	path('listAll', views.addUser)
-
-
 ]
