@@ -14,7 +14,10 @@ python3 -m venv .venv && source .venv/bin/activate\
 && pip install -r requirements.txt\
 
 
-mkdir staticfiles
+if [ ! -d "staticfiles" ]; then
+    mkdir staticfiles
+fi
+
 # cd trascendance
 # django-admin startproject trascendance .
 # django-admin startapp users
