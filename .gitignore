@@ -1,0 +1,3 @@
+/backend/staticfiles/rest_framework/*
+/backend/staticfiles/admin/*
+.venv
