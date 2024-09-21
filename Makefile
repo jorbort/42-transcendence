@@ -13,4 +13,4 @@ clean:
 	docker volume rm $$(docker volume ls -q)\
 	docker network rm $$(docker network ls -q --filter type=custom)
 
-re: clean up
+re: down up

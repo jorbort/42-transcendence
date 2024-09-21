@@ -10,6 +10,8 @@ if [ "$DATABASE" = "postgres" ]; then
     echo "PostgresSQL started"
 fi
 
+apt-get install cron -y 
+
 python3 -m venv .venv && source .venv/bin/activate\
 && pip install -r requirements.txt\
 
@@ -25,5 +27,6 @@ fi
 python3 manage.py makemigrations
 python3 manage.py migrate
 python3 manage.py collectstatic --no-input
-#python3 testenv.py
+python3 manage.py crontab add 
+
 gunicorn trascendance.wsgi:application --bind 0.0.0.0:8000
