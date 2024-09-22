@@ -142,7 +142,7 @@ AUTH_USER_MODEL = 'users.PongUser'
 #cronjobs
 
 CRONJOBS = [
-('*/2 * * * *', 'users.cron.my_cron_job')
+('*/2 * * * *', 'users.cron.do')
 ]
 
 # jwt expiration info
@@ -159,3 +159,19 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = '42pong1992@gmail.com'
 EMAIL_HOST_PASSWORD = 'mlsozbkuvjvabzhi'
+
+##Logging config para debugg
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'DEBUG',
+    },
+}
