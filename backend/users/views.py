@@ -5,9 +5,11 @@ from datetime import timedelta
 from django.utils import timezone
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import authenticate , login as django_login
+from django.contrib.auth import logout as django_logout
 from django.core.mail import send_mail
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+from django.views.decorators.csrf import csrf_exempt
 from rest_framework import status, generics
 from rest_framework_simplejwt.tokens import RefreshToken
 from .models import PongUser
@@ -32,6 +34,7 @@ def	getUser(request,pk):
 	serializer = UserSerializer(user,many=False)
 	return Response(serializer.data)
 
+@csrf_exempt
 @api_view(['POST'])
 def addUser(request):
 	data = request.data.copy()
@@ -95,6 +98,21 @@ def OtpVerify(request):
 			user.otp = ''
 			user.otp_expiry_time = None
 			user.save()
-
-			return Response({'access_token': access_token, 'refresh_token': str(refresh_token)}, status=status.HTTP_200_OK)
+			response = Response({'access_token': access_token, 'refresh_token': str(refresh_token)}, status=status.HTTP_200_OK)
+			response.set_cookie('access_token', access_token)
+			response.set_cookie('refresh_token', str(refresh_token))
+			return response
 	return Response({'detail': 'Invalid verification code or credentials.'}, status=status.HTTP_401_UNAUTHORIZED)
+
+
+@api_view(['POST'])
+def logout_view(request):
+    # Log the user out
+	django_logout(request)
+	# Clear the authentication cookies
+	response = Response({'detail': 'Successfully logged out.'}, status=status.HTTP_200_OK)
+	response.delete_cookie('access_token')
+	response.delete_cookie('refresh_token')
+	response.delete_cookie('csrftoken')
+	
+	return response

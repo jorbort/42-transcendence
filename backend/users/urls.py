@@ -9,4 +9,5 @@ urlpatterns = [
 	path('listAll', views.getUsers),
 	path('login', LoginView.as_view(), name='login'),
 	path('verify', views.OtpVerify),
+	path('logout', views.logout_view),
 ]
