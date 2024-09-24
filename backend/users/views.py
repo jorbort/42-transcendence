@@ -12,8 +12,8 @@ from rest_framework.decorators import api_view
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import status, generics
 from rest_framework_simplejwt.tokens import RefreshToken
-from .models import PongUser
-from .serializer import UserSerializer
+from .models import PongUser , MatchHistory ,Friendship
+from .serializer import UserSerializer , MatcHistorySerializer, FrienshipSerializer
 
 def generate_random_digits(n=6):
 	return "".join(map(str, random.sample(range(0, 10), n)))
@@ -34,7 +34,7 @@ def	getUser(request,pk):
 	serializer = UserSerializer(user,many=False)
 	return Response(serializer.data)
 
-@csrf_exempt
+
 @api_view(['POST'])
 def addUser(request):
 	data = request.data.copy()
@@ -116,3 +116,33 @@ def logout_view(request):
 	response.delete_cookie('csrftoken')
 	
 	return response
+
+@api_view(['GET'])
+def match_history(request):
+	if request.user.is_authenticated:
+		matches_as_player1= MatchHistory.objects.filter(player1=request.user)
+		matches_as_player2=MatchHistory.objects.filter(player2=request.user) 
+		matches= matches_as_player1 | matches_as_player2
+		serializer = MatcHistorySerializer(matches, many=True)
+		return Response(serializer.data, status=status.HTTP_200_OK)
+	else:
+		return Response({'detail': 'Authentication credentials were not provided'})
+
+@api_view(['POST'])
+def record_match(request):
+	if request.user.is_authenticated:
+		serializer= MatcHistorySerializer(data=request.data)
+		if serializer.is_valid():
+			serializer.save()
+			return Response(serializer.data, status=status.HTTP_201_CREATED)
+		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+	else:
+		return Response({'detail': 'authentication credential where not provided'})
+	
+@api_view(['POST'])
+def add_friend(request):
+	serializer= FrienshipSerializer(data=request.data)
+	if serializer.is_valid():
+		serializer.save()
+		return Response(serializer.data, status=status.HTTP_201_CREATED)
+	return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -10,4 +10,7 @@ urlpatterns = [
 	path('login', LoginView.as_view(), name='login'),
 	path('verify', views.OtpVerify),
 	path('logout', views.logout_view),
+	path('matches/register',views.record_match),
+	path('matches/obtainHistory',views.match_history),
+	path('friends', views.add_friend),
 ]
