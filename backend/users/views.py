@@ -15,7 +15,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework.permissions import IsAuthenticated 
 from .models import PongUser , MatchHistory ,Friendship
-from .serializer import UserSerializer , MatcHistorySerializer, FrienshipSerializer
+from .serializer import UserSerializer , MatcHistorySerializer, FrienshipSerializer, AvatarUploadSerializer, UpdateUserSerializer
 
 def generate_random_digits(n=6):
 	return "".join(map(str, random.sample(range(0, 10), n)))
@@ -32,19 +32,22 @@ def getUsers(request):
 
 @api_view(['GET'])
 def	getUser(request,pk):
-	user=PongUser.objects.get(id=pk)
-	serializer = UserSerializer(user,many=False)
+	try:
+		user=PongUser.objects.get(id=pk)
+	except PongUser.DoesNotExist:
+		return Response({'detail': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
+	serializer = UserSerializer(user, many=False, context={'request':request})
 	return Response(serializer.data)
 
 @api_view(['PUT'])
-@login_required
+@permission_classes([IsAuthenticated])
 def update_user_info(request):
 	try:
 		user=PongUser.objects.get(id=request.user.id)
 	except PongUser.DoesNotExist:
-		return Response(status=status.HTTP_404_NOT_Found)
+		return Response(status=status.HTTP_404_NOT_FOUND)
 	
-	serializer = UserSerializer(user, data=request.data, partial=True)
+	serializer = UpdateUserSerializer(user, data=request.data, partial=True)
 	if serializer.is_valid():
 		serializer.save()
 		return Response(serializer.data)
@@ -91,12 +94,17 @@ class LoginView(generics.GenericAPIView):
 		return Response({'detail': 'Invalid credentials.'}, status=status.HTTP_401_UNAUTHORIZED)
 
 ##TO-DO una vista para poder manejar la subida de imagenes por parte del usuario
-# @api_view(['POST'])
-# @permission_classes([IsAuthenticated])
-# def upload_avatar(request):
-# 	try:
-# 		user_profile = request.user.userprofile
-# 	except
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def upload_avatar(request):
+	user = request.user
+	serializer = AvatarUploadSerializer(instance=user, data=request.data,partial=True)
+	
+	if serializer.is_valid():
+		serializer.save()
+		return Response({'detail': 'Avatar uploaded successfully.'}, status=status.HTTP_200_OK)
+	return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 @api_view(['POST'])
 def OtpVerify(request):
