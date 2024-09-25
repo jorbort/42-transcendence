@@ -16,7 +16,7 @@ class Friendship(models.Model):
 	user2=models.ForeignKey(PongUser, related_name='friendship_user2', on_delete=models.CASCADE)
 
 	class Meta:
-		unique_together={'user1','user2'}
+		unique_together=['user1','user2']
 
 class MatchHistory(models.Model):
 	player1=models.ForeignKey(PongUser, related_name='match_as_player1', on_delete=models.CASCADE)

@@ -9,7 +9,7 @@ from django.contrib.auth import logout as django_logout
 from django.core.mail import send_mail
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-
+from django.contrib.auth.decorators import login_required
 from rest_framework import status, generics
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import TokenError
@@ -35,6 +35,19 @@ def	getUser(request,pk):
 	serializer = UserSerializer(user,many=False)
 	return Response(serializer.data)
 
+@api_view(['PUT'])
+@login_required
+def update_user_info(request):
+	try:
+		user=PongUser.objects.get(id=request.user.id)
+	except PongUser.DoesNotExit:
+		return Response(status=status.HTTP_404_NOT_Found)
+	
+	serializer = UserSerializer(user, data=request.data, partial=True)
+	if serializer.is_valid():
+		serializer.save()
+		return Response(serializer.data)
+	return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
 def addUser(request):
