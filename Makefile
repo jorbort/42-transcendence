@@ -6,7 +6,7 @@ up:
 down:
 	docker-compose down
 clean:
-	sudo rm -rf "/home/${USER}/data/postgres_data"\
+	rm -rf "/home/${USER}/data/postgres_data"\
 	docker stop $$(docker ps -aq)\
 	docker rm $$(docker ps -aq)\
 	docker image rmi $$(docker image ls -aq)\
