@@ -81,28 +81,39 @@ function signin(){
 		//   .catch(error => console.error('Error:', error));
 });
 }
+
 function signup(){
-	document.getElementById('sign_up').addEventListener('submit', function(event) {
-		event.preventDefault(); 
-		const email = document.getElementById('email').value;
-		const password = document.getElementById('password').value;
-		const confirm_password = document.getElementById('confirm_password').value;
-		const newFormData = {
-			email: email,
-			password: password,
-			confirm_password: confirm_password
-		};
-		const jsonString = JSON.stringify(newFormData);
-		console.log(jsonString);
-	//Optionally, you can send the JSON to a server using fetch
-	fetch('lcoalhost:8000/users/create', {
-	    method: 'POST',
-	    headers: {
-	        'Content-Type': 'application/json'
-	    },
-	    body: jsonString
-	}).then(response => response.json())
-	  .then(data => console.log(data))
-	  .catch(error => console.error('Error:', error));
-});
+	console.log('Signup function called');
+	const form = document.getElementById('signInForm');
+	if (form) {
+		form.addEventListener('submit', async function(event) {
+			event.preventDefault();
+			console.log('Signin form submitted');
+			const email = document.getElementById('email').value;
+			const password = document.getElementById('password').value;
+			const confirm_password = document.getElementById('confirm_password').value;
+			const formData = {
+				email: email,
+				password: password,
+				confirm_password: confirm_password
+			};
+			const jsonString = JSON.stringify(formData);
+			console.log(jsonString);
+			// try {
+			// 	const response = await fetch('/your-endpoint', {
+			// 		method: 'POST',
+			// 		headers: {
+			// 			'Content-Type': 'application/json'
+			// 		},
+			// 		body: jsonString
+			// 	});
+			// 	const data = await response.json();
+			// 	console.log(data);
+			// } catch (error) {
+			// 	console.error('Error:', error);
+			// }
+		});
+	} else {
+		console.error('Signin form not found');
+	}
 }
