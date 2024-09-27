@@ -6,6 +6,9 @@ services:
       dockerfile: frontend/Nginx/Dockerfile
     ports:
       - "80:80"
+    networks:
+      - trascendence
+    restart: always
 
   backend:
     depends_on:

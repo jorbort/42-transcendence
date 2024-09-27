@@ -99,19 +99,19 @@ function signup(){
 			};
 			const jsonString = JSON.stringify(formData);
 			console.log(jsonString);
-			// try {
-			// 	const response = await fetch('/your-endpoint', {
-			// 		method: 'POST',
-			// 		headers: {
-			// 			'Content-Type': 'application/json'
-			// 		},
-			// 		body: jsonString
-			// 	});
-			// 	const data = await response.json();
-			// 	console.log(data);
-			// } catch (error) {
-			// 	console.error('Error:', error);
-			// }
+			try {
+				const response = await fetch('http://localhost:8000/users/create', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: jsonString
+				});
+				const data = await response.json();
+				console.log(data);
+			} catch (error) {
+				console.error('Error:', error);
+			}
 		});
 	} else {
 		console.error('Signin form not found');
