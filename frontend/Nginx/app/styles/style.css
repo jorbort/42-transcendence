@@ -1,0 +1,150 @@
+html, body {
+	background-color: black !important; /* Dark background color */
+	height: 100%;
+	margin: 0;
+	flex-direction: column;
+	overflow: hidden; /* Hide scrollbar */
+}
+
+body{
+	font-family: 'Amatic SC' !important;	
+}
+
+.nav_bar{
+	font-size: 30px;
+}
+
+#spantitle{
+	font-weight: 300;
+	font-size: 60px;
+}
+
+.page_container{
+	border: sp;;
+	display: grid;
+	width: 100%;
+	height: 100%;
+	grid-template-rows: 1fr 15fr 1%;
+}
+
+.app{
+	display: grid;
+	grid-template-columns: 1.5fr 8.5fr;
+}
+
+.app .bar_nav_flex{
+	background-color: rgb(0, 0, 0);
+	border: 2px solid rgb(0, 0, 0);
+	justify-content: center;
+	align-items: flex-start;
+	display: flex;
+	gap: 80px;
+}
+
+.app .bar_nav{
+	margin: 50px;
+	display: grid;
+	gap: 80px;
+}
+
+.app .content_nav{
+	border: 2px solid black;
+	background-color: black;
+}
+
+.footer {
+	background-color: rgb(117, 11, 216) !important;
+	color: white !important;
+	text-align: center;
+	padding:  0 !important;
+	position: sticky;
+	bottom: 0;
+	width: 100%;
+	border: 1px solid black;
+}
+
+.container{
+	height: 8px;
+}
+
+.footer .text-muted {
+	padding-bottom: 5px !important;
+	color: #ffffff !important;
+}
+
+.table-container{
+	font-size: 30px;
+	max-height: 90vh;
+	overflow-y: auto !important;
+	padding-bottom: 20px;
+}
+
+.form_div{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100%;
+	width: 100%;
+}
+
+@keyframes borderColorChange {
+    0% {
+        border-color: rgb(117, 11, 216);
+    }
+    25% {
+        border-color: rgb(255, 0, 0);
+    }
+    50% {
+        border-color: rgb(0, 255, 0);
+    }
+    75% {
+        border-color: rgb(0, 0, 255);
+    }
+    100% {
+        border-color: rgb(117, 11, 216);
+    }
+}
+
+.form_container{
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	width: 550px;
+	height: 700px;
+	border: 20px solid rgb(117, 11, 216);
+	border-radius: 75px;
+	animation: borderColorChange 5s infinite; /* Apply the animation */
+}
+
+.mb-3 {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 100%; 
+}
+
+.form-label {
+	color: white !important;
+	font-size: 30px;
+	width: 100%; 
+}
+
+.form_separator{
+	color: white !important;
+}
+
+/* .btn-with-bg {
+ 
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: right center;
+} */
+
+.btn-primary, .btn-secondary {
+    width: 100%;
+}
+
+.btn, .btn-primary{
+	font-weight: 900;
+}

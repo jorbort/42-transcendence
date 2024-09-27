@@ -1,4 +1,12 @@
 services:
+
+  nginx:
+    build:
+      context: .
+      dockerfile: frontend/Nginx/Dockerfile
+    ports:
+      - "80:80"
+
   backend:
     depends_on:
       - postgres
