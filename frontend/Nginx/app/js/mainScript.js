@@ -92,10 +92,12 @@ function signup(){
 			const email = document.getElementById('email').value;
 			const password = document.getElementById('password').value;
 			const confirm_password = document.getElementById('confirm_password').value;
+			let username = document.getElementById('username').value;
 			const formData = {
+				username: username,
 				email: email,
 				password: password,
-				confirm_password: confirm_password
+				password2: confirm_password
 			};
 			const jsonString = JSON.stringify(formData);
 			console.log(jsonString);
