@@ -170,3 +170,8 @@ LOGGING = {
         'level': 'DEBUG',
     },
 }
+
+#42API
+CLIENT_ID=os.environ['CLIENT_ID']
+CLIENT_SECRET=os.environ['CLIENT_SECRET']
+REDIRECT_URI='http://localhost:8000/callback_42'

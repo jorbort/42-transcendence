@@ -6,6 +6,8 @@ from users.views.crud_user import (
 from users.views import LoginView
 from users.views.match import record_match, match_history
 from users.views.refresh_tokens import refreshTokens
+from users.views.FortyTwoLogin import login_42, callback_42
+
 
 urlpatterns = [
 	path('', hello_world), 
@@ -21,4 +23,6 @@ urlpatterns = [
 	path('friends', add_friend), #http://localhost:8000/users/friends
 	path('upload_avatar', upload_avatar), #http://localhost:8000/users/upload_avatar
 	path('TokenRefresh', refreshTokens), #http://localhost:8000/users/TokenRefresh
+	path('login_42', login_42, name='login_42'), #http://localhost:8000/users/login_42
+    path('callback_42', callback_42, name='callback_42'),#http://localhost:8000/users/callback_42
 ]

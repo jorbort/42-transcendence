@@ -9,6 +9,8 @@ services:
     networks:
       - trascendence
     restart: always
+    volumes:
+      - frontend_data:/usr/share/nginx/html
 
   backend:
     depends_on:
@@ -52,6 +54,12 @@ volumes:
     driver_opts:
       type: none
       device: "./backend"
+      o: bind
+  frontend_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: "./frontend"
       o: bind
 
 networks:
