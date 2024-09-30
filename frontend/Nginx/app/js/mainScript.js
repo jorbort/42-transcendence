@@ -1,6 +1,7 @@
 import aboutView from './views/highScores.js';
 import createUser from './views/createUser.js';
 import loginView from './views/loginView.js';
+import otpView from './views/otpView.js';
 
 const userlogged = 0;
 
@@ -163,3 +164,8 @@ function signup(){
 	}
 }
 
+function otp(data){
+
+	document.getElementById('app').innerHTML = otpView();
+	
+}
