@@ -1,7 +1,7 @@
 export default function createUser() {
 	return `<div class="form_div">
 				<div class="form_container">
-					<form id="signInForm">
+					<form id="signUpForm">
 						<div class="mb-3">
 							<label for="username" class="form-label">Name</label>
 							<input type="text" class="form-control" id="username" required>

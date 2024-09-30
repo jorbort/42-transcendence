@@ -14,9 +14,12 @@ class LoginView(generics.GenericAPIView):
 		username = request.data.get('username')
 		password = request.data.get('password')
 
+		print(f"Attempting to authenticate user: {username}")
+
 		user = authenticate(request, username=username, password=password)
 
 		if user is not None:
+			print(f"User authenticated: {username}")
 			verification_code = random.randint(100000,999999)
 			user.otp = verification_code
 			user.otp_expiry_time = timezone.now() + timedelta(hours=1)

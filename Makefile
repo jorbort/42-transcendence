@@ -9,7 +9,7 @@ down:
 		docker image rmi $$(docker image ls -aq); \
 	fi
 clean:
-	rm -rf "/home/${USER}/data/postgres_data"
+	sudo rm -rf "/home/${USER}/data/postgres_data"
 	docker stop $$(docker ps -aq)
 	docker rm $$(docker ps -aq)
 	docker image rmi $$(docker image ls -aq)
