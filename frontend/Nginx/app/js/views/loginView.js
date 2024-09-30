@@ -4,7 +4,7 @@ export default function loginView() {
 					<div class="mt-3">
 						<a href="#" class="btn btn-secondary btn-with-bg">
 							Sign in with
-							<img src="../images/42_Logo.svg" alt="Service Logo" style="width: 80px; height: 60px; margin-right: 5px; margin-left: 10px;">
+							<img src="images/42_Logo.svg" alt="Service Logo" style="width: 80px; height: 60px; margin-right: 5px; margin-left: 10px;">
 						</a>
 					</div>
 					<form id="loginForm">
