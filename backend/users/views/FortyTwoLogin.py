@@ -8,8 +8,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth import login as django_login
 from rest_framework_simplejwt.tokens import RefreshToken
-from .models import PongUser
-from .serializer import UserSerializer
+from users.models import PongUser
+from users.serializer import UserSerializer
 
 
 def gen_state():

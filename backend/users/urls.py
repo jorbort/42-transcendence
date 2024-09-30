@@ -1,13 +1,12 @@
 from django.urls import path
 from users.views.crud_user import (
 	hello_world, addUser, getUser, update_user_info, getUsers, 
-    OtpVerify, logout_view, add_friend, upload_avatar
+	 add_friend, upload_avatar
 )
-from users.views import LoginView
 from users.views.match import record_match, match_history
 from users.views.refresh_tokens import refreshTokens
 from users.views.FortyTwoLogin import login_42, callback_42
-
+from users.views.login_views import  LoginView , OtpVerify, logout_view
 
 urlpatterns = [
 	path('', hello_world), 

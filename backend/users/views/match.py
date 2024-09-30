@@ -1,8 +1,8 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status
-from .models import MatchHistory
-from .serializer import MatcHistorySerializer
+from users.models import MatchHistory
+from users.serializer import MatcHistorySerializer
 
 
 @api_view(['GET'])
