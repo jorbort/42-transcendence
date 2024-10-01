@@ -1,33 +1,48 @@
 import {createUser, signup} from './views/createUser.js';
 import {loginView, signin} from './views/loginView.js';
 // import {otpView, otp} from './views/otpView.js';
+// import {getCookie} from './utils/sessionToken.js';
+import tableView from './views/highScores.js';
 
 const userlogged = 0;
+let accessToken = 0;
 
-function handleRouteChange() {
+function getCookie(name) {
+	const value = `; ${document.cookie}`;
+	const parts = value.split(`; ${name}=`);
+	if (parts.length === 2) return parts.pop().split(';').shift();
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+	accessToken = getCookie('access_token');
+});
+
+export function handleRouteChange() {
 	const path = window.location.pathname;
 	let view;
-	switch (path) {
-		// case '/Profile':
-		// 	view = aboutView();
-		// 	break;
-		case '/Signup':
-			view = createUser();
-			break;
-		case '/login/otp':
-				view = '<h2>Enter OTP</h2>'; // Simple view for OTP route
+	if (accessToken){
+		switch (path) {
+				case '/Profile/':
+					view = tableView();
+					break;
+				//  case '/game':
+				// view = gameScreen();
+				// break;
+				// case '/game':
+				// view = gameScreen();
+				// break;
+			default:
+				view = '<h1>404</h1>';
+		}
+	}else{
+		switch (path) {
+			case '/Signup':
+				view = createUser();
 				break;
-		case '/login':
-			view = loginView();
-			break;
-			// case '/game':
-			// view = gameScreen();
-			// break;
-			// case '/game':
-			// view = gameScreen();
-			// break;
-		default:
-			view = '<h1>404</h1>';
+			case '/login':
+				view = loginView();
+				break;
+	}
 	}
 	document.getElementById('app').innerHTML = view;
 	handleEventListeners(path);

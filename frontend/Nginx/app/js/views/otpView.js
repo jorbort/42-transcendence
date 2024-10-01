@@ -1,3 +1,5 @@
+import { handleRouteChange } from '../mainScript.js';
+
 export function otpView() {
 	return `<div class="form_div" style="background-color: rgb(0, 0, 0) !important;>
 				<div class="row justify-content-center">
@@ -35,9 +37,7 @@ export function otp(userName, passWord){
 	  submitOtpButton.addEventListener('click', async function(event) {
 		event.preventDefault();
 		console.log('OTP button clicked');
-  
-		// Collect OTP values
-		const otpInputs = document.querySelectorAll('.otp_input');
+  		const otpInputs = document.querySelectorAll('.otp_input');
 		let otpValue = '';
 		otpInputs.forEach(input => {
 		  if (input.value === '') {
@@ -54,8 +54,7 @@ export function otp(userName, passWord){
 		};
 		const jsonString = JSON.stringify(formData);
 		console.log(jsonString);
-  
-		try {
+  		try {
 		  const response = await fetch('http://localhost:8000/users/verify', {
 			method: 'POST',
 			headers: {
@@ -67,7 +66,11 @@ export function otp(userName, passWord){
 			const responseData = await response.json();
 			console.log(responseData);
 			alert("OTP verified successfully");
-			// Handle successful OTP verification
+			// Assuming the response contains a token that needs to be stored in cookies
+			const token = responseData.token;
+			document.cookie = `token=${token}; path=/; secure; HttpOnly`;
+			window.location.pathname = '/Profile';
+			handleRouteChange();
 		  } else {
 			const errorData = await response.json();
 			const errorMessage = errorData.message || 'An error occurred';
