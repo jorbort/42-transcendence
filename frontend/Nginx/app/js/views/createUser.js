@@ -1,4 +1,4 @@
-export default function createUser() {
+export function createUser() {
 	return `<div class="form_div">
 				<div class="form_container">
 					<form id="signUpForm">
@@ -22,4 +22,54 @@ export default function createUser() {
 					</form>
 				</div>
 			</div>`;
+}
+
+export function signup(){
+	console.log('Signup function called');
+	const form = document.getElementById('signUpForm');
+	if (form) {
+		form.addEventListener('submit', async function(event) {
+			event.preventDefault();
+			console.log('Sign form submitted');
+			const email = document.getElementById('email').value;
+			const password = document.getElementById('password').value;
+			const confirm_password = document.getElementById('confirm_password').value;
+			let username = document.getElementById('username').value;
+			const formData = {
+				username: username,
+				email: email,
+				password: password,
+				password2: confirm_password
+			};
+			const jsonString = JSON.stringify(formData);
+			console.log(jsonString);
+			try {
+				const response = await fetch('http://localhost:8000/users/create', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: jsonString
+				});
+				if(response.ok){
+					const data = await response.json();
+					console.log(data);
+					alert("User created succesfully")
+					window.history.pushState({}, '', '/login');
+					handleRouteChange();
+				}
+				else{
+					const errorData = await response.json();
+					const emailError = errorData.serializer_errors?.email?.[0];
+					const usernameError = errorData.serializer_errors?.username?.[0];
+					const errorMessage = emailError || usernameError || 'An error occurred';
+					alert(`Error: ${errorMessage}`);
+				}
+			} catch (error) {
+				console.error('Error:', error);
+			}
+		});
+	} else {
+		console.error('Signin form not found');
+	}
 }

@@ -1,4 +1,6 @@
-export default function loginView() {
+import {otpView, otp} from './otpView.js';
+
+export function loginView() {
 	return `<div class="form_div">
 				<div class="form_container">
 					<div class="mt-3">
@@ -28,4 +30,52 @@ export default function loginView() {
 						</div>
 				</div>
 			</div>`;
+}
+
+export function signin(){
+	console.log('Sign in function called');
+	const form = document.getElementById('loginForm');
+	if (form) {
+		form.addEventListener('submit', async function(event) {
+			event.preventDefault();
+			console.log('Sign in form submitted');
+			const username = document.getElementById('username').value;
+			const password = document.getElementById('password').value;
+			const formData = {
+				username: username,
+				password: password,
+			};
+			const jsonString = JSON.stringify(formData);
+			console.log(jsonString);
+			try {
+				const response = await fetch('http://localhost:8000/users/login', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: jsonString
+				});
+				if (response.ok) {
+					const data = await response.json();
+					console.log(data);
+					if (data.detail === 'Verification code sent successfully.') {
+						console.log('Verification code sent successfully.');
+						otp(formData.username, formData.password);
+					} else {
+						console.log('Unexpected response:', data);
+						// falta implementar una alarte que avise de que input es erroneo password o username
+					}
+				} else {
+					const errorData = await response.json();
+					console.log('HTTP error:', response.status);
+					alert('HTTP error:', errorData.serializer_errors);
+				}
+			} catch (error) {
+				console.error('Error:', error);
+				alert('Error:', error);
+			}
+		});
+	} else {
+		console.error('Signin form not found');
+	}
 }
