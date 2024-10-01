@@ -1,4 +1,4 @@
-export default function aboutView() {
+export default function tableView() {
 	return `<div class="app" style="background-color: white;">
 			<div class="bar_nav_flex">
 				<div class="bar_nav">
