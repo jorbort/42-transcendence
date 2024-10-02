@@ -66,9 +66,22 @@ export function otp(userName, passWord){
 			const responseData = await response.json();
 			console.log(responseData);
 			alert("OTP verified successfully");
-			// Assuming the response contains a token that needs to be stored in cookies
-			const token = responseData.token;
-			document.cookie = `token=${token}; path=/; secure; HttpOnly`;
+			
+			// Use the correct token name from the response
+			const accessToken = responseData.access_token;
+			const refreshToken = responseData.refresh_token;
+		
+			// Set the cookies without HttpOnly flag for debugging
+			document.cookie = `access_token=${accessToken}; path=/`;
+			document.cookie = `refresh_token=${refreshToken}; path=/`;
+
+			// Access the cookies
+			const storedAccessToken = getCookie('access_token');
+			const storedRefreshToken = getCookie('refresh_token');
+
+			console.log('Stored Access Token:', storedAccessToken);
+			console.log('Stored Refresh Token:', storedRefreshToken);
+
 			window.location.pathname = '/Profile';
 			handleRouteChange();
 		  } else {
@@ -84,4 +97,11 @@ export function otp(userName, passWord){
 	} else {
 	  console.error('Submit OTP button not found');
 	}
+}
+
+// Function to get cookie value by name
+function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
 }

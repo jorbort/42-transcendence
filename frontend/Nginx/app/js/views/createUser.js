@@ -1,3 +1,5 @@
+import { handleRouteChange } from '../mainScript.js';
+
 export function createUser() {
 	return `<div class="form_div">
 				<div class="form_container">
