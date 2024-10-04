@@ -66,7 +66,13 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'trascendance.wsgi.application'
+ASGI_APPLICATION = 'trascendance.asgi.application'
 
+CHANNEl_LAYERS = {
+	'default' : {
+		'BACKEND': 'channels.layers.InMemoryChannelLayer',
+	},
+}
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
