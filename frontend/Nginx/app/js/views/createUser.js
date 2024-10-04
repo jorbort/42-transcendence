@@ -20,7 +20,12 @@ export function createUser() {
 							<label for="password" class="form-label">Confirm Password</label>
 							<input type="password" class="form-control" id="confirm_password" required>
 						</div>
-						<button type="submit" id="sign_up" class="btn btn-primary">Sign Up</button>
+						<button type="submit" id="sign_up" class="btn btn-primary">
+						<span class="button-text">Sign Up</span>
+						<span class="button-loading" style="display: none;>....Loading</span>
+						<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none;"></span>
+
+						</button>
 					</form>
 				</div>
 			</div>`;
@@ -28,11 +33,19 @@ export function createUser() {
 
 export function signup(){
 	console.log('Signup function called');
+	
+	const signUpButton = document.getElementById('sign_up');
+	const spinner = signUpButton.querySelector('.spinner-border');
+	const buttonText = signUpButton.querySelector('.button-text');
 	const form = document.getElementById('signUpForm');
+	
 	if (form) {
 		form.addEventListener('submit', async function(event) {
 			event.preventDefault();
 			console.log('Sign form submitted');
+			
+			showSpinner();
+			
 			const email = document.getElementById('email').value;
 			const password = document.getElementById('password').value;
 			const confirm_password = document.getElementById('confirm_password').value;
@@ -69,9 +82,23 @@ export function signup(){
 				}
 			} catch (error) {
 				console.error('Error:', error);
+			} finally {
+				hideSpinner();
 			}
 		});
 	} else {
 		console.error('Signin form not found');
+	}
+
+	function showSpinner() {
+		spinner.style.display = 'inline-block';
+		buttonText.style.display = 'none';
+		signUpButton.disabled = true;
+	}
+	
+	function hideSpinner() {
+		spinner.style.display = 'none';
+		buttonText.style.display = 'inline-block';
+		signUpButton.disabled = false;
 	}
 }

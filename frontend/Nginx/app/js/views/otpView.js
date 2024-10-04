@@ -16,7 +16,11 @@ export function otpView() {
 										<input class="otp_input" type="number" maxlength="1"/>
 										<input class="otp_input" type="number" maxlength="1"/>
 								</div>
-								<button id="submit_otp"class="btn btn-primary mb-3">Verify</button>									
+								<button id="submit_otp"class="btn btn-primary mb-3">
+									<span class="button-text">Verify</span>
+									<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none;">...Loading</span>
+								</button>
+								</button>									
 								</button>
 								<p class="resend text-muted mb-0">
 									Didn't receive code? <a href="">Request again</a>
@@ -33,10 +37,16 @@ export function otp(userName, passWord){
 	document.getElementById('app').innerHTML = otpView();
 
 	const submitOtpButton = document.getElementById('submit_otp');
+	const spinner = submitOtpButton.querySelector('.spinner-border');
+	const buttonText = submitOtpButton.querySelector('.button-text');
+	
 	if (submitOtpButton) {
 	  submitOtpButton.addEventListener('click', async function(event) {
 		event.preventDefault();
 		console.log('OTP button clicked');
+
+		showSpinner();
+
   		const otpInputs = document.querySelectorAll('.otp_input');
 		let otpValue = '';
 		otpInputs.forEach(input => {
@@ -92,10 +102,24 @@ export function otp(userName, passWord){
 		} catch (error) {
 		  console.error('Error:', error);
 		  alert('An error occurred while trying to verify the OTP.');
+		} finally {
+			hideSpinner();
 		}
 	  });
 	} else {
 	  console.error('Submit OTP button not found');
+	}
+
+	function showSpinner() {
+		spinner.style.display = 'inline-block';
+		buttonText.style.display = 'none';
+		submitOtpButton.disabled = true;
+	}
+	
+	function hideSpinner() {
+		spinner.style.display = 'none';
+		buttonText.style.display = 'inline-block';
+		submitOtpButton.disabled = false;
 	}
 }
 
