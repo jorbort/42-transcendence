@@ -16,7 +16,11 @@ export function otpView() {
 										<input class="otp_input" type="number" maxlength="1"/>
 										<input class="otp_input" type="number" maxlength="1"/>
 								</div>
-								<button id="submit_otp"class="btn btn-primary mb-3">Verify</button>									
+								<button id="submit_otp"class="btn btn-primary mb-3">
+									<span class="button-text">Verify</span>
+									<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none;">...Loading</span>
+								</button>
+								</button>									
 								</button>
 								<p class="resend text-muted mb-0">
 									Didn't receive code? <a href="">Request again</a>
@@ -33,10 +37,16 @@ export function otp(userName, passWord){
 	document.getElementById('app').innerHTML = otpView();
 
 	const submitOtpButton = document.getElementById('submit_otp');
+	const spinner = submitOtpButton.querySelector('.spinner-border');
+	const buttonText = submitOtpButton.querySelector('.button-text');
+	
 	if (submitOtpButton) {
 	  submitOtpButton.addEventListener('click', async function(event) {
 		event.preventDefault();
 		console.log('OTP button clicked');
+
+		showSpinner();
+
   		const otpInputs = document.querySelectorAll('.otp_input');
 		let otpValue = '';
 		otpInputs.forEach(input => {
@@ -66,9 +76,22 @@ export function otp(userName, passWord){
 			const responseData = await response.json();
 			console.log(responseData);
 			alert("OTP verified successfully");
-			// Assuming the response contains a token that needs to be stored in cookies
-			const token = responseData.token;
-			document.cookie = `token=${token}; path=/; secure; HttpOnly`;
+			
+			// Use the correct token name from the response
+			const accessToken = responseData.access_token;
+			const refreshToken = responseData.refresh_token;
+		
+			// Set the cookies without HttpOnly flag for debugging
+			document.cookie = `access_token=${accessToken}; path=/`;
+			document.cookie = `refresh_token=${refreshToken}; path=/`;
+
+			// Access the cookies
+			const storedAccessToken = getCookie('access_token');
+			const storedRefreshToken = getCookie('refresh_token');
+
+			console.log('Stored Access Token:', storedAccessToken);
+			console.log('Stored Refresh Token:', storedRefreshToken);
+
 			window.location.pathname = '/Profile';
 			handleRouteChange();
 		  } else {
@@ -79,9 +102,30 @@ export function otp(userName, passWord){
 		} catch (error) {
 		  console.error('Error:', error);
 		  alert('An error occurred while trying to verify the OTP.');
+		} finally {
+			hideSpinner();
 		}
 	  });
 	} else {
 	  console.error('Submit OTP button not found');
 	}
+
+	function showSpinner() {
+		spinner.style.display = 'inline-block';
+		buttonText.style.display = 'none';
+		submitOtpButton.disabled = true;
+	}
+	
+	function hideSpinner() {
+		spinner.style.display = 'none';
+		buttonText.style.display = 'inline-block';
+		submitOtpButton.disabled = false;
+	}
+}
+
+// Function to get cookie value by name
+function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
 }
