@@ -1,0 +1,36 @@
+body{
+	background-color: blueviolet;
+	font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+.card{
+	background-color: white;
+	border-radius: 10px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+	margin: 10px;
+	padding: 10px;
+}
+
+#register{
+	background-color: white;
+	border-radius: 10px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+	margin: 10px;
+	padding: 10px;
+}
+
+#42-login{
+	background-color: white;
+	border-radius: 10px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+	margin: 10px;
+	padding: 10px;
+}
+
+#logger{
+	background-color: white;
+	border-radius: 10px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+	margin: 10px;
+	padding: 10px;
+}

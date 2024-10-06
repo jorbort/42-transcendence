@@ -1,0 +1,68 @@
+services:
+  nginx:
+    container_name: nginx
+    build: ./requirements/nginx
+    image: nginx
+    ports:
+      - 443:443
+    volumes:
+      - postgres_data:/usr/share/nginx/html
+    restart: always
+    networks:
+      - transcendence
+    environment:
+      DOMAIN_NAME: ${DOMAIN_NAME}
+      CERTS_CRT: ${CERTS_CRT}
+      CERTS_KEY: ${CERTS_KEY}
+      NAME: ${NAME}
+
+  backend:
+    container_name: Django
+    build: ./requirements/back_end/
+    image: django
+    depends_on:
+      - postgres
+    ports:
+      - "8000:8000"
+    volumes:
+      - django_data:/app
+    restart: always
+    networks:
+      - transcendence
+    env_file:
+      - .env
+
+  postgres:
+    container_name: postgres
+    build: ./requirements/postgres
+    image: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/
+    restart: always
+    networks:
+      - transcendence
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+
+volumes:
+  postgres_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: /$HOME/data/postgres_data
+      o: bind
+  django_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: /$HOME/data/django_data
+      o: bind
+
+networks:
+  transcendence:
+    driver: bridge
+    name: transcendence
