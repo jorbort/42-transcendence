@@ -3,7 +3,7 @@ all: host vol
 	@docker compose -f ./srcs/docker-compose.yml up -d --build
 
 host:
-	sudo sed -i 's|localhost|trascendence.42.es|g' /etc/hosts
+	sudo sed -i 's|localhost|transcendence.42.es|g' /etc/hosts
 
 down:
 	@docker compose -f ./srcs/docker-compose.yml down
