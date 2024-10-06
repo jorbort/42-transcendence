@@ -31,53 +31,52 @@ def login_42(request):
 
 @api_view(['GET'])
 def callback_42(request):
-    state = request.GET.get('state')
-    code = request.GET.get('code')
+	state = request.GET.get('state')
+	code = request.GET.get('code')
+	if state != request.session.get('oauth_state'):
+		return Response({'detail': 'Invalid state parameter'}, status=status.HTTP_400_BAD_REQUEST)
+	
+	token_url = "https://api.intra.42.fr/oauth/token"
+	token_data = {
+		'grant_type': 'authorization_code',
+		'client_id': settings.CLIENT_ID,
+		'client_secret': settings.CLIENT_SECRET,
+		'code': code,
+		'redirect_uri': settings.REDIRECT_URI,
+		}
+	token_response = requests.post(token_url, data=token_data)
+	token_json = token_response.json()
+	if 'access_token' not in token_json:
+		return Response({'detail': 'Failed to obtain access token'}, status=status.HTTP_400_BAD_REQUEST)
+	
+	access_token = token_json['access_token']
 
-    if state != request.session.get('oauth_state'):
-        return Response({'detail': 'Invalid state parameter'}, status=status.HTTP_400_BAD_REQUEST)
+	user_info_url = "https://api.intra.42.fr/v2/me"
+	headers = {'Authorization': f'Bearer {access_token}'}
+	user_info_response = requests.get(user_info_url, headers=headers)
+	user_info = user_info_response.json()
 
-    token_url = "https://api.intra.42.fr/oauth/token"
-    token_data = {
-        'grant_type': 'authorization_code',
-        'client_id': settings.CLIENT_ID,
-        'client_secret': settings.CLIENT_SECRET,
-        'code': code,
-        'redirect_uri': settings.REDIRECT_URI,
+	user_data = {
+		'username': user_info['login'],
+		'email': user_info['email'],
+		'password' : 'vivapacman',
+		'password2' : 'vivapacman',
     }
+	try:
+		user = PongUser.objects.get(username=user_info['login'])
+	except PongUser.DoesNotExist:
+		serializer = UserSerializer(data=user_data)
+		if serializer.is_valid():
+			user = serializer.save()
+		else:
+			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+		
+	django_login(request, user)
 
-    token_response = requests.post(token_url, data=token_data)
-    token_json = token_response.json()
+	refresh_token = RefreshToken.for_user(user)
+	access_token = str(refresh_token.access_token)
 
-    if 'access_token' not in token_json:
-        return Response({'detail': 'Failed to obtain access token'}, status=status.HTTP_400_BAD_REQUEST)
-
-    access_token = token_json['access_token']
-
-    user_info_url = "https://api.intra.42.fr/v2/me"
-    headers = {'Authorization': f'Bearer {access_token}'}
-    user_info_response = requests.get(user_info_url, headers=headers)
-    user_info = user_info_response.json()
-
-    user_data = {
-        'username': user_info['login'],
-        'email': user_info['email'],
-        'first_name': user_info.get('first_name', ''),
-        'last_name': user_info.get('last_name', ''),
-    }
-
-    serializer = UserSerializer(data=user_data)
-    if serializer.is_valid():
-        user = serializer.save()
-    else:
-        user = PongUser.objects.get(username=user_info['login'])
-
-    django_login(request, user)
-
-    refresh_token = RefreshToken.for_user(user)
-    access_token = str(refresh_token.access_token)
-
-    response = Response({'access_token': access_token, 'refresh_token': str(refresh_token)}, status=status.HTTP_200_OK)
-    response.set_cookie('access_token', access_token)
-    response.set_cookie('refresh_token', str(refresh_token))
-    return response
+	response = Response({'access_token': access_token, 'refresh_token': str(refresh_token)}, status=status.HTTP_200_OK)
+	response.set_cookie('access_token', access_token)
+	response.set_cookie('refresh_token', str(refresh_token))
+	return response

@@ -15,9 +15,11 @@ class FriendConsumer(AsyncwebsocketConsumer):
 
 		await self.accept()
 
+		await self.update_online_status(self.username, True)
 		await self.notify_friends(self.username, 'online')
 	
 	async def disconnect(self, close_code):
+		await self.update_online_status(self.username, False)
 		await self.notify_friends(self.username, 'offline')
 
 		await self.channel_layer.group_discard(
@@ -55,6 +57,12 @@ class FriendConsumer(AsyncwebsocketConsumer):
 				friends.add(friendship.user1.username)
 		return friends
 	
+	@database_sync_to_async
+	def update_online_status(self, username, status):
+		user = PongUser.objects.get(username=username)
+		user.online_status = status
+		user.save()
+
 	async def notify_friends(self, username, status):
 		friends = await self.get_friends(username)
 		for friend in friends:
