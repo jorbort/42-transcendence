@@ -18,9 +18,8 @@ export function otpView() {
 								</div>
 								<button id="submit_otp"class="btn btn-primary mb-3">
 									<span class="button-text">Verify</span>
-									<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none;">...Loading</span>
-								</button>
-								</button>									
+									<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none;"></span>
+									<span class="loading-text" style="display: none;">....Loading </span>
 								</button>
 								<p class="resend text-muted mb-0">
 									Didn't receive code? <a href="">Request again</a>
@@ -39,6 +38,7 @@ export function otp(userName, passWord){
 	const submitOtpButton = document.getElementById('submit_otp');
 	const spinner = submitOtpButton.querySelector('.spinner-border');
 	const buttonText = submitOtpButton.querySelector('.button-text');
+	const loadingText = submitOtpButton.querySelector('.loading-text');
 	
 	if (submitOtpButton) {
 	  submitOtpButton.addEventListener('click', async function(event) {
@@ -112,12 +112,14 @@ export function otp(userName, passWord){
 
 	function showSpinner() {
 		spinner.style.display = 'inline-block';
+		loadingText.style.display = 'inline-block';
 		buttonText.style.display = 'none';
 		submitOtpButton.disabled = true;
 	}
 	
 	function hideSpinner() {
 		spinner.style.display = 'none';
+		loadingText.style.display = 'none';
 		buttonText.style.display = 'inline-block';
 		submitOtpButton.disabled = false;
 	}

@@ -23,7 +23,11 @@ export function loginView() {
 							<label for="password" class="form-label">Password</label>
 							<input type="password" class="form-control" id="password" required>
 						</div>
-						<button type="submit" id="sign_in" class="btn btn-primary">Sign In</button>
+						<button type="submit" id="sign_in" class="btn btn-primary">
+							<span class="button-text">Sign In</span>
+							<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none;"></span>
+							<span class="loading-text" style="display: none;">....Loading </span>						
+						</button>
 					</form>
 						<div class="mt-3">
 							<a href="/Signup" class="routelink-primary">Don't have an account? Sign up</a>
@@ -35,10 +39,18 @@ export function loginView() {
 export function signin(){
 	console.log('Sign in function called');
 	const form = document.getElementById('loginForm');
+	const signInButton = document.getElementById('sign_in');
+	const buttonText = signInButton.querySelector('.button-text');
+	const spinner = signInButton.querySelector('.spinner-border');
+	const loadingText = signInButton.querySelector('.loading-text');
+	
 	if (form) {
 		form.addEventListener('submit', async function(event) {
 			event.preventDefault();
 			console.log('Sign in form submitted');
+			
+			showSpinner();
+
 			const username = document.getElementById('username').value;
 			const password = document.getElementById('password').value;
 			const formData = {
@@ -73,9 +85,21 @@ export function signin(){
 			} catch (error) {
 				console.error('Error:', error);
 				alert('Error:', error);
+			}finally{
+				hideSpinner();
 			}
 		});
 	} else {
 		console.error('Signin form not found');
+	}
+	function showSpinner() {
+		buttonText.style.display = 'none';
+		loadingText.style.display = 'inline';
+		spinner.style.display = 'inline';
+	}
+	function hideSpinner() {
+		buttonText.style.display = 'inline';
+		loadingText.style.display = 'none';
+		spinner.style.display = 'none';
 	}
 }
