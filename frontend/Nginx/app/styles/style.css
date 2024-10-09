@@ -175,12 +175,13 @@ body{
   
   .otp-field input {
 	height: 45px;
-	width: 42px;
+	width: 150px;
 	border-radius: 6px;
 	outline: none;
 	font-size: 1.125rem;
 	text-align: center;
 	border: 1px solid #ddd;
+	font-weight: 700;
   }
   .otp-field input:focus {
 	box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
