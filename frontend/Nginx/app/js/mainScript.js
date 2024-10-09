@@ -1,8 +1,11 @@
 import {createUser, signup} from './views/createUser.js';
 import {loginView, signin} from './views/loginView.js';
+import {} from './views/loginView.js';
+
 // import {otpView, otp} from './views/otpView.js';
 // import {getCookie} from './utils/sessionToken.js';
 import tableView from './views/highScores.js';
+import { gameScreen } from './views/pong.js';
 
 const userlogged = 0;
 let accessToken = 0;
@@ -20,14 +23,15 @@ document.addEventListener('DOMContentLoaded', function() {
 export function handleRouteChange() {
 	const path = window.location.pathname;
 	let view;
+	console.log(path);
 	if (accessToken){
 		switch (path) {
-				case '/Profile/':
+				case '/Profile':
 					view = tableView();
 					break;
-				//  case '/game':
-				// view = gameScreen();
-				// break;
+				case '/Game':
+					view = gameScreen();
+					break;
 				// case '/game':
 				// view = gameScreen();
 				// break;
@@ -41,6 +45,9 @@ export function handleRouteChange() {
 				break;
 			case '/login':
 				view = loginView();
+				break;
+			case '/Game':
+				view = gameScreen();
 				break;
 	}
 	}
