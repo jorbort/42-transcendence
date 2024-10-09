@@ -10,11 +10,6 @@ export function otpView() {
 										<p>Your code was sent to you via email</p>
 								<div class="otp-field mb-4 otp-container">
 										<input class="otp_input" type="number" maxlength="1"/>
-										<input class="otp_input" type="number" maxlength="1"/>
-										<input class="otp_input" type="number" maxlength="1"/>
-										<input class="otp_input" type="number" maxlength="1"/>
-										<input class="otp_input" type="number" maxlength="1"/>
-										<input class="otp_input" type="number" maxlength="1"/>
 								</div>
 								<button id="submit_otp"class="btn btn-primary mb-3">
 									<span class="button-text">Verify</span>
@@ -41,20 +36,20 @@ export function otp(userName, passWord){
 	const loadingText = submitOtpButton.querySelector('.loading-text');
 	
 	if (submitOtpButton) {
-	  submitOtpButton.addEventListener('click', async function(event) {
+		submitOtpButton.addEventListener('click', async function(event) {
 		event.preventDefault();
 		console.log('OTP button clicked');
 
 		showSpinner();
 
-  		const otpInputs = document.querySelectorAll('.otp_input');
+		const otpInputs = document.querySelectorAll('.otp_input');
 		let otpValue = '';
 		otpInputs.forEach(input => {
-		  if (input.value === '') {
-			alert('All OTP fields must be filled');
-			throw new Error('Incomplete OTP');
-		  }
-		  otpValue += input.value;
+			// if (input.value === '') {
+			// 	alert('All OTP fields must be filled');
+			// 	otpValue = '';
+			// }
+			otpValue += input.value;
 		});
   
 		const formData = {
@@ -65,49 +60,54 @@ export function otp(userName, passWord){
 		const jsonString = JSON.stringify(formData);
 		console.log(jsonString);
   		try {
-		  const response = await fetch('http://localhost:8000/users/verify', {
-			method: 'POST',
-			headers: {
-			  'Content-Type': 'application/json'
-			},
-			body: jsonString
-		  });
-		  if (response.ok) {
-			const responseData = await response.json();
-			console.log(responseData);
-			alert("OTP verified successfully");
+			const response = await fetch('http://localhost:8000/users/verify', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: jsonString
+			});
+			if (response.ok) {
+				const responseData = await response.json();
+				console.log(responseData);
+				alert("OTP verified successfully");
 			
-			// Use the correct token name from the response
-			const accessToken = responseData.access_token;
-			const refreshToken = responseData.refresh_token;
-		
-			// Set the cookies without HttpOnly flag for debugging
-			document.cookie = `access_token=${accessToken}; path=/`;
-			document.cookie = `refresh_token=${refreshToken}; path=/`;
+				const accessToken = responseData.access_token;
+				const refreshToken = responseData.refresh_token;
+				// Set the cookies without HttpOnly flag for debugging
+				document.cookie = `access_token=${accessToken}; path=/`;
+				document.cookie = `refresh_token=${refreshToken}; path=/`;
+				// Access the cookies
+				const storedAccessToken = getCookie('access_token');
+				const storedRefreshToken = getCookie('refresh_token');
 
-			// Access the cookies
-			const storedAccessToken = getCookie('access_token');
-			const storedRefreshToken = getCookie('refresh_token');
+				console.log('Stored Access Token:', storedAccessToken);
+				console.log('Stored Refresh Token:', storedRefreshToken);
 
-			console.log('Stored Access Token:', storedAccessToken);
-			console.log('Stored Refresh Token:', storedRefreshToken);
-
-			window.location.pathname = '/Profile';
-			handleRouteChange();
-		  } else {
-			const errorData = await response.json();
-			const errorMessage = errorData.message || 'An error occurred';
-			alert(`Error: ${errorMessage}`);
-		  }
+				window.location.pathname = '/Profile';
+				handleRouteChange();
+			} else {
+				const errorData = await response.json();
+				const errorMessage = errorData.message || 'An error occurred';
+				if (otpValue === '') {
+					alert('All OTP fields must be filled');
+				}
+				else {
+					alert(`Error: ${errorMessage}`);
+				}
+				clearOtpInputs(otpInputs);
+			}
 		} catch (error) {
-		  console.error('Error:', error);
-		  alert('An error occurred while trying to verify the OTP.');
+			console.error('Error:', error);
+			clearOtpInputs(otpInputs);
+			alert('An error occurred while trying to verify the OTP.');
 		} finally {
 			hideSpinner();
 		}
 	  });
 	} else {
 	  console.error('Submit OTP button not found');
+	  clearOtpInputs(otpInputs);
 	}
 
 	function showSpinner() {
@@ -125,9 +125,57 @@ export function otp(userName, passWord){
 	}
 }
 
-// Function to get cookie value by name
 function getCookie(name) {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);
     if (parts.length === 2) return parts.pop().split(';').shift();
+}
+
+document.addEventListener('DOMContentLoaded', (event) => {
+    const otpInputs = document.querySelectorAll('.otp_input');
+
+    otpInputs.forEach((input, index) => {
+        // Restrict input length to 1 character
+        input.setAttribute('maxlength', '1');
+
+        // Move focus to the next input on input event
+        input.addEventListener('input', function() {
+            const otpValue = input.value;
+            if (otpValue.length === 1) {
+                const nextInput = otpInputs[index + 1];
+                if (nextInput) {
+                    nextInput.focus();
+                } else {
+                    input.blur();
+                }
+            }
+        });
+
+        // Move focus to the previous input on backspace
+        input.addEventListener('keydown', function(event) {
+            if (event.key === 'Backspace' && input.value.length === 0) {
+                const previousInput = otpInputs[index - 1];
+                if (previousInput) {
+                    previousInput.focus();
+                }
+            }
+        });
+
+        // Restrict input to numbers only
+        input.addEventListener('input', function() {
+            input.value = input.value.replace(/[^0-9]/g, '');
+        });
+    });
+
+    // Set focus on the first OTP input when the page loads
+    if (otpInputs.length > 0) {
+        otpInputs[0].focus();
+    }
+});
+
+function clearOtpInputs(otpInputs) {
+	otpInputs.forEach(input => {
+		input.value = '';
+	});
+	otpInputs[0].focus();
 }

@@ -94,12 +94,14 @@ export function signin(){
 	}
 	function showSpinner() {
 		buttonText.style.display = 'none';
-		loadingText.style.display = 'inline';
-		spinner.style.display = 'inline';
+		loadingText.style.display = 'inline-block';
+		spinner.style.display = 'inline-block';
+		signInButton.disabled = true;
 	}
 	function hideSpinner() {
-		buttonText.style.display = 'inline';
+		buttonText.style.display = 'inline-block';
 		loadingText.style.display = 'none';
 		spinner.style.display = 'none';
+		signInButton.disabled = false;
 	}
 }
