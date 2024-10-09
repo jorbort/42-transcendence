@@ -96,10 +96,12 @@ export function signin(){
 		buttonText.style.display = 'none';
 		loadingText.style.display = 'inline';
 		spinner.style.display = 'inline';
+		signInButton.disabled = true;
 	}
 	function hideSpinner() {
 		buttonText.style.display = 'inline';
 		loadingText.style.display = 'none';
 		spinner.style.display = 'none';
+		signInButton.disabled = false;
 	}
 }
