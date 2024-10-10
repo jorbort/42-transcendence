@@ -104,7 +104,7 @@
             // Actualizar la posición de la bola
             sphere.position.x += ballSpeedX;
             sphere.position.y += ballSpeedY;
-
+            
             checkIfLost();
 
             // Colisiones con los bordes del campo
@@ -132,14 +132,15 @@
 
         function resetBall() {
             sphere.position.set(0, 0, 0);
-            ballSpeedX = -ballSpeedX;
+            ballSpeedX = (Math.random() < 0.5 ? -1 : 1) * 0.15;
+            ballSpeedY = (Math.random() < 0.5 ? -1 : 1) * 0.1;
         }
 
-        function checkIfLost() {
-            if (sphere.position.x > 10.5) {
-                pointsPlayer++;
-                playerText.geometry.dispose(); // Eliminamos anterior
-                playerText.geometry = new THREE.TextGeometry("Player X: " + pointsPlayer, {
+        function reprint(name,points) {
+            if (name == 'IA')
+            {
+                IAText.geometry.dispose(); // Eliminamos anterior
+                IAText.geometry = new THREE.TextGeometry(name + " " + points, {
                     font: loadfont,
                     size: 0.5,
                     height: 0.1,
@@ -149,21 +150,49 @@
                     bevelSize: 0.02,
                     bevelSegments: 5
                 });
+            }
+            else
+            {
+                playerText.geometry.dispose(); // Eliminamos anterior
+                    playerText.geometry = new THREE.TextGeometry(name + " " + points, {
+                        font: loadfont,
+                        size: 0.5,
+                        height: 0.1,
+                        curveSegments: 12, // Suavidad
+                        bevelEnabled: true, // biselado para el borde
+                        bevelThickness: 0.03,
+                        bevelSize: 0.02,
+                        bevelSegments: 5
+                    });
+            }
+        }
+
+        function checkIfLost() {
+            if (sphere.position.x > 10.5) {
+                pointsPlayer++;
+                reprint("Player X", pointsPlayer);
+                if (pointsPlayer >= 3)
+                {
+                    alert("¡Felicidades! " + "player X" + " ha ganado la partida de pong.");
+                    pointsIA = 0;
+                    pointsPlayer = 0;
+                    reprint("Player X", pointsPlayer);
+                    reprint("IA", pointsPlayer);
+
+                }
                 resetBall();
             }
             if (sphere.position.x < -10.5) {
                 pointsIA++;
-                IAText.geometry.dispose();
-                IAText.geometry = new THREE.TextGeometry("IA: " + pointsIA, {
-                    font: loadfont,
-                    size: 0.5,
-                    height: 0.1,
-                    curveSegments: 12,
-                    bevelEnabled: true,
-                    bevelThickness: 0.03,
-                    bevelSize: 0.02,
-                    bevelSegments: 5
-                });
+                reprint("IA", pointsIA);
+                if (pointsIA >= 3)
+                {
+                    alert("La IA ha ganado la partida de pong");
+                    pointsIA = 0;
+                    pointsPlayer = 0;
+                    reprint("Player X", pointsPlayer);
+                    reprint("IA", pointsPlayer);
+                }
                 resetBall();
             }
         }
@@ -174,8 +203,8 @@
                 sphere.position.y >= paddleLeft.position.y - 1 &&
                 sphere.position.y <= paddleLeft.position.y + 1) {
                 ballSpeedX *= -1;
-                ballSpeedX += 0.015;
-                ballSpeedY += 0.005;
+                ballSpeedX += 0.025;
+                ballSpeedY += 0.017;
             }
 
             // Colisión con la pala derecha
@@ -183,8 +212,8 @@
                 sphere.position.y >= paddleRight.position.y - 1 &&
                 sphere.position.y <= paddleRight.position.y + 1) {
                 ballSpeedX *= -1;
-                ballSpeedX += 0.015;
-                ballSpeedY += 0.005;
+                ballSpeedX += 0.025;
+                ballSpeedY += 0.017;
             }
         }
 
