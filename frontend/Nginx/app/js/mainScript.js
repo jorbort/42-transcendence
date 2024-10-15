@@ -3,6 +3,7 @@ import {loginView, signin} from './views/loginView.js';
 // import {otpView, otp} from './views/otpView.js';
 // import {getCookie} from './utils/sessionToken.js';
 import tableView from './views/highScores.js';
+import { fortyTwoCallback } from './views/fortyTwoCallback.js';
 
 const userlogged = 0;
 let accessToken = 0;
@@ -42,6 +43,8 @@ export function handleRouteChange() {
 			case '/login':
 				view = loginView();
 				break;
+			case '/callback_42':
+				view = fortyTwoCallback();
 	}
 	}
 	document.getElementById('app').innerHTML = view;

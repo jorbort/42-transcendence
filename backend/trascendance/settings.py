@@ -48,6 +48,21 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'trascendance.urls'
 CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_METHODS = [
+    "GET",
+    "POST",
+    "OPTIONS",
+]
+
+CORS_ALLOW_HEADERS = [
+    "accept",
+    "authorization",
+    "content-type",
+    "dnt",
+    'token',
+    "origin",
+    "user-agent",
+]
 
 TEMPLATES = [
     {
@@ -65,7 +80,6 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'trascendance.wsgi.application'
 ASGI_APPLICATION = 'trascendance.asgi.application'
 
 CHANNEl_LAYERS = {
@@ -180,4 +194,14 @@ LOGGING = {
 #42API
 CLIENT_ID=os.environ['CLIENT_ID']
 CLIENT_SECRET=os.environ['CLIENT_SECRET']
-REDIRECT_URI='http://localhost:8000/callback_42'
+REDIRECT_URI='http://localhost:80/callback_42'
+
+#django sesion configurations
+
+
+SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
+
+SESSION_COOKIE_NAME = 'sessionid'
+SESSION_COOKIE_SECURE = False  
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = 'Lax'

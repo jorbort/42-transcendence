@@ -1,9 +1,9 @@
 import json
-from channels.generic.websocket import AsyncwebsocketConsumer
+from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from .models import PongUser, Friendship
 
-class FriendConsumer(AsyncwebsocketConsumer):
+class FriendConsumer(AsyncWebsocketConsumer):
 	async def connect(self):
 		self.username = self.scope['url_route']['kwargs']['username']
 		self.group_name = f'friemds_{self.username}'

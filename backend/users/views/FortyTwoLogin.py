@@ -18,7 +18,6 @@ def gen_state():
 @api_view(['GET'])
 def login_42(request):
     state = gen_state()
-    request.session['oauth_state'] = state
     authorize_url = (
         "https://api.intra.42.fr/oauth/authorize"
         f"?client_id={settings.CLIENT_ID}"
@@ -29,12 +28,10 @@ def login_42(request):
     )
     return redirect(authorize_url)
 
-@api_view(['GET'])
+@api_view(['POST'])
 def callback_42(request):
-	state = request.GET.get('state')
-	code = request.GET.get('code')
-	if state != request.session.get('oauth_state'):
-		return Response({'detail': 'Invalid state parameter'}, status=status.HTTP_400_BAD_REQUEST)
+	state = request.data.get('state')
+	code = request.data.get('code')
 	
 	token_url = "https://api.intra.42.fr/oauth/token"
 	token_data = {
@@ -43,11 +40,15 @@ def callback_42(request):
 		'client_secret': settings.CLIENT_SECRET,
 		'code': code,
 		'redirect_uri': settings.REDIRECT_URI,
-		}
-	token_response = requests.post(token_url, data=token_data)
-	token_json = token_response.json()
-	if 'access_token' not in token_json:
-		return Response({'detail': 'Failed to obtain access token'}, status=status.HTTP_400_BAD_REQUEST)
+		'state' : state
+	}
+	
+	try:
+		token_response = requests.post(token_url, data=token_data)
+		token_response.raise_for_status()
+		token_json = token_response.json()
+	except requests.exceptions.RequestException as e:
+		return Response({'detail': f'Failed to obtain access token: {str(e)}'}, status=status.HTTP_400_BAD_REQUEST)
 	
 	access_token = token_json['access_token']
 
@@ -80,3 +81,6 @@ def callback_42(request):
 	response.set_cookie('access_token', access_token)
 	response.set_cookie('refresh_token', str(refresh_token))
 	return response
+
+	# frontend_url = f"http://localhost:80/profile?access_token={access_token}&refresh_token={str(refresh_token)}"
+	# return redirect(frontend_url)
