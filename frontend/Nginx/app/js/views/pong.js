@@ -1,24 +1,44 @@
 class PongGame extends HTMLElement {
     constructor() {
         super();
-        this.ballSpeedX = (Math.random() < 0.5 ? -1 : 1) * 0.07;
-        this.ballSpeedY = (Math.random() < 0.5 ? -1 : 1) * 0.05; 
+        this.ballSpeedX = 0.2;
+        this.ballSpeedY = 0.1;
+        this.ballDireccionX = (Math.random() < 0.5 ? -1 : 1);
+        this.ballDireccionY = (Math.random() < 0.5 ? -1 : 1);
         this.pointsPlayer = 0;
         this.pointsIA = 0;
         this.aiSpeed = 0.1;
         this.movePaddleLeft = 0;
         this.targetPaddleLeftY = 0;
-        this.loadfont = null; // Inicializar variable para la fuente
-        this.playerText = null; // Inicializar variable para el texto del jugador
-        this.IAText = null; // Inicializar variable para el texto de la IA
+        this.loadfont = null;
+        this.playerText = null;
+        this.IAText = null;
+        this.handleKeyDown = this.handleKeyDown.bind(this);
+        this.handleKeyUp = this.handleKeyUp.bind(this);
     }
 
     connectedCallback() {
+        window.addEventListener('keydown', this.handleKeyDown);
+        window.addEventListener('keyup', this.handleKeyUp);
         this.startGame();
     }
 
     disconnectedCallback() {
-        this.disconnectGame();
+        // this.disconnectGame();
+    }
+
+    handleKeyDown(event) {
+        if (event.key === 'w') {
+            this.movePaddleLeft = 1;
+        } else if (event.key === 's') {
+            this.movePaddleLeft = -1;
+        }
+    }
+
+    handleKeyUp(event) {
+        if (event.key === 'w' || event.key === 's') {
+            this.movePaddleLeft = 0;
+        }
     }
 
     startGame() {
@@ -30,31 +50,30 @@ class PongGame extends HTMLElement {
         renderer.setSize(window.innerWidth, window.innerHeight);
         this.appendChild(renderer.domElement);
 
-        const sphereGeometry = new THREE.SphereGeometry(0.3, 27, 27);
+        const sphereGeometry = new THREE.SphereGeometry(0.5, 27, 27);
         const sphereMaterial = new THREE.MeshStandardMaterial({ color: 0x87CEEB, metalness: 0.5, roughness: 0.5 });
         const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
         camera.position.set(0, 0, 20);
         scene.add(sphere);
 
-        const paddleGeometry = new THREE.BoxGeometry(0.2, 2, 0.1);
+        const paddleGeometry = new THREE.BoxGeometry(0.4, 2, 0.1);
         const paddleMaterial = new THREE.MeshStandardMaterial({ color: 0xff0000 });
         const paddleLeft = new THREE.Mesh(paddleGeometry, paddleMaterial);
-        paddleLeft.position.x = -10; 
+        paddleLeft.position.x = -14; 
         paddleLeft.position.y = 0; 
         scene.add(paddleLeft);
 
         const paddleRight = new THREE.Mesh(paddleGeometry, paddleMaterial);
-        paddleRight.position.x = 10; 
+        paddleRight.position.x = 12.5; 
         paddleRight.position.y = 0; 
         scene.add(paddleRight);
 
         const borderMaterial = new THREE.LineBasicMaterial({ color: 0xffffff });
         const points = [];
-        points.push(new THREE.Vector3(-10.5, 4, 0)); // Esquina superior izquierda
-        points.push(new THREE.Vector3(10.5, 4, 0)); // Esquina superior derecha
-        points.push(new THREE.Vector3(10.5, -4, 0)); // Esquina inferior derecha
-        points.push(new THREE.Vector3(-10.5, -4, 0)); // Esquina inferior izquierda
-        points.push(new THREE.Vector3(-10.5, 4, 0)); // Esquina superior izquierda
+        points.push(new THREE.Vector3(-15, 8, 0)); // Esquina superior izquierda
+        points.push(new THREE.Vector3(13.5, 8, 0)); // Esquina superior derecha
+        points.push(new THREE.Vector3(13.5, -4, 0)); // Esquina inferior derecha
+        points.push(new THREE.Vector3(-15, -4, 0)); // Esquina inferior izquierda
 
         const geometry = new THREE.BufferGeometry().setFromPoints(points);
         const border = new THREE.LineSegments(geometry, borderMaterial);
@@ -71,119 +90,166 @@ class PongGame extends HTMLElement {
         loader.load('https://threejs.org/examples/fonts/helvetiker_bold.typeface.json', (font) => {
             this.loadfont = font;
             const textMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff });
-            this.playerText = this.createText("Player X: " + this.pointsPlayer, new THREE.Vector3(-10, 4.5, 0), font, textMaterial);
-            this.IAText = this.createText("IA: " + this.pointsIA, new THREE.Vector3(7, 4.5, 0), font, textMaterial);
+            this.playerText = this.createText("Player X: " + this.pointsPlayer, new THREE.Vector3(-15, 9.5, 0), font, textMaterial);
+            this.IAText = this.createText("IA: " + this.pointsIA, new THREE.Vector3(12, 9.5, 0), font, textMaterial);
             scene.add(this.playerText);
             scene.add(this.IAText);
         });
 
         const animate = () => {
-            requestAnimationFrame(animate);
             // Actualizar la posición de la bola
-            sphere.position.x += this.ballSpeedX; // Usar this
-            sphere.position.y += this.ballSpeedY; // Usar this
-
-            this.checkIfLost(sphere); // Llamar el método correctamente
-
-            // Colisiones con los bordes del campo
-            if (sphere.position.y > 4 || sphere.position.y < -4) {
-                this.ballSpeedY *= -1; // Usar this
-            }
-
-            this.checkPaddleCollision(sphere, paddleLeft, paddleRight); // Pasar objetos si es necesario
+            sphere.position.x += this.ballSpeedX * this.ballDireccionX;
+            sphere.position.y += this.ballSpeedY * this.ballDireccionY;
             
-            if (this.ballSpeedX > 0) this.moveAI(paddleRight, sphere); // Usar this
-
-            if (this.movePaddleLeft === 1) {
-                this.targetPaddleLeftY += this.aiSpeed; // Usar this
-            } else if (this.movePaddleLeft === -1) {
-                this.targetPaddleLeftY -= this.aiSpeed; // Usar this
+            if (this.checkIfLost(sphere))
+                return ;
+            
+            // Colisiones con los bordes del campo
+            if (sphere.position.y > 8 || sphere.position.y < -3.8) {
+                this.ballDireccionY *= -1; // Cambiar la dirección vertical
             }
-
-            this.targetPaddleLeftY = THREE.MathUtils.clamp(this.targetPaddleLeftY, -3, 3);
-            paddleLeft.position.y = THREE.MathUtils.lerp(paddleLeft.position.y, this.targetPaddleLeftY, 0.1); // Usar this
-            paddleRight.position.y = THREE.MathUtils.clamp(paddleRight.position.y, -3, 3);
-
+            
+            this.checkPaddleCollision(sphere, paddleLeft, paddleRight);
+            
+            if (this.ballDireccionX > 0) this.moveAI(paddleRight, sphere);
+            
+            if (this.movePaddleLeft === 1) {
+                this.targetPaddleLeftY += this.aiSpeed;
+            } else if (this.movePaddleLeft === -1) {
+                this.targetPaddleLeftY -= this.aiSpeed;
+            }
+            
+            this.targetPaddleLeftY = THREE.MathUtils.clamp(this.targetPaddleLeftY, -3, 7);
+            paddleLeft.position.y = THREE.MathUtils.lerp(paddleLeft.position.y, this.targetPaddleLeftY, 0.1);
+            paddleRight.position.y = THREE.MathUtils.clamp(paddleRight.position.y, -3, 7);
+            
             renderer.render(scene, camera);
+            requestAnimationFrame(animate);
         };
         animate();
     }
 
     resetBall(sphere) {
         sphere.position.set(0, 0, 0);
-        this.ballSpeedX = -this.ballSpeedX; // Usar this
+        this.ballDireccionX = (Math.random() < 0.5 ? -1 : 1); // Dirección X al azar
+        this.ballDireccionY = (Math.random() < 0.5 ? -1 : 1); // Dirección Y al azar
+        this.ballSpeedX = 0.2;
+        this.ballSpeedY = 0.1;
+    }
+
+    reprint(name,points) {
+        if (name == 'IA')
+        {
+            this.IAText.geometry.dispose(); // Eliminamos anterior
+            this.IAText.geometry = new THREE.TextGeometry(name + " " + points, {
+                font: this.loadfont,
+                size: 0.7,
+                height: 0.1,
+                curveSegments: 12, // Suavidad
+                bevelEnabled: true, // biselado para el borde
+                bevelThickness: 0.03,
+                bevelSize: 0.02,
+                bevelSegments: 5
+            });
+        }
+        else
+        {
+            this.playerText.geometry.dispose(); // Eliminamos anterior
+            this.playerText.geometry = new THREE.TextGeometry(name + " " + points, {
+                    font: this.loadfont,
+                    size: 0.7,
+                    height: 0.1,
+                    curveSegments: 12, // Suavidad
+                    bevelEnabled: true, // biselado para el borde
+                    bevelThickness: 0.03,
+                    bevelSize: 0.02,
+                    bevelSegments: 5
+                });
+        }
     }
 
     checkIfLost(sphere) {
-        if (sphere.position.x > 10.5) {
-            this.pointsPlayer++; // Usar this
-            this.updateText(this.playerText, "Player X: " + this.pointsPlayer); // Usar this
-            this.resetBall(sphere); // Llamar a resetBall correctamente
+        if (sphere.position.x > 15) {
+            this.resetBall(sphere);
+            this.pointsPlayer++;
+            this.reprint("Player X", this.pointsPlayer);
+            console.log("Puntos Player =", this.pointsPlayer);
+            if (this.pointsPlayer >= 3)
+            {
+                // alert("¡Felicidades! " + "player X" + " ha ganado la partida de pong.");
+                this.pointsIA = 0;
+                this.pointsPlayer = 0;
+                this.reprint("Player X", this.pointsPlayer);
+                this.reprint("IA", this.pointsIA);
+                return true;
+            }
         }
-        if (sphere.position.x < -10.5) {
-            this.pointsIA++; // Usar this
-            this.updateText(this.IAText, "IA: " + this.pointsIA); // Usar this
-            this.resetBall(sphere); // Llamar a resetBall correctamente
+        if (sphere.position.x < -15) {
+            this.resetBall(sphere);
+            this.pointsIA++;
+            console.log("X = ", sphere.position.x);
+            console.log("Puntos IA =", this.pointsIA);
+            this.reprint("IA", this.pointsIA);
+            if (this.pointsIA >= 3)
+            {
+                // alert("La IA ha ganado la partida de pong");
+                this.pointsIA = 0;
+                this.pointsPlayer = 0;
+                this.reprint("Player X", this.pointsPlayer);
+                this.reprint("IA", this.pointsIA);
+                return true;
+            }
         }
+        return false;
     }
 
     checkPaddleCollision(sphere, paddleLeft, paddleRight) {
         // Colisión con la pala izquierda
         if (sphere.position.x <= paddleLeft.position.x + 0.2 &&
-            sphere.position.y >= paddleLeft.position.y - 1 &&
-            sphere.position.y <= paddleLeft.position.y + 1) {
-            this.ballSpeedX *= -1; // Usar this
-            this.ballSpeedX += 0.010; // Usar this
-            this.ballSpeedY += 0.003; // Usar this
+            sphere.position.y < paddleLeft.position.y + 1.4 &&
+            sphere.position.y > paddleLeft.position.y - 1.4) {
+            this.ballDireccionX = 1;
+            this.ballSpeedX += 0.009;
+            this.ballSpeedY += 0.0009;
         }
 
         // Colisión con la pala derecha
         if (sphere.position.x >= paddleRight.position.x - 0.2 &&
-            sphere.position.y >= paddleRight.position.y - 1 &&
-            sphere.position.y <= paddleRight.position.y + 1) {
-            this.ballSpeedX *= -1; // Usar this
-            this.ballSpeedX += 0.010; // Usar this
-            this.ballSpeedY += 0.003; // Usar this
+            sphere.position.y < paddleRight.position.y + 1.4 &&
+            sphere.position.y > paddleRight.position.y - 1.4) {
+            this.ballDireccionX = -1;
+            this.ballSpeedX += 0.009;
+            this.ballSpeedY += 0.0009;
         }
     }
 
     moveAI(paddleRight, sphere) {
-        const aiPosition = paddleRight.position.y;
-        const ballPosition = sphere.position.y;
-
-        if (ballPosition > aiPosition + 0.5 && aiPosition < 3) {
-            paddleRight.position.y += this.aiSpeed; // Usar this
-        } else if (ballPosition < aiPosition - 0.5 && aiPosition > -3) {
-            paddleRight.position.y -= this.aiSpeed; // Usar this
+        if (sphere.position.y > paddleRight.position.y) {
+            paddleRight.position.y += this.aiSpeed;
+        } else if (sphere.position.y < paddleRight.position.y) {
+            paddleRight.position.y -= this.aiSpeed;
         }
     }
 
     createText(text, position, font, material) {
-        const geometry = new THREE.TextGeometry(text, {
+        const textGeometry = new THREE.TextGeometry(text, {
             font: font,
-            size: 0.5,
+            size: 0.7,
             height: 0.1,
-            curveSegments: 12,
-            bevelEnabled: false,
+            curveSegments: 12, // Suavidad
+            bevelEnabled: true, // biselado para el borde
+            bevelThickness: 0.03,
+            bevelSize: 0.02,
+            bevelSegments: 5
         });
-        const mesh = new THREE.Mesh(geometry, material);
-        mesh.position.copy(position);
-        return mesh;
-    }
-
-    updateText(textMesh, newText) {
-        textMesh.geometry.dispose(); // Limpiar geometría anterior
-        textMesh.geometry = new THREE.TextGeometry(newText, {
-            font: this.loadfont,
-            size: 0.5,
-            height: 0.1,
-            curveSegments: 12,
-            bevelEnabled: false,
-        });
+        const textMesh = new THREE.Mesh(textGeometry, material);
+        textMesh.position.copy(position);
+        return textMesh;
     }
 }
 
 customElements.define('pong-game', PongGame);
+
 
 export default function renderPongGame() {
     return '<pong-game></pong-game>';
