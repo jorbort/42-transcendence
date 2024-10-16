@@ -5,7 +5,7 @@ import {} from './views/loginView.js';
 // import {otpView, otp} from './views/otpView.js';
 // import {getCookie} from './utils/sessionToken.js';
 import tableView from './views/highScores.js';
-import { gameScreen } from './views/pong.js';
+import renderPongGame from './views/pong.js';
 
 const userlogged = 0;
 let accessToken = 0;
@@ -30,11 +30,8 @@ export function handleRouteChange() {
 					view = tableView();
 					break;
 				case '/Game':
-					view = gameScreen();
+					view = renderPongGame();
 					break;
-				// case '/game':
-				// view = gameScreen();
-				// break;
 			default:
 				view = '<h1>404</h1>';
 		}
@@ -47,7 +44,7 @@ export function handleRouteChange() {
 				view = loginView();
 				break;
 			case '/Game':
-				view = gameScreen();
+				view = renderPongGame();
 				break;
 	}
 	}
