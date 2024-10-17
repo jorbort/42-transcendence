@@ -80,7 +80,7 @@ document.querySelectorAll('.route').forEach(link => {
 	});
 });
 
-handleRouteChange();
+// handleRouteChange();
 // Call handleRouteChange when the page loads
 window.addEventListener('load', handleRouteChange);
 // 'popstate': This is the event type being listened for. The popstate event is triggered when the active history entry changes.
