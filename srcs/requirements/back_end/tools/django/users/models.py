@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.conf import settings
+import uuid
 # Create your models here.
 
 class PongUser(AbstractUser):
@@ -29,3 +31,5 @@ class MatchHistory(models.Model):
 
 	def __str__(self):
 		return f"Match on {self.date} between {self.player1.username} and {self.player2.username}"
+	
+	

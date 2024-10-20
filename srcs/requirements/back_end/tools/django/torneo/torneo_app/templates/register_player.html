@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Registrar Jugador</title>
+</head>
+<body>
+    <h1>Registrar Jugador</h1>
+    <form method="POST">
+        {% csrf_token %}
+        <label for="name">Nombre:</label>
+        <input type="text" name="name" required><br>
+        <label for="email">Correo:</label>
+        <input type="email" name="email" required><br>
+        <button type="submit">Registrar</button>
+    </form>
+</body>
+</html>

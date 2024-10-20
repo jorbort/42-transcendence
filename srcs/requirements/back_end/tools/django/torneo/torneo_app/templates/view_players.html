@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}Jugadores Registrados{% endblock %}
+
+{% block content %}
+<h1 class="mt-5">Jugadores Registrados</h1>
+<table class="table mt-3">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Nombre</th>
+            <th scope="col">Correo</th>
+            <th scope="col">Password</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for player in players %}
+        <tr>
+            <th scope="row">{{ forloop.counter }}</th>
+            <td>{{ player.name }}</td>
+            <td>{{ player.email }}</td>
+            <td>{{ player.password }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mi Perfil</title>
+</head>
+<body>
+    <h1>Bienvenido, {{ user.username }}</h1>
+    <p>Este es tu perfil.</p>
+    <a href="{% url 'logout' %}">Cerrar sesión</a>
+</body>
+</html>

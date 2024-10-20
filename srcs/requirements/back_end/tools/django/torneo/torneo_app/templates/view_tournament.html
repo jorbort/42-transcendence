@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Estado del Torneo</title>
+</head>
+<body>
+    <h1>Partidos del Torneo</h1>
+    <ul>
+        {% for match in matches %}
+            <li>{{ match.player_1.name }} vs {{ match.player_2.name }} - Ganador: {{ match.winner.name if match.winner else "Pendiente" }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
