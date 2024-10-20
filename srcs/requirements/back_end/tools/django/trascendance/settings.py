@@ -22,6 +22,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'django.contrib.sites',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -33,6 +34,7 @@ INSTALLED_APPS = [
 	'rest_framework_simplejwt',
 	'django_crontab',
 	'corsheaders',
+    'torneo_app',
 ]
 
 MIDDLEWARE = [
@@ -87,6 +89,23 @@ DATABASES = {
 		'PASSWORD': os.environ["POSTGRES_PASSWORD"]
     }
 }
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'django_postgres',
+# 		'USER': 'hello_world',
+# 		'HOST': 'postgres',
+# 		'PORT': 5432,
+# 		'PASSWORD': 'hello_world'
+#     }
+# }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -176,8 +195,8 @@ LOGGING = {
         'level': 'DEBUG',
     },
 }
-
+LOGIN_REDIRECT_URL = '/tournament/'
 #42API
-CLIENT_ID=os.environ['CLIENT_ID']
-CLIENT_SECRET=os.environ['CLIENT_SECRET']
+CLIENT_ID='u-s4t2ud-6fe120c148cb11a4661739b955d4e5480fe0fa05624033fd800157a00ef34040'
+CLIENT_SECRET='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'
 REDIRECT_URI='http://localhost:8000/callback_42'
