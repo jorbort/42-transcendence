@@ -1,0 +1,68 @@
+services:
+
+  nginx:
+    build:
+      context: .
+      dockerfile: frontend/Nginx/Dockerfile
+    ports:
+      - "80:80"
+    networks:
+      - trascendence
+    restart: always
+    volumes:
+      - frontend_data:/usr/share/nginx/html
+
+  backend:
+    depends_on:
+      - postgres
+    container_name: backend
+    build: ./backend/
+    image: backend
+    volumes:
+      - django_data:/app
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    networks:
+      - trascendence
+    restart: always
+
+  postgres:
+    restart: always
+    build: ./postgres
+    image: postgres
+    container_name: postgres
+    env_file:
+      - .env
+    ports:
+      - "5432:5432"
+    networks:
+      - trascendence
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+
+volumes:
+  postgres_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: "/home/${USER}/data/postgres_data"
+      o: bind
+  django_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: "./backend"
+      o: bind
+  frontend_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: "./frontend"
+      o: bind
+
+networks:
+  trascendence:
+    name: trascendence
+    driver: bridge
