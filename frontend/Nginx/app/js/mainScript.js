@@ -5,7 +5,9 @@ import {} from './views/loginView.js';
 // import {otpView, otp} from './views/otpView.js';
 // import {getCookie} from './utils/sessionToken.js';
 import tableView from './views/highScores.js';
+import renderPongGameIA from './views/pongIA.js';
 import renderPongGame from './views/pong.js';
+
 
 const userlogged = 0;
 let accessToken = 0;
@@ -29,7 +31,10 @@ export function handleRouteChange() {
 				case '/Profile':
 					view = tableView();
 					break;
-				case '/Game':
+				case '/1vsIA':
+					view = renderPongGameIA();
+					break;
+				case '/1vs1':
 					view = renderPongGame();
 					break;
 			default:
@@ -43,12 +48,16 @@ export function handleRouteChange() {
 			case '/login':
 				view = loginView();
 				break;
-			case '/Game':
+			case '/1vsIA':
+				view = renderPongGameIA();
+				break;
+			case '/1vs1':
 				view = renderPongGame();
 				break;
 	}
 	}
 	document.getElementById('app').innerHTML = view;
+
 	handleEventListeners(path);
 }
 
