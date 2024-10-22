@@ -1,6 +1,7 @@
 import random
 import string
 import requests
+import logging
 from django.conf import settings
 from django.shortcuts import redirect
 from rest_framework.decorators import api_view
@@ -11,6 +12,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from users.models import PongUser
 from users.serializer import UserSerializer
 
+logging.basicConfig(level=logging.DEBUG)
 
 def gen_state():
 	return ''.join(random.choices(string.ascii_letters + string.digits, k=16))
@@ -48,6 +50,7 @@ def callback_42(request):
 		token_response.raise_for_status()
 		token_json = token_response.json()
 	except requests.exceptions.RequestException as e:
+		logging.debug(str(e))
 		return Response({'detail': f'Failed to obtain access token: {str(e)}'}, status=status.HTTP_400_BAD_REQUEST)
 	
 	access_token = token_json['access_token']
@@ -57,11 +60,13 @@ def callback_42(request):
 	user_info_response = requests.get(user_info_url, headers=headers)
 	user_info = user_info_response.json()
 
+	
 	user_data = {
 		'username': user_info['login'],
 		'email': user_info['email'],
 		'password' : 'vivapacman',
 		'password2' : 'vivapacman',
+		'fortytwo_image_url' : user_info['image']['link']
     }
 	try:
 		user = PongUser.objects.get(username=user_info['login'])
@@ -70,6 +75,7 @@ def callback_42(request):
 		if serializer.is_valid():
 			user = serializer.save()
 		else:
+			logging.error(serializer.errors)
 			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 		
 	django_login(request, user)

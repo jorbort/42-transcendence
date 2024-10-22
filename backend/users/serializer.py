@@ -4,9 +4,10 @@ from .models import PongUser , MatchHistory, Friendship
 class UserSerializer(serializers.ModelSerializer):
 	password2= serializers.CharField(style={'input_type': 'pasword'}, write_only = True)
 	avatar_url = serializers.SerializerMethodField()
+	fortytwo_image_url = serializers.URLField(required=False, allow_blank=True)
 	class Meta:
 		model=PongUser
-		fields=['username', 'email', 'password','password2', 'otp', 'otp_expiry_time', 'online_status', 'avatar_url']
+		fields=['username', 'email', 'password','password2', 'otp', 'otp_expiry_time', 'online_status', 'avatar_url', 'fortytwo_image_url']
 	
 	def get_avatar_url(self,obj):
 		request = self.context.get('request')
