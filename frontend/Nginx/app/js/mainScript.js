@@ -7,6 +7,8 @@ import {} from './views/loginView.js';
 import tableView from './views/highScores.js';
 import renderPongGameIA from './views/pongIA.js';
 import renderPongGame from './views/pong.js';
+import renderPongGameCustom from './views/pongCustom.js';
+
 
 
 const userlogged = 0;
@@ -37,8 +39,11 @@ export function handleRouteChange() {
 				case '/1vs1':
 					view = renderPongGame();
 					break;
-			default:
-				view = '<h1>404</h1>';
+				case '/1vs1Custom':
+					view =  renderPongGameCustom();
+					break;
+				default:
+					view = '<h1>404</h1>';
 		}
 	}else{
 		switch (path) {
@@ -53,6 +58,9 @@ export function handleRouteChange() {
 				break;
 			case '/1vs1':
 				view = renderPongGame();
+				break;
+			case '/1vs1Custom':
+				view =  renderPongGameCustom();
 				break;
 	}
 	}

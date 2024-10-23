@@ -12,14 +12,13 @@ class PongGame extends HTMLElement {
         this.pointsIA = 0;
         this.aiSpeed = 0.1;
         this.movePaddleLeft = 0;
-        this.movePaddleRight = 0;
         this.targetPaddleLeftY = 0;
-        this.targetPaddleRightY = 0;
         this.ball = null; // ocultar pelota
         this.countdownText = null;
         this.loadfont = null;
         this.playerText = null;
         this.IAText = null;
+        this.futureLeftY = 0;
         this.gameStarted = false;
         this.gameHeight = 12;
         this.paddleHeight = 2;
@@ -49,7 +48,8 @@ class PongGame extends HTMLElement {
         const sphereGeometry = new THREE.SphereGeometry(0.5, 27, 27);
         const sphereMaterial = new THREE.MeshStandardMaterial({ color: 0x87CEEB, metalness: 0.5, roughness: 0.5 });
         this.ball = new THREE.Mesh(sphereGeometry, sphereMaterial);
-        this.camera.position.set(0, 1, 20);
+        this.camera.position.set(0, 1.5, 20);
+        this.ball.position.set(0, 2, 0);
         this.scene.add(this.ball);
 
         const paddleGeometry = new THREE.BoxGeometry(0.4, 2, 0.1);
@@ -58,12 +58,14 @@ class PongGame extends HTMLElement {
         this.paddleLeft.position.x = -14;
         this.paddleLeft.position.y = 2;
         this.targetPaddleLeftY = 2;
+
         this.scene.add(this.paddleLeft);
 
         this.paddleRight = new THREE.Mesh(paddleGeometry, paddleMaterial);
         this.paddleRight.position.x = 12.5;
-        this.targetPaddleRightY = 2;
         this.paddleRight.position.y = 2;
+        this.targetPaddleRightY = 2;
+
         this.scene.add(this.paddleRight);
 
         const borderMaterial = new THREE.LineBasicMaterial({ color: 0xffffff });
@@ -109,18 +111,16 @@ class PongGame extends HTMLElement {
         const   goHome = `<button id="Go-Home" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Go Home</button>`
         const   tryAgain = `<button id="try-again" type="button" class="btn btn-primary">Try Againg</button>`
         const   newModal = this.newModal( goHome, tryAgain);
-        
         this.appendChild(newModal);
         const myModal = new bootstrap.Modal(document.getElementById('myModal'), {
             keyboard: false
         });
         myModal.show();
-
         const btnTryAgain = document.getElementById("try-again");
         if (btnTryAgain) {
             btnTryAgain.addEventListener('click', () => {
                 myModal.dispose()
-                history.pushState('', '', '/1vs1');
+                history.pushState('', '', '/1vsIA');
                 handleRouteChange();
             });
         }
@@ -128,7 +128,7 @@ class PongGame extends HTMLElement {
         if (btnGoHome) {
             btnGoHome.addEventListener('click', () => {
                 myModal.dispose()
-                history.pushState('', '', '/Profile');
+                history.pushState('', '', '/');
                 handleRouteChange();
             });
         }
@@ -141,8 +141,8 @@ class PongGame extends HTMLElement {
                 console.log("Font loaded successfully.");
                 this.loadfont = font;
                 const textMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff });
-                this.playerText = this.createText("Player1: " + this.pointsPlayer, new THREE.Vector3(-15, 9.5, 0), font, textMaterial);
-                this.IAText = this.createText("Player2: " + this.pointsIA, new THREE.Vector3(8, 9.5, 0), font, textMaterial);
+                this.playerText = this.createText("Player: " + this.pointsPlayer, new THREE.Vector3(-15, 9.5, 0), font, textMaterial);
+                this.IAText = this.createText("IA: " + this.pointsIA, new THREE.Vector3(12, 9.5, 0), font, textMaterial);
                 this.scene.add(this.playerText);
                 this.scene.add(this.IAText);
                 resolve(font); // Resolvemos la promesa con la fuente
@@ -173,13 +173,17 @@ class PongGame extends HTMLElement {
     async startGame() {
         
         this.scene = new THREE.Scene();
+
         this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         this.camera.position.z = 10;
+
         this.renderer = new THREE.WebGLRenderer();
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         this.appendChild(this.renderer.domElement);
+
         const ambientLight = new THREE.AmbientLight(0x404040);
         this.scene.add(ambientLight);
+
         const pointLight = new THREE.PointLight(0xffffff, 1, 100);
         pointLight.position.set(10, 10, 10);
         this.scene.add(pointLight);
@@ -187,9 +191,10 @@ class PongGame extends HTMLElement {
         await this.loadFont();
 
         this.renderer.render(this.scene, this.camera);
-        
+                
         await this.startCountdown();
         
+
         this.initObjects();
                         
         const animate = async () => 
@@ -203,7 +208,7 @@ class PongGame extends HTMLElement {
             this.movaPaddles();
             
             this.paddleLeft.position.y = THREE.MathUtils.clamp(this.targetPaddleLeftY, -3, 7);
-            this.paddleRight.position.y  = THREE.MathUtils.clamp(this.targetPaddleRightY, -3, 7);
+            this.paddleRight.position.y = THREE.MathUtils.clamp(this.targetPaddleRightY, -3, 7);
             this.renderer.render(this.scene, this.camera);
             
             if (!this.checkIfLost(this.ball))
@@ -213,6 +218,16 @@ class PongGame extends HTMLElement {
         this.IntervalIA =  setInterval(this.moveAI, 1000, this);
 
         animate();
+    }
+
+    async functionAMAZING(font)
+    {
+        this.loadfont = font;
+        const textMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff });
+        this.playerText = this.createText("Player: " + this.pointsPlayer, new THREE.Vector3(-15, 9.5, 0), font, textMaterial);
+        this.IAText = this.createText("IA: " + this.pointsIA, new THREE.Vector3(12, 9.5, 0), font, textMaterial);
+        this.scene.add(this.playerText);
+        this.scene.add(this.IAText);
     }
 
     printCountdown(countdown,countdownMesh, scene, font) {
@@ -267,15 +282,15 @@ class PongGame extends HTMLElement {
 
     handleKeyDown(event) {
         if (event.key === "ArrowUp") {
-            this.movePaddleRight = 1;
+            this.movePaddleLeft = 1;
         } else if (event.key === "ArrowDown") {
-            this.movePaddleRight = -1;
+            this.movePaddleLeft = -1;
         }
     }
 
     handleKeyUp(event) {
         if (event.key === "ArrowUp" || event.key === "ArrowDown") {
-            this.movePaddleRight = 0;
+            this.movePaddleLeft = 0;
         }
     }
 
@@ -283,12 +298,12 @@ class PongGame extends HTMLElement {
         if (event.key === 'w' || event.key === 'W') {
             this.movePaddleLeft = 1;
         } else if (event.key === 's' || event.key === 'S') {
-            this.movePaddleLeft = -1; 
+            this.movePaddleLeft = -1;
         }
     }
 
     handleKeyUpL(event) {
-        if (event.key === 'w' || event.key === 's') {
+        if (event.key === 'w' || event.key === 's' || event.key === 'W' || event.key === 'S') {
             this.movePaddleLeft = 0;
         }
     }
@@ -316,7 +331,7 @@ class PongGame extends HTMLElement {
 
     reprint(name,points)
     {
-        if (name == 'Player2')
+        if (name == 'IA')
         {
             this.IAText.geometry.dispose(); // Eliminamos anterior
             this.IAText.geometry = new THREE.TextGeometry(name + ": " + points, {
@@ -352,13 +367,15 @@ class PongGame extends HTMLElement {
         this.ball.position.y += this.ballSpeedY * this.ballDireccionY;
         if (this.ball.position.x > 15) {
             this.pointsPlayer++;
-            this.reprint("Player1", this.pointsPlayer);
+            console.log("pointsPlayer = ", this.pointsPlayer);
+            this.reprint("Player X", this.pointsPlayer);
             await this.pauseGameAndShowCountdown()
             this.resetBall();
         }
         if (this.ball.position.x < -15) {
             this.pointsIA++;
-            this.reprint("Player2", this.pointsIA);
+            console.log("PointsIA = ", this.pointsIA);
+            this.reprint("IA", this.pointsIA);
             await this.pauseGameAndShowCountdown()
             this.resetBall();
         }
@@ -373,23 +390,28 @@ class PongGame extends HTMLElement {
         } else if (this.movePaddleLeft === -1) {
             this.targetPaddleLeftY -= this.aiSpeed;
         }
-        if (this.movePaddleRight === 1) {
-            this.targetPaddleRightY += this.aiSpeed;
-        } else if (this.movePaddleRight === -1) {
+    
+        if (this.targetPaddleRightY > this.futureLeftY) {
             this.targetPaddleRightY -= this.aiSpeed;
+        } else if (this.targetPaddleRightY < this.futureLeftY) {
+            this.targetPaddleRightY += this.aiSpeed;
         }
     
+        this.paddleLeft.position.y = THREE.MathUtils.clamp(this.paddleLeft.position.y, -4, 8);
+        this.paddleRight.position.y = THREE.MathUtils.clamp(this.paddleRight.position.y, -4, 8);
     }
 
     checkIfLost()
     {
         if (this.pointsPlayer >= 1) {
+            clearInterval(this.IntervalIA);
             this.createModal()
             this.resetGame(this.ball);
             this.gameStarted = true;
             return true;
         }
         else if (this.pointsIA >= 1) {
+            clearInterval(this.IntervalIA);
             this.createModal()
             this.resetGame(this.ball);
             this.gameStarted = true;
@@ -407,8 +429,7 @@ class PongGame extends HTMLElement {
         this.ballSpeedY = 0.1;
         this.scene.remove(this.ball);
         if (!(this.pointsPlayer == 1 || this.pointsIA == 1))
-            await this.showCountdown(this.scene, this.loadfont, this.renderer, this.camera);
-    }
+            await this.showCountdown(this.scene, this.loadfont, this.renderer, this.camera);    }
     
     resetGame()
     {
@@ -419,11 +440,27 @@ class PongGame extends HTMLElement {
         this.ball = null;
         this.gameStarted = false;
     }
+    
+    moveAI(object) {
+        const ballSpeedX = (object.ballSpeedX * object.ballDireccionX);
+        const ballSpeedY = (object.ballSpeedY * object.ballDireccionY);
+    
+        let futureLeft = object.ball.position.y + ((object.paddleRight.position.x - object.ball.position.x) / ballSpeedX) * ballSpeedY;
+    
+        while (futureLeft < -4 || futureLeft > 8)
+        {
+                if (futureLeft < -4)
+                    futureLeft = -futureLeft;
+                else if (futureLeft > 8)
+                    futureLeft = 2 * 8 - futureLeft;
+        }
 
+        object.futureLeftY = futureLeft; 
+    }
 }
 
-customElements.define('pong-game', PongGame);
+customElements.define('pong-gameia', PongGame);
 
-export default function renderPongGame() {
-    return '<pong-game></pong-game>';
+export default function renderPongGameIA() {
+    return '<pong-gameia></pong-gameia>';
 }
