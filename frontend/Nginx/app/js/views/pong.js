@@ -3,7 +3,6 @@ import { handleRouteChange } from "../mainScript.js";
 class PongGame extends HTMLElement {
     constructor() {
         super();
-        // Variables de juego y contador
         this.ballSpeedX = 0.15;
         this.ballSpeedY = 0.05;
         this.ballDireccionX = (Math.random() < 0.5 ? -1 : 1);
@@ -90,7 +89,7 @@ class PongGame extends HTMLElement {
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="exampleModalCenterTitle">Result Game</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            <button type="button" class="btn-close"  aria-label="Close"></button>
                         </div>
                         <div class="modal-body d-flex flex-column justify-content-center align-items-center">
                             <p>!Game Over!</p>
@@ -106,7 +105,7 @@ class PongGame extends HTMLElement {
     }
 
     createModal(){
-        const   goHome = `<button id="Go-Home" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Go Home</button>`
+        const   goHome = `<button id="Go-Home" type="button" class="btn btn-secondary" >Go Home</button>`
         const   tryAgain = `<button id="try-again" type="button" class="btn btn-primary">Try Againg</button>`
         const   newModal = this.newModal( goHome, tryAgain);
         

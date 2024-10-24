@@ -36,9 +36,6 @@ export function handleRouteChange() {
 				case '/1vsIA':
 					view = renderPongGameIA();
 					break;
-				case '/1vs1':
-					view = renderPongGame();
-					break;
 				case '/1vs1Custom':
 					view =  renderPongGameCustom();
 					break;
@@ -56,11 +53,8 @@ export function handleRouteChange() {
 			case '/1vsIA':
 				view = renderPongGameIA();
 				break;
-			case '/1vs1':
-				view = renderPongGame();
-				break;
 			case '/1vs1Custom':
-				view =  renderPongGameCustom();
+				view = renderPongGameCustom();
 				break;
 	}
 	}

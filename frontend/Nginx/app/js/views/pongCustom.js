@@ -3,7 +3,6 @@ import { handleRouteChange } from "../mainScript.js";
 class PongGame extends HTMLElement {
     constructor() {
         super();
-        // Variables de juego y contador
         this.ballSpeedX = 0.15;
         this.ballSpeedY = 0.05;
         this.ballDireccionX = (Math.random() < 0.5 ? -1 : 1);
@@ -24,6 +23,12 @@ class PongGame extends HTMLElement {
         this.gameHeight = 12;
         this.paddleHeight = 2;
         this.configsaved = false;
+        this.addCustom = false;
+        this.addCustom1 = false;
+        this.addCustom2 = false;
+        this.firstSelect = false;
+        this.SecondSelect = false;
+        this.lastSelect = false;
         this.handleKeyDown = this.handleKeyDown.bind(this);
         this.handleKeyUp = this.handleKeyUp.bind(this);
         this.handleKeyDownL = this.handleKeyDownL.bind(this);
@@ -35,8 +40,6 @@ class PongGame extends HTMLElement {
         window.addEventListener('keyup', this.handleKeyUp);
         window.addEventListener('keydown', this.handleKeyDownL);
         window.addEventListener('keyup', this.handleKeyUpL);
-        this.initObjects();
-
         this.createModalData();
     }
 
@@ -47,19 +50,9 @@ class PongGame extends HTMLElement {
         this.gameStarted = false;
     }
 
-    initObjects() {
-        this.scene = new THREE.Scene();
-        this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        this.camera.position.z = 10;
-        this.renderer = new THREE.WebGLRenderer();
-        this.renderer.setSize(window.innerWidth, window.innerHeight);
-        this.appendChild(this.renderer.domElement);
-        const ambientLight = new THREE.AmbientLight(0x404040);
-        this.scene.add(ambientLight);
-        const pointLight = new THREE.PointLight(0xffffff, 1, 100);
-        pointLight.position.set(10, 10, 10);
-        this.scene.add(pointLight);
-
+    initObjects()
+    {   
+  
         const sphereGeometry = new THREE.SphereGeometry(0.5, 27, 27);
         const sphereMaterial = new THREE.MeshStandardMaterial({ color: 0x87CEEB, metalness: 0.5, roughness: 0.5 });
         this.ball = new THREE.Mesh(sphereGeometry, sphereMaterial);
@@ -72,18 +65,24 @@ class PongGame extends HTMLElement {
         this.Custom = new THREE.Mesh(CustomGeometry, CustomMaterial);
         this.Custom.position.set(4, -2, 0);
         this.camera.position.set(0, 1, 20);
+        if (this.addCustom)
+            this.scene.add(this.Custom);
 
         const Custom1Geometry = new THREE.IcosahedronGeometry(0.5);
         const Custom1Material = new THREE.MeshStandardMaterial({ color: 0x00FF00, metalness: 0.5, roughness: 0.5 });
         this.Custom1 = new THREE.Mesh(Custom1Geometry, Custom1Material);
         this.Custom1.position.set(-1, 4, 0);
         this.camera.position.set(0, 1, 20);
+        if (this.addCustom1)
+            this.scene.add(this.Custom1);
 
         const Custom2Geometry =  new THREE.TorusKnotGeometry(0.4, 0.12, 47, 7);
         const Custom2Material = new THREE.MeshStandardMaterial({ color: 0x00FFFF, metalness: 0.5, roughness: 0.5 });
         this.Custom2 = new THREE.Mesh(Custom2Geometry, Custom2Material);
         this.Custom2.position.set(-5, -3, 0);
         this.camera.position.set(0, 1, 20);
+        if (this.addCustom2)
+            this.scene.add(this.Custom2);
 
         const paddleGeometry = new THREE.BoxGeometry(0.4, 2, 0.1);
         const paddleMaterial = new THREE.MeshStandardMaterial({ color: 0xff0000 });
@@ -112,7 +111,7 @@ class PongGame extends HTMLElement {
         this.scene.add(border);
     }
 
-    newModal( goHome, tryAgain) {
+    newModal( goHome, tryAgain, btncruz) {
         const modalContainer = document.createElement('div');
         modalContainer.innerHTML = /* html */`
             <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
@@ -120,7 +119,7 @@ class PongGame extends HTMLElement {
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="exampleModalCenterTitle">Result Game</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            ${btncruz}
                         </div>
                         <div class="modal-body d-flex flex-column justify-content-center align-items-center">
                             <p>!Game Over!</p>
@@ -136,9 +135,10 @@ class PongGame extends HTMLElement {
     }
 
     createModal(){
-        const   goHome = `<button id="Go-Home" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Go Home</button>`
+        const   goHome = `<button id="Go-Home" type="button" class="btn btn-secondary">Go Home</button>`
         const   tryAgain = `<button id="try-again" type="button" class="btn btn-primary">Try Againg</button>`
-        const   newModal = this.newModal( goHome, tryAgain);
+        const   btncruzend = `<button id="btn-cruz" type="button" class="btn-close" aria-label="Close"></button>`
+        const   newModal = this.newModal( goHome, tryAgain, btncruzend);
         
         this.appendChild(newModal);
         const myModal = new bootstrap.Modal(document.getElementById('myModal'), {
@@ -162,58 +162,61 @@ class PongGame extends HTMLElement {
                 handleRouteChange();
             });
         }
+        const btncruz = document.getElementById("btn-cruz");
+        if (btncruz) {
+            btncruz.addEventListener('click', () => {
+                myModal.hide()
+            });
+        }
     }
 
     ModalData() {
         const modalContainer = document.createElement('div');
         modalContainer.innerHTML = /* html */`
-            <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal fade" id="customModal" tabindex="-1" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="exampleModalCenterTitle">Custom Game</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            <button id="btncruz" type="button" class="btn-close" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
                         <form>
-                            <p>¿Quieres aumentar la velocidad de la pelota con el cono?</p>
-                            <div class="modal-footer">
+                            <div class="modal-footer" >
+                                <p>¿Quieres aumentar la velocidad de la pelota con el cono?</p>
                                 <button id="btnSpeedYes" type="button" class="btn btn-success">Sí</button>
                                 <button id="btnSpeedNo" type="button" class="btn btn-danger">No</button>
                             </div>
-                            <p>¿Quieres aumentar el tamaño de la pelota con el Icosahedron?</p>
                             <div class="modal-footer">
+                                <p>¿Quieres aumentar el tamaño de la pelota con el Icosahedron?</p>
                                 <button id="btnSizeYes" type="button" class="btn btn-success">Sí</button>
                                 <button id="btnSizeNo" type="button" class="btn btn-danger">No</button>
                             </div>
-                            <p>¿Quieres disminuir el tamaño de la pelota con TorusKnot?</p>
                             <div class="modal-footer">
+                                <p>¿Quieres disminuir el tamaño de la pelota con TorusKnot?</p>
                                 <button id="btnDecreaseYes" type="button" class="btn btn-success">Sí</button>
                                 <button id="btnDecreaseNo" type="button" class="btn btn-danger">No</button>
                             </div>
-                            <button id="btnSave" type="button" class="btn btn-primary">Guardar Configuración</button>
-                            <button id="btnCancel" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button id="btnSave" type="button" class="btn btn-primary" disabled>Guardar Configuración</button>
+                            <button id="btnCancel" type="button" class="btn btn-secondary">Cancelar</button>
                             </form>
                         </div>
                     </div>
                 </div>
             </div>`;
         return modalContainer;
+        // <button id="btnSave" type="button" class="btn btn-primary">Guardar Configuración</button>
     }
     
-    do_coustomGame(responseType, action)
+    checkSavebtn()
     {
-        if (responseType == "Aumentar velocidad" && action == "Si")
+        if (this.firstSelect && this.SecondSelect && this.lastSelect)
         {
-            this.scene.add(this.Custom);
-        }
-        else if (responseType == "Aumentar tamaño" && action == "Si")
-        {
-            this.scene.add(this.Custom1);
-        }
-        else if (responseType == "Disminuir tamaño" && action == "Si")
-        {
-            this.scene.add(this.Custom2);
+            console.log(this.firstSelect, this.SecondSelect, this.lastSelect)
+            const btnSave = document.getElementById("btnSave");
+            btnSave.disabled = false; // Habilita el botón
+            btnSave.style.backgroundColor = "#007bff"; // Cambia el color a azul (color por defecto de Bootstrap)
+            btnSave.style.cursor = "pointer"; 
         }
     }
 
@@ -222,14 +225,14 @@ class PongGame extends HTMLElement {
         const newModal = this.ModalData();
     
         this.appendChild(newModal);
-        const myModal = new bootstrap.Modal(document.getElementById('myModal'), {
+        const myModal = new bootstrap.Modal(document.getElementById('customModal'), {
             keyboard: false
         });
         myModal.show();
     
         const handleResponse = (responseType, action) => {
             console.log(`${responseType} respondido: ${action}`);
-            this.do_coustomGame(responseType, action);
+            this.checkSavebtn();
         };
     
         function resetButtonStyles(buttonYesId, buttonNoId) {
@@ -262,6 +265,8 @@ class PongGame extends HTMLElement {
             const btn = document.getElementById("btnSpeedYes");
             btn.style.backgroundColor = "green";
             btn.style.color = "#fff";
+            this.addCustom = true;
+            this.firstSelect = true;
             handleResponse("Aumentar velocidad", "Si");
         });
 
@@ -270,6 +275,8 @@ class PongGame extends HTMLElement {
             const btn = document.getElementById("btnSpeedNo");
             btn.style.backgroundColor = "red";
             btn.style.color = "#fff";
+            this.addCustom = false;
+            this.firstSelect = true;
             handleResponse("Aumentar velocidad", "No");
         });
 
@@ -278,6 +285,8 @@ class PongGame extends HTMLElement {
             const btn = document.getElementById("btnSizeYes");
             btn.style.backgroundColor = "green";
             btn.style.color = "#fff";
+            this.addCustom1 = true;
+            this.SecondSelect = true;
             handleResponse("Aumentar tamaño", "Si");
         });
 
@@ -286,6 +295,8 @@ class PongGame extends HTMLElement {
             const btn = document.getElementById("btnSizeNo");
             btn.style.backgroundColor = "red";
             btn.style.color = "#fff";
+            this.SecondSelect = true;
+            this.addCustom1 = false;
             handleResponse("Aumentar tamaño", "No");
         });
 
@@ -294,6 +305,8 @@ class PongGame extends HTMLElement {
             const btn = document.getElementById("btnDecreaseYes");
             btn.style.backgroundColor = "green";
             btn.style.color = "#fff";
+            this.addCustom2 = true;
+            this.lastSelect = true;
             handleResponse("Disminuir tamaño", "Si");
         });
 
@@ -302,23 +315,42 @@ class PongGame extends HTMLElement {
             const btn = document.getElementById("btnDecreaseNo");
             btn.style.backgroundColor = "red";
             btn.style.color = "#fff";
+            this.lastSelect = true;
+            this.addCustom2 = false;
             handleResponse("Disminuir tamaño", "No");
         });
 
         document.getElementById("btnSave").addEventListener('click', async () => {
-            console.log("Configuración guardada.");
-            myModal.hide();
+            if (this.firstSelect && this.SecondSelect && this.lastSelect)
+            {
+                // myModal.hide();
+                myModal.dispose()
+                document.getElementById('customModal').remove();
+                await this.startGame();
+            }
+        });
+        document.getElementById("btnCancel").addEventListener('click', async () => {
+            console.log("Cancel Seleccionado.");
+            this.addCustom = false;
+            this.addCustom1 = false;
+            this.addCustom2 = false;
+            // myModal.hide();
             myModal.dispose()
+            document.getElementById('customModal').remove();
             await this.startGame();
         });
+        document.getElementById("btncruz").addEventListener('click', async () => {
+            console.log("Cruz Seleccionado.");
+            this.addCustom = false;
+            this.addCustom1 = false;
+            this.addCustom2 = false;
             // myModal.hide();
-            // myModal.dispose()
-            // await this.startGame();
-            // Gestionar Cancel????
+            myModal.dispose()
+            document.getElementById('customModal').remove();
+            await this.startGame();
+        });
     }
-    
-    
-    
+
     async loadFont() {
         return new Promise((resolve, reject) => {
             const loader = new THREE.FontLoader();
@@ -355,8 +387,19 @@ class PongGame extends HTMLElement {
         this.scene.remove(countdownMesh);
     }
 
-    async startGame() {
-
+    async startGame()
+    {
+        this.scene = new THREE.Scene();
+        this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        this.camera.position.z = 10;
+        this.renderer = new THREE.WebGLRenderer();
+        this.renderer.setSize(window.innerWidth, window.innerHeight);
+        this.appendChild(this.renderer.domElement);
+        const ambientLight = new THREE.AmbientLight(0x404040);
+        this.scene.add(ambientLight);
+        const pointLight = new THREE.PointLight(0xffffff, 1, 100);
+        pointLight.position.set(10, 10, 10);
+        this.scene.add(pointLight);
 
         await this.loadFont();
 
@@ -364,12 +407,15 @@ class PongGame extends HTMLElement {
         
         await this.startCountdown();
         
+        this.initObjects();
                         
         const animate = async () => 
         {
             if (this.gameStarted) return;
 
             await this.moveBall();
+
+            this.customGame();
             
             this.checkPaddleCollision(this.ball, this.paddleLeft, this.paddleRight);
             
@@ -519,6 +565,33 @@ class PongGame extends HTMLElement {
         }
     }
 
+    customGame()
+    {
+        if (this.firstSelect)
+        {
+            if (this.Custom.position.x == this.ball.position.x && this.Custom.position.y == this.ball.position.y)
+            {
+             //Aumentar velocidad pelota
+                this.ballSpeedX += 0.25;
+                this.ballSpeedY += 0.15;
+            }
+        }
+        else if (this.SecondSelect)
+        {
+            if (this.Custom1.position.x == this.ball.position.x && this.Custom1.position.y == this.ball.position.y)
+            {
+            //Aumentar tamanyo de la pelota
+            }
+        }
+        else if (this.lastSelect)
+        {
+            if (this.Custom2.position.x == this.ball.position.x && this.Custom2.position.y == this.ball.position.y)
+            {
+            //Disminuri tamanyo de la pelota
+            }
+        }
+    }
+
     async moveBall()
     {
         this.ball.position.x += this.ballSpeedX * this.ballDireccionX;
@@ -556,13 +629,13 @@ class PongGame extends HTMLElement {
 
     checkIfLost()
     {
-        if (this.pointsPlayer >= 2) {
+        if (this.pointsPlayer >= 1) {
             this.createModal()
             this.resetGame(this.ball);
             this.gameStarted = true;
             return true;
         }
-        else if (this.pointsIA >= 2) {
+        else if (this.pointsIA >= 1) {
             this.createModal()
             this.resetGame(this.ball);
             this.gameStarted = true;
@@ -579,7 +652,7 @@ class PongGame extends HTMLElement {
         this.ballSpeedX = 0.2;
         this.ballSpeedY = 0.1;
         this.scene.remove(this.ball);
-        if (!(this.pointsPlayer == 2 || this.pointsIA == 2))
+        if (!(this.pointsPlayer == 1 || this.pointsIA == 1))
             await this.showCountdown(this.scene, this.loadfont, this.renderer, this.camera);
     }
     

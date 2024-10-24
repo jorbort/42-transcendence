@@ -3,7 +3,6 @@ import { handleRouteChange } from "../mainScript.js";
 class PongGame extends HTMLElement {
     constructor() {
         super();
-        // Variables de juego y contador
         this.ballSpeedX = 0.15;
         this.ballSpeedY = 0.05;
         this.ballDireccionX = (Math.random() < 0.5 ? -1 : 1);
@@ -79,9 +78,6 @@ class PongGame extends HTMLElement {
         const geometry = new THREE.BufferGeometry().setFromPoints(points);
         const border = new THREE.LineSegments(geometry, borderMaterial);
         this.scene.add(border);
-
-
-
     }
 
     newModal( goHome, tryAgain) {
@@ -92,7 +88,7 @@ class PongGame extends HTMLElement {
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="exampleModalCenterTitle">Result Game</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            <button type="button" class="btn-close"  aria-label="Close"></button>
                         </div>
                         <div class="modal-body d-flex flex-column justify-content-center align-items-center">
                             <p>!Game Over!</p>
@@ -108,7 +104,7 @@ class PongGame extends HTMLElement {
     }
 
     createModal(){
-        const   goHome = `<button id="Go-Home" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Go Home</button>`
+        const   goHome = `<button id="Go-Home" type="button" class="btn btn-secondary" >Go Home</button>`
         const   tryAgain = `<button id="try-again" type="button" class="btn btn-primary">Try Againg</button>`
         const   newModal = this.newModal( goHome, tryAgain);
         this.appendChild(newModal);
@@ -441,20 +437,22 @@ class PongGame extends HTMLElement {
         this.gameStarted = false;
     }
     
-    moveAI(object) {
+    moveAI(object)
+    {
         const ballSpeedX = (object.ballSpeedX * object.ballDireccionX);
         const ballSpeedY = (object.ballSpeedY * object.ballDireccionY);
-    
+        const minY = -4;
+        const maxY = 8;
         let futureLeft = object.ball.position.y + ((object.paddleRight.position.x - object.ball.position.x) / ballSpeedX) * ballSpeedY;
-    
-        while (futureLeft < -4 || futureLeft > 8)
-        {
-                if (futureLeft < -4)
-                    futureLeft = -futureLeft;
-                else if (futureLeft > 8)
-                    futureLeft = 2 * 8 - futureLeft;
-        }
 
+        while (futureLeft < minY || futureLeft > maxY)
+        {
+            if (futureLeft < minY) {
+              futureLeft = minY + (minY - futureLeft);
+            } else if (futureLeft > maxY) {
+              futureLeft = maxY - (futureLeft - maxY);
+            }
+        }
         object.futureLeftY = futureLeft; 
     }
 }
