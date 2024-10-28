@@ -149,7 +149,7 @@ class PongGame extends HTMLElement {
         if (btnTryAgain) {
             btnTryAgain.addEventListener('click', () => {
                 myModal.dispose()
-                history.pushState('', '', '/1vs1Custom');
+                history.pushState('', '', '/localgame1vs1');
                 handleRouteChange();
             });
         }
