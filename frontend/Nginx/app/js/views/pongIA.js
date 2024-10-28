@@ -5,11 +5,11 @@ class PongGame extends HTMLElement {
         super();
         this.ballSpeedX = 0.15;
         this.ballSpeedY = 0.05;
+        this.aiSpeed = 0.16;
         this.ballDireccionX = (Math.random() < 0.5 ? -1 : 1);
         this.ballDireccionY = (Math.random() < 0.5 ? -1 : 1);
         this.pointsPlayer = 0;
         this.pointsIA = 0;
-        this.aiSpeed = 0.16;
         this.movePaddleLeft = 0;
         this.movePaddleRight = 0;
         this.targetPaddleLeftY = 0;
@@ -173,37 +173,43 @@ class PongGame extends HTMLElement {
     ModalData() {
         const modalContainer = document.createElement('div');
         modalContainer.innerHTML = /* html */`
-            <div class="modal fade" id="customModal" tabindex="-1" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalCenterTitle">Custom Game</h5>
-                            <button id="btncruz" type="button" class="btn-close" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                        <form>
-                            <div class="modal-footer" >
-                                <p>¿Quieres aumentar la velocidad de la pelota con el cono?</p>
-                                <button id="btnSpeedYes" type="button" class="btn btn-success">Sí</button>
-                                <button id="btnSpeedNo" type="button" class="btn btn-danger">No</button>
-                            </div>
-                            <div class="modal-footer">
-                                <p>¿Quieres disminuir la velocidad de la pelota con el Icosahedron?</p>
-                                <button id="btnSizeYes" type="button" class="btn btn-success">Sí</button>
-                                <button id="btnSizeNo" type="button" class="btn btn-danger">No</button>
-                            </div>
-                            <div class="modal-footer">
-                                <p>¿Quieres disminuir la velocidad de las palas con el TorusKnot?</p>
-                                <button id="btnDecreaseYes" type="button" class="btn btn-success">Sí</button>
-                                <button id="btnDecreaseNo" type="button" class="btn btn-danger">No</button>
-                            </div>
-                            <button id="btnSave" type="button" class="btn btn-primary" disabled>Guardar Configuración</button>
-                            <button id="btnCancel" type="button" class="btn btn-secondary">Cancelar</button>
-                            </form>
+        <div class="modal fade" id="customModal" tabindex="-1" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalCenterTitle">Custom Game</h5>
+                    <button id="btncruz" type="button" class="btn-close" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                <form>
+                    <div class="modal-footer d-flex justify-content-between align-items-center">
+                        <p class="text-start mb-0">¿Quieres aumentar la velocidad de la pelota con el cono?</p>
+                        <div>
+                            <button id="btnSpeedYes" type="button" class="btn btn-success btn-sm">Sí</button>
+                            <button id="btnSpeedNo" type="button" class="btn btn-danger btn-sm">No</button>
                         </div>
                     </div>
+                    <div class="modal-footer d-flex justify-content-between align-items-center">
+                        <p class="text-start mb-0">¿Quieres disminuir la velocidad de la pelota con el Icosahedron?</p>
+                        <div>
+                            <button id="btnSizeYes" type="button" class="btn btn-success btn-sm">Sí</button>
+                            <button id="btnSizeNo" type="button" class="btn btn-danger btn-sm">No</button>
+                        </div>
+                    </div>
+                    <div class="modal-footer d-flex justify-content-between align-items-center">
+                        <p class="text-start mb-0">¿Quieres disminuir la velocidad de las palas con el TorusKnot?</p>
+                        <div>
+                            <button id="btnDecreaseYes" type="button" class="btn btn-success btn-sm">Sí</button>
+                            <button id="btnDecreaseNo" type="button" class="btn btn-danger btn-sm">No</button>
+                        </div>
+                    </div>
+                    <button id="btnSave" type="button" class="btn btn-primary" disabled>Guardar Configuración</button>
+                    <button id="btnCancel" type="button" class="btn btn-secondary">Cancelar</button>
+                    </form>
                 </div>
-            </div>`;
+            </div>
+        </div>
+    </div>`;
         return modalContainer;
         // <button id="btnSave" type="button" class="btn btn-primary">Guardar Configuración</button>
     }
@@ -530,6 +536,7 @@ class PongGame extends HTMLElement {
         this.ballDireccionY = (Math.random() < 0.5 ? -1 : 1);
         this.ballSpeedX = 0.15;
         this.ballSpeedY = 0.05;
+        this.aiSpeed = 0.16;
     }
 
     reprint(name,points)
@@ -647,14 +654,14 @@ class PongGame extends HTMLElement {
 
     checkIfLost()
     {
-        if (this.pointsPlayer >= 1) {
+        if (this.pointsPlayer >= 3) {
             clearInterval(this.IntervalIA);
             this.createModal()
             this.resetGame(this.ball);
             this.gameStarted = true;
             return true;
         }
-        else if (this.pointsIA >= 1) {
+        else if (this.pointsIA >= 3) {
             clearInterval(this.IntervalIA);
             this.createModal()
             this.resetGame(this.ball);
@@ -669,10 +676,11 @@ class PongGame extends HTMLElement {
         // console.log("CUANTAS VEZES ENTRAS");
         this.gameStarted = false;
         this.ball.position.set(5, 2, 50);
-        this.ballSpeedX = 0.2;
-        this.ballSpeedY = 0.1;
+        this.ballSpeedX = 0.15;
+        this.ballSpeedY = 0.05;
+        this.aiSpeed = 0.16;
         this.scene.remove(this.ball);
-        if (!(this.pointsPlayer == 1 || this.pointsIA == 1))
+        if (!(this.pointsPlayer == 3 || this.pointsIA == 3))
             await this.showCountdown(this.scene, this.loadfont, this.renderer, this.camera);
     }
     
