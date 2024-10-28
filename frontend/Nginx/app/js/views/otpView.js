@@ -74,7 +74,7 @@ export function otp(userName, passWord){
 			
 				const accessToken = responseData.access_token;
 				const refreshToken = responseData.refresh_token;
-				// Set the cookies without HttpOnly flag for debugging
+				
 				document.cookie = `access_token=${accessToken}; path=/`;
 				document.cookie = `refresh_token=${refreshToken}; path=/`;
 				// Access the cookies
@@ -129,53 +129,4 @@ function getCookie(name) {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);
     if (parts.length === 2) return parts.pop().split(';').shift();
-}
-
-document.addEventListener('DOMContentLoaded', (event) => {
-    const otpInputs = document.querySelectorAll('.otp_input');
-
-    otpInputs.forEach((input, index) => {
-        // Restrict input length to 1 character
-        input.setAttribute('maxlength', '1');
-
-        // Move focus to the next input on input event
-        input.addEventListener('input', function() {
-            const otpValue = input.value;
-            if (otpValue.length === 1) {
-                const nextInput = otpInputs[index + 1];
-                if (nextInput) {
-                    nextInput.focus();
-                } else {
-                    input.blur();
-                }
-            }
-        });
-
-        // Move focus to the previous input on backspace
-        input.addEventListener('keydown', function(event) {
-            if (event.key === 'Backspace' && input.value.length === 0) {
-                const previousInput = otpInputs[index - 1];
-                if (previousInput) {
-                    previousInput.focus();
-                }
-            }
-        });
-
-        // Restrict input to numbers only
-        input.addEventListener('input', function() {
-            input.value = input.value.replace(/[^0-9]/g, '');
-        });
-    });
-
-    // Set focus on the first OTP input when the page loads
-    if (otpInputs.length > 0) {
-        otpInputs[0].focus();
-    }
-});
-
-function clearOtpInputs(otpInputs) {
-	otpInputs.forEach(input => {
-		input.value = '';
-	});
-	otpInputs[0].focus();
 }

@@ -44,10 +44,10 @@ export function signin(){
 	const spinner = signInButton.querySelector('.spinner-border');
 	const loadingText = signInButton.querySelector('.loading-text');
 	
-	document.getElementById('loginButton').addEventListener('click', function() {
-        this.classList.add('disabled');
-        this.setAttribute('aria-disabled', 'true');
-    });
+	// document.getElementById('loginButton').addEventListener('click', function() {
+	// this.classList.add('disabled');
+	// this.setAttribute('aria-disabled', 'true');
+	// });
 
 	if (form) {
 		form.addEventListener('submit', async function(event) {
