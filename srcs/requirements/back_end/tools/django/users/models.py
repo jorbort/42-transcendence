@@ -22,14 +22,22 @@ class Friendship(models.Model):
 		unique_together=['user1','user2']
 
 class MatchHistory(models.Model):
-	player1=models.ForeignKey(PongUser, related_name='match_as_player1', on_delete=models.CASCADE)
-	player2=models.ForeignKey(PongUser,related_name='match_as_player2',on_delete=models.CASCADE)
-	date= models.DateTimeField(auto_now_add=True)
-	player1_score = models.IntegerField()
-	player2_score=models.IntegerField()
-	winner=models.ForeignKey(PongUser, related_name='matches_won', on_delete=models.CASCADE)
+	player_1 = models.ForeignKey(PongUser, related_name='matches_as_player_1', on_delete=models.CASCADE)
+	player_2 = models.ForeignKey(PongUser, related_name='matches_as_player_2', on_delete=models.CASCADE)
+	winner = models.ForeignKey(PongUser, related_name='won_matches', null=True, blank=True, on_delete=models.CASCADE)
+	date = models.DateTimeField(auto_now_add=True)
+	# player1_score = models.IntegerField( null=True, blank=True,)
+	# player2_score=models.IntegerField( null=True, blank=True,)
 
 	def __str__(self):
-		return f"Match on {self.date} between {self.player1.username} and {self.player2.username}"
+		return f"Match on {self.date} between {self.player_1.username} and {self.player_2.username}"
 	
 	
+# class Match(models.Model):
+#     player_1 = models.ForeignKey(PongUser, related_name='matches_as_player_1', on_delete=models.CASCADE)
+#     player_2 = models.ForeignKey(PongUser, related_name='matches_as_player_2', on_delete=models.CASCADE)
+#     winner = models.ForeignKey(PongUser, related_name='won_matches', null=True, blank=True, on_delete=models.CASCADE)
+#     date = models.DateTimeField(auto_now_add=True)
+
+#     def __str__(self):
+#         return f"{self.player_1} vs {self.player_2}"

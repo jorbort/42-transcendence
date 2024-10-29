@@ -1,0 +1,30 @@
+<!-- tournaments/tournament_list.html -->
+<h1>Lista de Torneos</h1>
+
+<ul>
+    {% for tournament in tournaments %}
+        <li>
+            {{ tournament.name }} - Creado por {{ tournament.created_by.username }}
+            {% if request.user not in tournament.participants.all %}
+                <form action="{% url 'join_tournament' tournament.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit">Unirse</button>
+                </form>
+            {% else %}
+                <p>Ya estás inscrito en este torneo</p>
+            {% endif %}
+        </li>
+    {% endfor %}
+</ul>
+
+<h2>Crear nuevo torneo</h2>
+<form method="post">
+    {% csrf_token %}
+    <label for="name">Nombre del Torneo:</label>
+    <input type="text" name="name" required>
+
+    <label for="is_public">¿Público?</label>
+    <input type="checkbox" name="is_public">
+
+    <button type="submit">Crear Torneo</button>
+</form>

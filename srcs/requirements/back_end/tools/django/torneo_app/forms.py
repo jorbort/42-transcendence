@@ -1,12 +1,12 @@
 from django import forms
-from django.contrib.auth.models import User
+from users.models import PongUser
 
 class UserRegistrationForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput())
     password_confirm = forms.CharField(widget=forms.PasswordInput(), label='Confirmar contraseña')
 
     class Meta:
-        model = User
+        model = PongUser
         fields = ['username', 'email', 'password']
 
     def clean_password_confirm(self):
