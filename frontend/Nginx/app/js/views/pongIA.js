@@ -6,6 +6,7 @@ class PongGame extends HTMLElement {
         this.ballSpeedX = 0.15;
         this.ballSpeedY = 0.05;
         this.aiSpeed = 0.16;
+        this.paddleSpeed = 0.16;
         this.ballDireccionX = (Math.random() < 0.5 ? -1 : 1);
         this.ballDireccionY = (Math.random() < 0.5 ? -1 : 1);
         this.pointsPlayer = 0;
@@ -537,6 +538,7 @@ class PongGame extends HTMLElement {
         this.ballSpeedX = 0.15;
         this.ballSpeedY = 0.05;
         this.aiSpeed = 0.16;
+        this.paddleSpeed = 0.16;
     }
 
     reprint(name,points)
@@ -605,9 +607,14 @@ class PongGame extends HTMLElement {
                 Math.abs(this.Custom2.position.y - this.ball.position.y) <= proximityRange)
             {
                 // Disminuir velocidad de palas
-                this.aiSpeed -= 0.03;
+                if (this.ballDireccionX > 0)
+                    this.aiSpeed -= 0.03;
+                else
+                    this.paddleSpeed -= 0.03;
                 if (this.aiSpeed < 0.03)
                     this.aiSpeed = 0.03;
+                if (this.paddleSpeed < 0.03)
+                    this.paddleSpeed = 0.03;
                 this.Custom2.position.set(Math.floor(Math.random() * (4 - (-5) + 1)) + (-5), Math.floor(Math.random() * (5 - (-3) + 1)) + (-3), 0);
                 console.log("Disminuir velocidad palas");
             }
@@ -637,15 +644,18 @@ class PongGame extends HTMLElement {
 
     movaPaddles() {
         if (this.movePaddleLeft === 1) {
-            this.targetPaddleLeftY += this.aiSpeed;
+            this.targetPaddleLeftY += this.paddleSpeed;
         } else if (this.movePaddleLeft === -1) {
-            this.targetPaddleLeftY -= this.aiSpeed;
+            this.targetPaddleLeftY -= this.paddleSpeed;
         }
     
-        if (this.targetPaddleRightY > this.futureLeftY) {
-            this.targetPaddleRightY -= this.aiSpeed;
-        } else if (this.targetPaddleRightY < this.futureLeftY) {
-            this.targetPaddleRightY += this.aiSpeed;
+        if (Math.abs(this.targetPaddleRightY - this.futureLeftY) > 0.2)
+        {
+            if (this.targetPaddleRightY > this.futureLeftY) {
+                this.targetPaddleRightY -= this.aiSpeed;
+            } else if (this.targetPaddleRightY < this.futureLeftY) {
+                this.targetPaddleRightY += this.aiSpeed;
+            }
         }
     
         this.paddleLeft.position.y = THREE.MathUtils.clamp(this.paddleLeft.position.y, -4, 8);
@@ -679,6 +689,7 @@ class PongGame extends HTMLElement {
         this.ballSpeedX = 0.15;
         this.ballSpeedY = 0.05;
         this.aiSpeed = 0.16;
+        this.paddleSpeed = 0.16;
         this.scene.remove(this.ball);
         if (!(this.pointsPlayer == 3 || this.pointsIA == 3))
             await this.showCountdown(this.scene, this.loadfont, this.renderer, this.camera);
