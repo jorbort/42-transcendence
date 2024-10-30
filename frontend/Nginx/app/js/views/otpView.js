@@ -1,4 +1,5 @@
 import { handleRouteChange } from '../mainScript.js';
+import { updateNav } from '../utils/updateNav.js';
 
 export function otpView() {
 	return `<div class="form_div" style="background-color: rgb(0, 0, 0) !important;>
@@ -83,9 +84,10 @@ export function otp(userName, passWord){
 
 				console.log('Stored Access Token:', storedAccessToken);
 				console.log('Stored Refresh Token:', storedRefreshToken);
-
+				console.log('Access Token:' );
+				updateNav();
 				window.location.pathname = '/Profile';
-				handleRouteChange();
+				// handleRouteChange();
 			} else {
 				const errorData = await response.json();
 				const errorMessage = errorData.message || 'An error occurred';

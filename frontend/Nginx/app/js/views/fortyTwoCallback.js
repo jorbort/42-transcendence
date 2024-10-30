@@ -1,3 +1,6 @@
+import { updateNav } from '../utils/updateNav.js';
+
+
 export function fortyTwoCallback(){
 	const urlParams = new URLSearchParams(window.location.search);
 	const code = urlParams.get('code');
@@ -17,8 +20,9 @@ export function fortyTwoCallback(){
 			if (data.access_token && data.refresh_token){
 				document.cookie = `access_token=${data.access_token}`;
 				document.cookie = `refresh_token=${data.refresh_token}`;
-
+				updateNav();
 				window.location.href = '/Profile';
+				handleRouteChange();
 			}else{
 				console.error('Error: Failed to obtain access-tokens', data);
 			}
