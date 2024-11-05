@@ -1,3 +1,5 @@
 /backend/staticfiles/rest_framework/*
 /backend/staticfiles/admin/*
+__pycache__
+migrations
 .venv

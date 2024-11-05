@@ -1,8 +1,12 @@
 import {createUser, signup} from './views/createUser.js';
 import {loginView, signin} from './views/loginView.js';
+import {} from './views/loginView.js';
+
 // import {otpView, otp} from './views/otpView.js';
 // import {getCookie} from './utils/sessionToken.js';
 import tableView from './views/highScores.js';
+import renderPongGameIA from './views/pongIA.js';
+import renderPongGame from './views/pong.js';
 import { fortyTwoCallback } from './views/fortyTwoCallback.js';
 import { updateNav } from './utils/updateNav.js';
 
@@ -30,19 +34,28 @@ export function handleRouteChange() {
 	if (accessToken){
 		// updateNav();
 		switch (path) {
-			case '/Profile':
-				view = tableView();
-				break;
-			case '/game':
-				view = gameScreen();
-				break;
-			default:
+				case '/Profile':
+					view = tableView();
+					break;
+				case '/localgame1vsIA':
+					view = renderPongGameIA();
+					break;
+				case '/localgame1vs1':
+					view =  renderPongGame();
+					break;
+				default:
 				view = '<h1>404 Not Found</h1>';
 		}
 	}else{
 		switch (path) {
 			case '/login':
 				view = loginView();
+				break;
+			case '/localgame1vsIA':
+				view = renderPongGameIA();
+				break;
+			case '/localgame1vs1':
+				view = renderPongGame();
 				break;
 			case '/callback_42':
 				view = fortyTwoCallback();
