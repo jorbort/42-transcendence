@@ -7,6 +7,7 @@ import {} from './views/loginView.js';
 import tableView from './views/highScores.js';
 import renderPongGameIA from './views/pongIA.js';
 import renderPongGame from './views/pong.js';
+import renderPongGameMulti from './views/pongMulti.js';
 import { fortyTwoCallback } from './views/fortyTwoCallback.js';
 import { updateNav } from './utils/updateNav.js';
 
@@ -43,6 +44,9 @@ export function handleRouteChange() {
 				case '/localgame1vs1':
 					view =  renderPongGame();
 					break;
+				case '/localgameMulti':
+					view = renderPongGameMulti();
+					break;
 				default:
 				view = '<h1>404 Not Found</h1>';
 		}
@@ -56,6 +60,9 @@ export function handleRouteChange() {
 				break;
 			case '/localgame1vs1':
 				view = renderPongGame();
+				break;
+			case '/localgameMulti':
+				view = renderPongGameMulti();
 				break;
 			case '/callback_42':
 				view = fortyTwoCallback();

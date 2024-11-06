@@ -423,7 +423,7 @@ class PongGame extends HTMLElement {
 
             this.customGame();
             
-            this.checkPaddleCollision(this.ball, this.paddleLeft, this.paddleRight);
+            this.checkPaddleCollision();
             
             this.movaPaddles();
             
@@ -431,7 +431,7 @@ class PongGame extends HTMLElement {
             this.paddleRight.position.y  = THREE.MathUtils.clamp(this.targetPaddleRightY, -3, 7);
             this.renderer.render(this.scene, this.camera);
             
-            if (!this.checkIfLost(this.ball))
+            if (!this.checkIfLost())
                 requestAnimationFrame(animate);
         };
 
@@ -513,18 +513,18 @@ class PongGame extends HTMLElement {
     }
 
     handleKeyUpL(event) {
-        if (event.key === 'w' || event.key === 's') {
+        if (event.key === 'w' || event.key === 's' || event.key === 'S' || event.key === 'W') {
             this.movePaddleLeft = 0;
         }
     }
 
     checkPaddleCollision() {
-        if (this.ball.position.x <= this.paddleLeft.position.x + 0.2 && this.ball.position.y < this.paddleLeft.position.y + 1 && this.ball.position.y > this.paddleLeft.position.y - 1) {
+        if (this.ball.position.x <= this.paddleLeft.position.x + 0.7 && this.ball.position.y < this.paddleLeft.position.y + 1 && this.ball.position.y > this.paddleLeft.position.y - 1) {
             this.ballDireccionX *= -1;
             this.ballSpeedX += 0.009;
             this.ballSpeedY += 0.0009;
         }
-        if (this.ball.position.x >= this.paddleRight.position.x - 0.2 && this.ball.position.y < this.paddleRight.position.y + 1 && this.ball.position.y > this.paddleRight.position.y - 1) {
+        if (this.ball.position.x >= this.paddleRight.position.x - 0.7 && this.ball.position.y < this.paddleRight.position.y + 1 && this.ball.position.y > this.paddleRight.position.y - 1) {
             this.ballDireccionX *= -1;
             this.ballSpeedX += 0.009;
             this.ballSpeedY += 0.0009;
@@ -637,7 +637,7 @@ class PongGame extends HTMLElement {
             await this.pauseGameAndShowCountdown()
             this.resetBall();
         }
-        if (this.ball.position.y > 8 || this.ball.position.y < -3.8) {
+        if (this.ball.position.y > 7.5 || this.ball.position.y < -3.5) {
             this.ballDireccionY *= -1;
         }
     }

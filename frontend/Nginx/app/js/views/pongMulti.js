@@ -15,6 +15,10 @@ class PongGame extends HTMLElement {
         this.movePaddleRight = 0;
         this.targetPaddleLeftY = 0;
         this.targetPaddleRightY = 0;
+        this.movePaddle2 = 0;
+        this.movePaddle1 = 0;
+        this.targetPaddle2Y = 0;
+        this.targetPaddle1Y = 0;
         this.ball = null; // ocultar pelota
         this.countdownText = null;
         this.loadfont = null;
@@ -34,6 +38,11 @@ class PongGame extends HTMLElement {
         this.handleKeyUp = this.handleKeyUp.bind(this);
         this.handleKeyDownL = this.handleKeyDownL.bind(this);
         this.handleKeyUpL = this.handleKeyUpL.bind(this);
+
+        this.handleKeyDownM = this.handleKeyDownM.bind(this);
+        this.handleKeyUpM = this.handleKeyUpM.bind(this);
+        this.handleKeyDownN = this.handleKeyDownN.bind(this);
+        this.handleKeyUpN = this.handleKeyUpN.bind(this);
     }
 
     async connectedCallback() {
@@ -41,6 +50,10 @@ class PongGame extends HTMLElement {
         window.addEventListener('keyup', this.handleKeyUp);
         window.addEventListener('keydown', this.handleKeyDownL);
         window.addEventListener('keyup', this.handleKeyUpL);
+        window.addEventListener('keydown', this.handleKeyDownM);
+        window.addEventListener('keyup', this.handleKeyUpM);
+        window.addEventListener('keydown', this.handleKeyDownN);
+        window.addEventListener('keyup', this.handleKeyUpN);
         this.createModalData();
     }
 
@@ -91,7 +104,7 @@ z
         if (btnTryAgain) {
             btnTryAgain.addEventListener('click', () => {
                 myModal.dispose()
-                history.pushState('', '', '/localgame1vs1');
+                history.pushState('', '', '/localgameMulti');
                 handleRouteChange();
             });
         }
@@ -304,8 +317,8 @@ z
                 console.log("Font loaded successfully.");
                 this.loadfont = font;
                 const textMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff });
-                this.playerText = this.createText("Player1: " + this.pointsPlayer, new THREE.Vector3(-15, 9.5, 0), font, textMaterial);
-                this.IAText = this.createText("Player2: " + this.pointsIA, new THREE.Vector3(8, 9.5, 0), font, textMaterial);
+                this.playerText = this.createText("Team1: " + this.pointsPlayer, new THREE.Vector3(-15, 9.5, 0), font, textMaterial);
+                this.IAText = this.createText("Team2: " + this.pointsIA, new THREE.Vector3(8, 9.5, 0), font, textMaterial);
                 this.scene.add(this.playerText);
                 this.scene.add(this.IAText);
                 resolve(font); // Resolvemos la promesa con la fuente
@@ -371,15 +384,27 @@ z
         const paddleMaterial = new THREE.MeshStandardMaterial({ color: 0xff0000 });
         this.paddleLeft = new THREE.Mesh(paddleGeometry, paddleMaterial);
         this.paddleLeft.position.x = -14;
-        this.paddleLeft.position.y = 2;
+        this.paddleLeft.position.y = -2;
         this.targetPaddleLeftY = 2;
         this.scene.add(this.paddleLeft);
 
         this.paddleRight = new THREE.Mesh(paddleGeometry, paddleMaterial);
         this.paddleRight.position.x = 12.5;
-        this.targetPaddleRightY = 2;
+        this.targetPaddleRightY = -2;
         this.paddleRight.position.y = 2;
         this.scene.add(this.paddleRight);
+
+        this.paddle1 = new THREE.Mesh(paddleGeometry, paddleMaterial);
+        this.paddle1.position.x = 12.5;
+        this.targetPaddle1Y = 4;
+        this.paddle1.position.y = 2;
+        this.scene.add(this.paddle1);
+
+        this.paddle2 = new THREE.Mesh(paddleGeometry, paddleMaterial);
+        this.paddle2.position.x = -14;
+        this.targetPaddle2Y = 4;
+        this.paddle2.position.y = 2;
+        this.scene.add(this.paddle2);
 
         const borderMaterial = new THREE.LineBasicMaterial({ color: 0xffffff });
         const points = [
@@ -430,6 +455,8 @@ z
             
             this.paddleLeft.position.y = THREE.MathUtils.clamp(this.targetPaddleLeftY, -3, 7);
             this.paddleRight.position.y  = THREE.MathUtils.clamp(this.targetPaddleRightY, -3, 7);
+            this.paddle1.position.y = THREE.MathUtils.clamp(this.targetPaddle1Y, -3, 7);
+            this.paddle2.position.y  = THREE.MathUtils.clamp(this.targetPaddle2Y, -3, 7);
             this.renderer.render(this.scene, this.camera);
             
             if (!this.checkIfLost())
@@ -504,26 +531,64 @@ z
     }
 
     handleKeyDownL(event) {
-        if (event.key === 'w' || event.key === 'W') {
+        if (event.key === 'q' || event.key === 'Q') {
             this.movePaddleLeft = 1;
-        } else if (event.key === 's' || event.key === 'S') {
+        } else if (event.key === 'a' || event.key === 'A') {
             this.movePaddleLeft = -1; 
         }
     }
 
     handleKeyUpL(event) {
-        if (event.key === 'w' || event.key === 's' || event.key === 'W' || event.key === 'S') {
+        if (event.key === 'a' || event.key === 'q' || event.key === 'Q' || event.key === 'A') {
             this.movePaddleLeft = 0;
         }
     }
 
+    handleKeyDownN(event) {
+        if (event.key === 'o' || event.key === 'O') {
+            this.movePaddle1 = 1;
+        } else if (event.key === 'l' || event.key === 'L') {
+            this.movePaddle1 = -1;
+        }
+    }
+
+    handleKeyUpN(event) {
+        if (event.key === 'o' || event.key === 'O' || event.key === 'l' || event.key === 'L') {
+            this.movePaddle1 = 0;
+        }
+    }
+
+    handleKeyDownM(event) {
+        if (event.key === 'R' || event.key === 'r') {
+            this.movePaddle2 = 1;
+        } else if (event.key === 'd' || event.key === 'D') {
+            this.movePaddle2 = -1; 
+        }
+    }
+
+    handleKeyUpM(event) {
+        if (event.key === 'R' || event.key === 'r' || event.key === 'D' || event.key === 'd') {
+            this.movePaddle2 = 0;
+        }
+    }
+
     checkPaddleCollision() {
+        if (this.ball.position.x >= this.paddleRight.position.x - 0.7 && this.ball.position.y < this.paddleRight.position.y + 1 && this.ball.position.y > this.paddleRight.position.y - 1) {
+            this.ballDireccionX *= -1;
+            this.ballSpeedX += 0.009;
+            this.ballSpeedY += 0.0009;
+        }
+        else if (this.ball.position.x >= this.paddle1.position.x - 0.7 && this.ball.position.y < this.paddle1.position.y + 1 && this.ball.position.y > this.paddle1.position.y - 1) {
+            this.ballDireccionX *= -1;
+            this.ballSpeedX += 0.009;
+            this.ballSpeedY += 0.0009;
+        }
         if (this.ball.position.x <= this.paddleLeft.position.x + 0.7 && this.ball.position.y < this.paddleLeft.position.y + 1 && this.ball.position.y > this.paddleLeft.position.y - 1) {
             this.ballDireccionX *= -1;
             this.ballSpeedX += 0.009;
             this.ballSpeedY += 0.0009;
         }
-        if (this.ball.position.x >= this.paddleRight.position.x - 0.7 && this.ball.position.y < this.paddleRight.position.y + 1 && this.ball.position.y > this.paddleRight.position.y - 1) {
+        else if (this.ball.position.x <= this.paddle2.position.x + 0.7 && this.ball.position.y < this.paddle2.position.y + 1 && this.ball.position.y > this.paddle2.position.y - 1) {
             this.ballDireccionX *= -1;
             this.ballSpeedX += 0.009;
             this.ballSpeedY += 0.0009;
@@ -625,15 +690,15 @@ z
     {
         this.ball.position.x += this.ballSpeedX * this.ballDireccionX;
         this.ball.position.y += this.ballSpeedY * this.ballDireccionY;
-        if (this.ball.position.x > 17) {
+        if (this.ball.position.x > 15) {
             this.pointsPlayer++;
-            this.reprint("Player1", this.pointsPlayer);
+            this.reprint("Team1", this.pointsPlayer);
             await this.pauseGameAndShowCountdown()
             this.resetBall();
         }
-        if (this.ball.position.x < -17) {
+        if (this.ball.position.x < -15) {
             this.pointsIA++;
-            this.reprint("Player2", this.pointsIA);
+            this.reprint("Team2", this.pointsIA);
             await this.pauseGameAndShowCountdown()
             this.resetBall();
         }
@@ -652,6 +717,16 @@ z
             this.targetPaddleRightY += this.paddleSpeed;
         } else if (this.movePaddleRight === -1) {
             this.targetPaddleRightY -= this.paddleSpeed;
+        }
+        if (this.movePaddle1 === 1) {
+            this.targetPaddle1Y += this.paddleSpeed;
+        } else if (this.movePaddle1 === -1) {
+            this.targetPaddle1Y -= this.paddleSpeed;
+        }
+        if (this.movePaddle2 === 1) {
+            this.targetPaddle2Y += this.aiSpeed;
+        } else if (this.movePaddle2 === -1) {
+            this.targetPaddle2Y -= this.aiSpeed;
         }
     
     }
@@ -691,16 +766,16 @@ z
     {
         this.pointsIA = 0;
         this.pointsPlayer = 0;
-        this.reprint("Player X", this.pointsPlayer);
-        this.reprint("IA", this.pointsIA);
+        this.reprint("Team1", this.pointsPlayer);
+        this.reprint("Team2", this.pointsIA);
         this.ball = null;
         this.gameStarted = false;
     }
 
 }
 
-customElements.define('pong-game', PongGame);
+customElements.define('pong-gamemulti', PongGame);
 
-export default function renderPongGame() {
-    return '<pong-game></pong-game>';
+export default function renderPongGameMulti() {
+    return '<pong-gamemulti></pong-gamemulti>';
 }
