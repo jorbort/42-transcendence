@@ -642,18 +642,17 @@ z
         }
     }
 
-    movaPaddles() {
-        if (this.movePaddleLeft === 1) {
+    movaPaddles()
+    {
+        if (this.movePaddleLeft === 1 && this.targetPaddleLeftY < 8) {
             this.targetPaddleLeftY += this.aiSpeed;
-        } else if (this.movePaddleLeft === -1) {
+        } else if (this.movePaddleLeft === -1 && this.targetPaddleLeftY > -4)
             this.targetPaddleLeftY -= this.aiSpeed;
-        }
-        if (this.movePaddleRight === 1) {
+        if (this.movePaddleRight === 1 && this.targetPaddleRightY < 8) {
             this.targetPaddleRightY += this.paddleSpeed;
-        } else if (this.movePaddleRight === -1) {
+        } else if (this.movePaddleRight === -1 && this.targetPaddleRightY > -4) {
             this.targetPaddleRightY -= this.paddleSpeed;
         }
-    
     }
 
     checkIfLost()

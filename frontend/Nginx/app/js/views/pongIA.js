@@ -642,12 +642,12 @@ class PongGame extends HTMLElement {
         }
     }
 
-    movaPaddles() {
-        if (this.movePaddleLeft === 1) {
-            this.targetPaddleLeftY += this.paddleSpeed;
-        } else if (this.movePaddleLeft === -1) {
-            this.targetPaddleLeftY -= this.paddleSpeed;
-        }
+    movaPaddles()
+    {
+        if (this.movePaddleLeft === 1 && this.targetPaddleLeftY < 8) {
+            this.targetPaddleLeftY += this.aiSpeed;
+        } else if (this.movePaddleLeft === -1 && this.targetPaddleLeftY > -4)
+            this.targetPaddleLeftY -= this.aiSpeed;
     
         if (Math.abs(this.targetPaddleRightY - this.futureLeftY) > 0.2)
         {

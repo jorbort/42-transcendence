@@ -595,6 +595,30 @@ z
         }
     }
 
+
+    movaPaddles()
+    {
+        if (this.movePaddleLeft === 1 && this.targetPaddleLeftY < 8) {
+            this.targetPaddleLeftY += this.aiSpeed;
+        } else if (this.movePaddleLeft === -1 && this.targetPaddleLeftY > -4)
+            this.targetPaddleLeftY -= this.aiSpeed;
+        if (this.movePaddleRight === 1 && this.targetPaddleRightY < 8) {
+            this.targetPaddleRightY += this.paddleSpeed;
+        } else if (this.movePaddleRight === -1 && this.targetPaddleRightY > -4) {
+            this.targetPaddleRightY -= this.paddleSpeed;
+        }
+        if (this.movePaddle1 === 1 && this.targetPaddle1Y < 8) {
+            this.targetPaddle1Y += this.paddleSpeed;
+        } else if (this.movePaddle1 === -1 && this.targetPaddle1Y > -4) {
+            this.targetPaddle1Y -= this.paddleSpeed;
+        }
+        if (this.movePaddle2 === 1 && this.targetPaddle2Y < 8) {
+            this.targetPaddle2Y += this.aiSpeed;
+        } else if (this.movePaddle2 === -1 && this.targetPaddle2Y > -4) {
+            this.targetPaddle2Y -= this.aiSpeed;
+        }
+    }
+
     resetBall() {
         this.ball.position.set(0, 2, 0);
         this.ballDireccionX = (Math.random() < 0.5 ? -1 : 1);
@@ -705,30 +729,6 @@ z
         if (this.ball.position.y > 7.5 || this.ball.position.y < -3.5) {
             this.ballDireccionY *= -1;
         }
-    }
-
-    movaPaddles() {
-        if (this.movePaddleLeft === 1) {
-            this.targetPaddleLeftY += this.aiSpeed;
-        } else if (this.movePaddleLeft === -1) {
-            this.targetPaddleLeftY -= this.aiSpeed;
-        }
-        if (this.movePaddleRight === 1) {
-            this.targetPaddleRightY += this.paddleSpeed;
-        } else if (this.movePaddleRight === -1) {
-            this.targetPaddleRightY -= this.paddleSpeed;
-        }
-        if (this.movePaddle1 === 1) {
-            this.targetPaddle1Y += this.paddleSpeed;
-        } else if (this.movePaddle1 === -1) {
-            this.targetPaddle1Y -= this.paddleSpeed;
-        }
-        if (this.movePaddle2 === 1) {
-            this.targetPaddle2Y += this.aiSpeed;
-        } else if (this.movePaddle2 === -1) {
-            this.targetPaddle2Y -= this.aiSpeed;
-        }
-    
     }
 
     checkIfLost()
