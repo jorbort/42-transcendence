@@ -1,5 +1,5 @@
 html, body {
-	background-color: black !important; /* Dark background color */
+	background-color: #2b3339 !important; /* Dark background color */
 	height: 100%;
 	margin: 0;
 	flex-direction: column;
@@ -7,11 +7,20 @@ html, body {
 }
 
 body{
-	font-family: 'Amatic SC' !important;	
+	font-family: 'Press Start 2P' !important;	
 }
 
 .nav_bar{
 	font-size: 30px;
+	position: relative;
+	z-index: 1;
+}
+
+.navbar-brand{
+	font-family: 'Press Start 2P';
+	font-size: 55px;
+	font-weight: 900 ;
+	margin-left: 100px;
 }
 
 .hidden{
@@ -22,9 +31,33 @@ body{
 	display: block;
 }
 
+/* .navbar-brand{
+	transform: translateX(-250px);
+} */
+.gradient-text {
+	background: linear-gradient(45deg, #7a4141, #5f3c48, #964ea8, #694dbd, #546ed6, #3c698d, #22b8cf, #3f8a73, #51cf66, #87a854, #e0bc4f, #f19d4e);
+	background-size: 200% 200%;
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	background-clip: text;
+	animation: gradient-animation 5s ease infinite;
+}
+
+@keyframes gradient-animation {
+	0% {
+	  background-position: 0% 50%;
+	}
+	50% {
+	  background-position: 100% 50%;
+	}
+	100% {
+	  background-position: 0% 50%;
+	}
+  }
+
 #spantitle{
 	font-weight: 300;
-	font-size: 60px;
+	font-size: 45px;
 }
 
 .page_container{
@@ -36,7 +69,7 @@ body{
 }
 
 .app{
-	background-color: black;
+	background-color: #2b3339;
 	grid-template-columns: 1.5fr 8.5fr;
 }
 
@@ -49,8 +82,9 @@ body{
 }
 
 .app .bar_nav_flex{
-	background-color: rgb(0, 0, 0);
-	border: 2px solid rgb(0, 0, 0);
+	background-color: #2b3339;
+	border: 1px solid rgb(0, 0, 0);
+	box-shadow: inline 5px 5px 10px  rgba(0, 0, 0, 0.7);
 	justify-content: center;
 	align-items: flex-start;
 	display: flex;
@@ -203,3 +237,18 @@ body{
 	font-size: 12px;
   }
 
+  @media (max-width: 1230px) {
+	#spantitle{
+		font-weight: 300;
+		font-size: 25px;
+	}
+	.nav_bar{
+		font-size: 15px;
+		position: relative;
+		z-index: 1;
+	}
+	.gradient-text{
+		font-size: 30px;
+		margin-left:  25px;
+	}
+  }

@@ -6,7 +6,6 @@ export default function tableView() {
 					<button type="button" class="btn btn-primary">Game Statistics</button>
 					<button type="button" class="btn btn-primary">Friends</button>
 					<button type="button" class="btn btn-primary">High Scores</button>
-					<button type="button" class="btn btn-primary">Chat</button>
 				</div>
 			</div>
 			<div class="content_nav">
