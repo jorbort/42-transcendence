@@ -9,7 +9,7 @@ COPY frontend/Nginx/nginx.conf /etc/nginx/nginx.conf
 COPY frontend/Nginx/app /usr/share/nginx/html
 
 # Expose port 80 to the outside world
-EXPOSE 80
+EXPOSE 2080
 
 # Start Nginx when the container launches
 CMD ["nginx", "-g", "daemon off;"]

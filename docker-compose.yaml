@@ -5,7 +5,7 @@ services:
       context: .
       dockerfile: frontend/Nginx/Dockerfile
     ports:
-      - "80:80"
+      - "2080:2080"
     networks:
       - trascendence
     restart: always
@@ -47,7 +47,7 @@ volumes:
     driver: local
     driver_opts:
       type: none
-      device: "/home/${USER}/data/postgres_data"
+      device: "/home/${USER}/Desktop/data/postgres_data"
       o: bind
   django_data:
     driver: local
