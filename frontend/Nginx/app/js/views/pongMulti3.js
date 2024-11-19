@@ -42,6 +42,7 @@ class PongGame extends HTMLElement {
         this.YellPosY = 0;
         this.RedPosX = 0;
         this.RedPosY = 0;
+        this.hexagonRadius = 0;
         this.handleKeyDown = this.handleKeyDown.bind(this);
         this.handleKeyUp = this.handleKeyUp.bind(this);
         this.handleKeyDownL = this.handleKeyDownL.bind(this);
@@ -354,132 +355,62 @@ z
         this.scene.remove(countdownMesh);
     }
 
-    initObjects()
-    {   
-  
+    initObjects() {
         const sphereGeometry = new THREE.SphereGeometry(0.5, 27, 27);
         const sphereMaterial = new THREE.MeshStandardMaterial({ color: 0x87CEEB, metalness: 0.5, roughness: 0.5 });
         this.ball = new THREE.Mesh(sphereGeometry, sphereMaterial);
         this.ball.position.set(0, 2, 0);
         this.camera.position.set(0, 1, 20);
         this.scene.add(this.ball);
-
-        const CustomGeometry = new THREE.ConeGeometry(0.5, 1, 16);
-        const CustomMaterial = new THREE.MeshStandardMaterial({ color: 0xFFC0CB, metalness: 0.5, roughness: 0.5 });
-        this.Custom = new THREE.Mesh(CustomGeometry, CustomMaterial);
-        this.Custom.position.set(4, -2, 0);
-        this.camera.position.set(0, 1, 20);
-        if (this.addCustom)
-            this.scene.add(this.Custom);
-
-        const Custom1Geometry = new THREE.IcosahedronGeometry(0.5);
-        const Custom1Material = new THREE.MeshStandardMaterial({ color: 0x00FF00, metalness: 0.5, roughness: 0.5 });
-        this.Custom1 = new THREE.Mesh(Custom1Geometry, Custom1Material);
-        this.Custom1.position.set(-1, 4, 0);
-        this.camera.position.set(0, 1, 20);
-        if (this.addCustom1)
-            this.scene.add(this.Custom1);
-
-        const L = 27;
-        const h = (Math.sqrt(3) * L) / 2;
-        const offset = 9; // Distancia desde el final de cada línea
-        
-        // Función para calcular puntos ajustados
-        const adjustPoint = (start, end, offset) => {
-            const dir = new THREE.Vector3().subVectors(end, start).normalize(); // Dirección entre los puntos
-            return new THREE.Vector3().addVectors(start, dir.multiplyScalar(offset)); // Ajuste del punto con el offset
-        };
-        
-        // Ajuste de puntos para crear las "líneas flotantes"
-        const points = [
-            adjustPoint(new THREE.Vector3(-L / 2, -5, 0), new THREE.Vector3(L / 2, -5, 0), offset), // línea 1, primer punto
-            adjustPoint(new THREE.Vector3(L / 2, -5, 0), new THREE.Vector3(-L / 2, -5, 0), offset), // línea 1, segundo punto
-            adjustPoint(new THREE.Vector3(L / 2, -5, 0), new THREE.Vector3(0, -5 + h, 0), offset), // línea 2, primer punto
-            adjustPoint(new THREE.Vector3(0, -5 + h, 0), new THREE.Vector3(L / 2, -5, 0), offset), // línea 2, segundo punto
-            adjustPoint(new THREE.Vector3(0, -5 + h, 0), new THREE.Vector3(-L / 2, -5, 0), offset), // línea 3, primer punto
-            adjustPoint(new THREE.Vector3(-L / 2, -5, 0), new THREE.Vector3(0, -5 + h, 0), offset) // línea 3, segundo punto
-        ];
-
-        const material = new THREE.LineBasicMaterial({
-            color: 0x808080, // Gris
-            linewidth: 3,    // Grosor de la línea
-            opacity: 0.8,    // Opacidad de la línea (si quieres que sea algo transparente)
-            transparent: true // Habilitar transparencia
-        });
-        
-        for (let i = 0; i < points.length; i += 2) {
-            const geometry = new THREE.BufferGeometry().setFromPoints([points[i], points[i + 1]]);
-            const line = new THREE.Line(geometry, material);
-            this.scene.add(line);
-        }
-        
-        const Custom2Geometry =  new THREE.TorusKnotGeometry(0.4, 0.12, 47, 7);
-        const Custom2Material = new THREE.MeshStandardMaterial({ color: 0x00FFFF, metalness: 0.5, roughness: 0.5 });
-        this.Custom2 = new THREE.Mesh(Custom2Geometry, Custom2Material);
-        this.Custom2.position.set(-4, -2, 0);
-        this.camera.position.set(0, 1, 20);
-        if (this.addCustom2)
-            this.scene.add(this.Custom2);
-
-        const p1 = new THREE.Vector3(-L / 2, -5, 0); // Vértice 1
-        const p2 = new THREE.Vector3(L / 2, -5, 0);  // Vértice 2
-        const p3 = new THREE.Vector3(0, -5 + h, 0);  // Vértice 3
-
-
-        this.triangleVertices = [p1, p2, p3];
-        
-        this.edges = [
-            { start: p1, end: p2 },
-            { start: p2, end: p3 },
-            { start: p3, end: p1 },
-        ];
-
-        // Cálculo del centro del triángulo
-        const centerX = (p1.x + p2.x + p3.x) / 3;
-        const centerY = (p1.y + p2.y + p3.y) / 3;
-        const centerZ = (p1.z + p2.z + p3.z) / 3;
-
-        // Crear un vector con las coordenadas del centro
-        const center = new THREE.Vector3(centerX, centerY, centerZ);
-
-        console.log(center);  // Imprime las coordenadas del centro
-
-
-        const paddleGeometry = new THREE.BoxGeometry(0.4, 2, 0.1);
-        const paddleMaterial = new THREE.MeshStandardMaterial({ color: 0xff0000 });
-
-        this.paddle1 = new THREE.Mesh(paddleGeometry, paddleMaterial);
-        var m = Math.sqrt(((L / 2) * (L / 2)) + 25)
-        this.RedPosX = (-L / 2) + 8 * ((0 - (-L / 2)) / m)
-        this.RedPosY = (-5) + 8 * ((0 + 5) / m)
-        this.paddle1.position.set(this.RedPosX, this.RedPosY, 0);
-       
-        // this.paddle1.lookAt(center);
-        this.paddle1.lookAt(new THREE.Vector3(0, 1, 0));
-
-        this.scene.add(this.paddle1);
-
-        const paddleMaterial2 = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
-        this.paddle2 = new THREE.Mesh(paddleGeometry, paddleMaterial2);
-        var m2 = Math.sqrt(((L / 2) * (L / 2)) + 25);
-        this.GreenposX = (L / 2) - 8 * ((L / 2 - 0) / m2);
-        this.GreenposY = (-5) + 8 * ((0 + 5) / m2);
-        this.paddle2.position.set(this.GreenposX, this.GreenposY, 0);
-        
-        this.paddle2.lookAt(new THREE.Vector3(0, 1, 0));
-        this.scene.add(this.paddle2);
-
-        const paddleMaterial3 = new THREE.MeshStandardMaterial({ color: 0xffff00 });
-        const paddleGeometry2 = new THREE.BoxGeometry(2, 0.4, 0.1);
-        this.paddle3 = new THREE.Mesh(paddleGeometry2, paddleMaterial3);
-        this.YellPosX = 0;
-        this.YellPosY = -12 + h;
-        this.paddle3.position.set(this.YellPosX , this.YellPosY, 0);
-        this.scene.add(this.paddle3);
-
-        this.velocity = new THREE.Vector3(0.15, 0.05, 0);
-    }
     
+        this.hexagonRadius = 11; // Radio del hexágono
+        const hexagonGeometry = new THREE.CylinderGeometry(this.hexagonRadius, this.hexagonRadius, 0.1, 6, 1); 
+        const hexagonEdges = new THREE.EdgesGeometry(hexagonGeometry);
+        const hexagonEdgeMaterial = new THREE.LineBasicMaterial({ color: 0x808080 });
+        this.hexagon = new THREE.LineSegments(hexagonEdges, hexagonEdgeMaterial);
+        this.hexagon.rotation.x = Math.PI / 2; // Asegura que esté plano
+        this.hexagon.position.set(0, 3, 0);
+        this.scene.add(this.hexagon);
+    
+        const paddleGeometry = new THREE.BoxGeometry(0.4, 2, 0.1);
+        const paddleMaterial1 = new THREE.MeshStandardMaterial({ color: 0xff0000 });
+        const paddleMaterial2 = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
+        const paddleMaterial3 = new THREE.MeshStandardMaterial({ color: 0xffff00 });
+    
+        const paddlePositions = [
+            { x: this.hexagonRadius * Math.cos(Math.PI / 3), y: 10, z: 0 },  // Lado 0
+            { x: this.hexagonRadius * Math.cos(3.6 * Math.PI / 3), y: 3, z: 0 },  // Lado 2
+            { x: this.hexagonRadius * Math.cos(5 * Math.PI / 3), y: -4, z: 0 },  // Lado 4
+        ];
+    
+        const paddleOrientations = [
+            Math.PI / 3, 
+            3 * Math.PI / 3, 
+            5 * Math.PI / 3
+        ];
+
+        const paddleLines = [
+            { start: { x: 5.5, y: 9.5 }, end: { x: 0, y: 12.5 } },  // Línea del lado 0 (pala roja)
+            { start: { x: -11.5, y: 15 }, end: { x: -5.5, y: -9.5 } },   // Línea del lado 2 (pala verde)
+            { start: { x: -5.5, y: -7.5 }, end: { x: 11, y: 0 } },     // Línea del lado 4 (pala amarilla)
+        ];
+    
+        this.paddles = [];
+        const paddleMaterials = [paddleMaterial1, paddleMaterial2, paddleMaterial3];
+        for (let i = 0; i < 3; i++) {
+            const paddle = {
+                mesh: new THREE.Mesh(paddleGeometry, paddleMaterials[i]),
+                position: { x: paddlePositions[i].x, y: paddlePositions[i].y, z: paddlePositions[i].z },
+                orientation: paddleOrientations[i],
+                line: paddleLines[i],
+            };
+            paddle.mesh.position.set(paddle.position.x, paddle.position.y, paddle.position.z);
+            paddle.mesh.rotation.z = paddle.orientation;
+            this.scene.add(paddle.mesh);
+            this.paddles.push(paddle);
+        }
+    }
+        
     async startGame()
     {
         this.scene = new THREE.Scene();
@@ -507,21 +438,11 @@ z
             if (this.gameStarted) return;
 
             // await this.moveBall();
-            await this.detectAndReflect();
+            // await this.detectAndReflect();
 
             // this.customGame();
-            
-            this.checkPaddleCollision();
-            
-            // this.movaPaddles();
-
-            this.movePaddle(this.paddle1, this.movePaddle1 * this.paddleSpeed, this.edges[0].start, this.edges[0].end);
-            this.movePaddle(this.paddle2, this.movePaddle2 * this.paddleSpeed, this.edges[1].start, this.edges[1].end);
-            this.movePaddle(this.paddle3, this.movePaddle3 * this.paddleSpeed, this.edges[2].start, this.edges[2].end);
-            
-            // this.paddle1.position.y = THREE.MathUtils.clamp(this.targetPaddle1Y, this.RedPosX, this.RedPosY);
-            // this.paddle2.position.y  = THREE.MathUtils.clamp(this.targetPaddle2Y, 0, 0);
-            // this.paddle3.position.y  = THREE.MathUtils.clamp(this.targetPaddle3Y, this.YellPosX, this.YellPosY);
+                        
+            this.updatePaddleMovement();
 
             this.renderer.render(this.scene, this.camera);
             
@@ -532,17 +453,71 @@ z
         animate();
     }
 
-    movePaddle(paddle, movement, edgeStart, edgeEnd) {
-        const paddlePosition = new THREE.Vector3(paddle.position.x, paddle.position.y, paddle.position.z);
-        const edgeVector = new THREE.Vector3().subVectors(edgeEnd, edgeStart).normalize();
-        const movementVector = edgeVector.clone().multiplyScalar(movement);
+    updatePaddleMovement() {
+        const movementSpeed = 0.2; // Velocidad de movimiento de las palas
     
-        const newPaddlePosition = paddlePosition.clone().add(movementVector);
+        // Mover pala 1 (Teclas W y S)
+        this.movePaddle(0, this.movePaddle1 * movementSpeed);
     
-        if (this.isPointInTriangle(newPaddlePosition, ...this.triangleVertices)) {
-            paddle.position.set(newPaddlePosition.x, newPaddlePosition.y, newPaddlePosition.z);
-        }
+        // Mover pala 2 (Raton izquierdo y derecho)
+        this.movePaddle(1, this.movePaddle2 * movementSpeed);
+    
+        // Mover pala 3 (Teclas Flecha arriba y abajo)
+        this.movePaddle(2, this.movePaddle3 * movementSpeed);
     }
+    
+    movePaddle(index, movement) {
+        const paddle = this.paddles[index];
+        const paddleMesh = paddle.mesh;
+        const angle = -paddle.orientation;
+    
+        // Calculamos el movimiento en X y Y con respecto a la orientación de la pala
+        const movementInX = movement * Math.sin(angle);
+        const movementInY = movement * Math.cos(angle);
+    
+        // Nueva posición de la pala después del movimiento
+        const newPosition = {
+            x: paddle.position.x + movementInX,
+            y: paddle.position.y + movementInY,
+        };
+    
+        // Proyectamos la nueva posición sobre la línea del hexágono correspondiente
+        const lineStart = paddle.line.start; // Punto inicial de la línea
+        const lineEnd = paddle.line.end;     // Punto final de la línea
+    
+        const lineVector = {
+            x: lineEnd.x - lineStart.x,
+            y: lineEnd.y - lineStart.y,
+        };
+    
+        const lineLengthSquared = lineVector.x ** 2 + lineVector.y ** 2;
+    
+        const paddleToStart = {
+            x: newPosition.x - lineStart.x,
+            y: newPosition.y - lineStart.y,
+        };
+    
+        // Proyección escalar de la posición de la pala sobre el vector de la línea
+        const t = Math.max(
+            0,
+            Math.min(1, (paddleToStart.x * lineVector.x + paddleToStart.y * lineVector.y) / lineLengthSquared)
+        );
+    
+        // Calculamos la posición limitada en la línea
+        const limitedPosition = {
+            x: lineStart.x + t * lineVector.x,
+            y: lineStart.y + t * lineVector.y,
+        };
+    
+        // Actualizamos la posición de la pala
+        paddle.position.x = limitedPosition.x;
+        paddle.position.y = limitedPosition.y;
+    
+        // Actualizamos la posición de la pala en el escenario
+        paddleMesh.position.set(paddle.position.x, paddle.position.y, paddle.position.z);
+    }
+    
+    
 
     isPointInTriangle(p, p1, p2, p3) {
         const area = (p1, p2, p3) => Math.abs((p1.x * (p2.y - p3.y) + p2.x * (p3.y - p1.y) + p3.x * (p1.y - p2.y)) / 2.0);
@@ -634,19 +609,27 @@ z
     }
 
     handleMouseDown(event) {
-        console.log('MouseDown:', event.button);
-        if (event.button === 0) { // Botón izquierdo del ratón
+        if (event.key === 'T' || event.key === 't') {
             this.movePaddle2 = 1;
-        } else if (event.button === 2) { // Botón derecho del ratón
-            this.movePaddle2 = -1;
+        } else if (event.key === 'G' || event.key === 'g') {
+            this.movePaddle2 = -1; 
         }
+        // console.log('MouseDown:', event.button);
+        // if (event.button === 0) { // Botón izquierdo del ratón
+        //     this.movePaddle2 = 1;
+        // } else if (event.button === 2) { // Botón derecho del ratón
+        //     this.movePaddle2 = -1;
+        // }
     }
     
     handleMouseUp(event) {
-        console.log('MouseUp:', event.button);
-        if (event.button === 0 || event.button === 2) { // Ambos botones
+        if (event.key === 'T' || event.key === 't' || event.key === 'G' || event.key === 'g') {
             this.movePaddle2 = 0;
         }
+        // console.log('MouseUp:', event.button);
+        // if (event.button === 0 || event.button === 2) { // Ambos botones
+        //     this.movePaddle2 = 0;
+        // }
     }
 
 
@@ -666,26 +649,6 @@ z
             this.ballDireccionX *= -1;
             this.ballSpeedX += 0.009;
             this.ballSpeedY += 0.0009;
-        }
-    }
-
-
-    movaPaddles()
-    {
-        if (this.movePaddle1 === 1 && this.targetPaddle1Y < 8) {
-            this.targetPaddle1Y += this.paddleSpeed;
-        } else if (this.movePaddle1 === -1 && this.targetPaddle1Y > -4) {
-            this.targetPaddle1Y -= this.paddleSpeed;
-        }
-        if (this.movePaddle2 === 1 && this.targetPaddle2Y < 8) {
-            this.targetPaddle2Y += this.aiSpeed;
-        } else if (this.movePaddle2 === -1 && this.targetPaddle2Y > -4) {
-            this.targetPaddle2Y -= this.aiSpeed;
-        }
-        if (this.movePaddle3 === 1 && this.targetPaddle3Y < 8) {
-            this.targetPaddle3Y += this.paddleSpeed;
-        } else if (this.movePaddle3 === -1 && this.targetPaddle3Y > -4) {
-            this.targetPaddle3Y -= this.paddleSpeed;
         }
     }
 
