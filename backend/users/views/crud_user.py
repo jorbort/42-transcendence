@@ -73,9 +73,18 @@ def upload_avatar(request):
 	return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
+@permission_classes([isAuthenticated])
 def add_friend(request):
 	serializer= FrienshipSerializer(data=request.data)
 	if serializer.is_valid():
 		serializer.save()
 		return Response(serializer.data, status=status.HTTP_201_CREATED)
 	return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+@permission_classe([isAuthenticated])
+def	get_friends(request):
+	user = request.user
+	friends = Friendship.objects.filter(user1=user) | Friendship.objects.filter(user2=user)
+	serializer = FriendshipSerializer(friends, many=True)
+	return Response(serializer.data, status=200)
