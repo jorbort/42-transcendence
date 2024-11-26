@@ -1,5 +1,5 @@
 import {createUser, signup} from './views/createUser.js';
-import {loginView, signin} from './views/loginView.js';
+import {loginView} from './views/loginView.js';
 import {} from './views/loginView.js';
 
 // import {otpView, otp} from './views/otpView.js';
@@ -78,7 +78,7 @@ function handleEventListeners(path) {
 			signup();
 			break;
 		case '/login':
-			signin();
+			// signin();
 			break;
 	}
 }

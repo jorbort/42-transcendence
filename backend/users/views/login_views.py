@@ -1,4 +1,5 @@
 import random
+import logging
 from datetime import timedelta
 from django.utils import timezone
 from django.contrib.auth import authenticate, login as django_login, logout as django_logout
@@ -8,13 +9,14 @@ from rest_framework.decorators import api_view
 from rest_framework import status, generics
 from rest_framework_simplejwt.tokens import RefreshToken
 
+logger = logging.getLogger(__name__)
+
 class LoginView(generics.GenericAPIView):
 
 	def post(self,request):
 		username = request.data.get('username')
 		password = request.data.get('password')
 
-		print(f"Attempting to authenticate user: {username}")
 
 		user = authenticate(request, username=username, password=password)
 
@@ -33,6 +35,7 @@ class LoginView(generics.GenericAPIView):
 				fail_silently=False,
 			)
 			return Response({'detail': 'Verification code sent successfully.'}, status=status.HTTP_200_OK)
+		logger.warning(f"Invalid login attempt for username: {username}")
 		return Response({'detail': 'Invalid credentials.'}, status=status.HTTP_401_UNAUTHORIZED)
 	
 

@@ -12,43 +12,18 @@
 	<link rel="icon" href="images/42_Logo.svg" type="image/x-icon">
 </head>
 <body>
-	<div class="page_container">
-		<nav class="navbar navbar-expand-lg bg-body-tertiary" style="background-color: #2b3339 !important;">
-			<div class="container-fluid">
-				<div class="navbar-brand gradient-text">
-					TRANS<span id="spantitle">CENDENCE</span>
-				</div>
-				<ul class="nav justify-content-end">
-					<li class="nav-item">
-						<a class="route nav-link active nav_bar hidden" aria-current="page" href="/Profile">Profile</a>
-					</li>
-					<li class="nav-item dropdown">
-						<a class="nav-link dropdown-toggle nav_bar" href="#" id="gameDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-							Game
-						</a>
-						<ul class="dropdown-menu" aria-labelledby="gameDropdown">
-							<li><a class="dropdown-item" href="/localgame1vs1">1 vs 1</a></li>
-							<li><a class="dropdown-item" href="/localgame1vsIA">1 vs IA</a></li>
-						</ul>
-					</li>
-					<li class="nav-item">
-						<a class="nav-link active nav_bar" aria-current="page" href="#">About us</a>
-					</li>
-					<li class="nav-item">
-						<a class="route nav-link active nav_bar" id="login" aria-current="page" href="/login">Login</a>
-					</li>
-				</ul> 
-			</div>
-		</nav>
-		<!-- SPA APP -->
-		<div id="app">
-		</div>
-		<!-- SPAP APP END -->
-		<footer class="footer mt-auto py-3 bg-dark text-white space-background">
-			<div class="footer_container">
-				<span class="text-muted">© 2024 TRANSCENDENCE. All rights reserved.</span>
-			</div>
-		</footer>
+	<style>
+		#app{
+			background-color:rgba(50, 59, 65,1);
+			width: 100vw;
+			height: 100vh;
+			display: flex; 
+			align-items: center;
+			justify-content: space-evenly;
+			flex-direction: column;
+		}
+	</style>
+	<div id="app">
 	</div>
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>

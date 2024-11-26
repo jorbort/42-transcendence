@@ -26,4 +26,3 @@ def record_match(request):
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 	else:
 		return Response({'detail': 'authentication credential where not provided'})
-	

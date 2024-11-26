@@ -47,7 +47,7 @@ volumes:
     driver: local
     driver_opts:
       type: none
-      device: "/home/${USER}/Desktop/data/postgres_data"
+      device: "./postgres/res"
       o: bind
   django_data:
     driver: local

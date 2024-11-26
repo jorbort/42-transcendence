@@ -194,7 +194,7 @@ LOGGING = {
 #42API
 CLIENT_ID=os.environ['CLIENT_ID']
 CLIENT_SECRET=os.environ['CLIENT_SECRET']
-REDIRECT_URI='http://localhost:80/callback_42'
+REDIRECT_URI='http://localhost:2080/callback_42'
 
 #django sesion configurations
 

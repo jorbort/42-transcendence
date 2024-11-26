@@ -1,7 +1,7 @@
 up:	
-	@if [ ! -d "/home/${USER}/data/postgres_data" ]; then \
-		mkdir "/home/${USER}/data/postgres_data"; \
-	fi
+	# @if [ ! -d "/home/${USER}/data/postgres_data" ]; then \
+	# 	mkdir "/home/${USER}/data/postgres_data"; \
+	# fi
 	docker-compose up 
 down:
 	docker-compose down
