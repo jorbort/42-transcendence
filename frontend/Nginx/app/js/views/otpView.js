@@ -1,4 +1,3 @@
-import { handleRouteChange } from '../mainScript.js';
 import { updateNav } from '../utils/updateNav.js';
 
 export function otpView() {
