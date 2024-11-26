@@ -1,4 +1,4 @@
-import renderPongGame from './ponTornamentGame.js'; // Importamos la función renderPongGame
+import renderPongGame1 from './ponTornamentGame.js'; // Importamos la función renderPongGame
 
 class TournamentApp extends HTMLElement {
     constructor() {
@@ -252,25 +252,28 @@ class TournamentApp extends HTMLElement {
     async startMatch(event) {
         const matchIndex = parseInt(event.target.getAttribute('data-index'), 10);
         const match = this.tournamentData.rounds[this.currentRoundIndex][matchIndex];
-        const isAI = match.player2 === 'AI'; // Supongamos que el jugador IA se llama "AI".
+        const isAI = match.player2 === 'AI';
     
         try {
-            // Esperar a que el juego termine y devuelva un ganador
-            const winner = await renderPongGame(match.player1, match.player2, isAI);
+            // Crear y renderizar el juego Pong
+            this.style.display = "none";
+            const pongElement = renderPongGame1(match.player1, match.player2, isAI, (winner) => {
+                match.winner = winner;
+                alert(`Ganador: ${winner}`);
+                
+                // Actualizamos el estado del torneo
+                const matchElement = this.shadowRoot.querySelector(`[data-index="${matchIndex}"]`).parentElement;
+                matchElement.innerHTML = `<p>Ganador: <strong>${winner}</strong></p>`;
+            });
     
-            // Actualizar los datos del torneo
-            match.winner = winner;
-    
-            // Mostrar el ganador
-            alert(`Ganador: ${winner}`);
-    
-            // Actualizar la vista
-            const matchElement = this.shadowRoot.querySelector(`[data-index="${matchIndex}"]`).parentElement;
-            matchElement.innerHTML = `<p>Ganador: <strong>${winner}</strong></p>`;
+            // Mostrar el juego
+            document.getElementById('app').appendChild(pongElement);
         } catch (error) {
-            console.error('Error al jugar el partido:', error);
+            console.error('Error al iniciar el partido:', error);
         }
     }
+    
+    
     
     completeRound() {
         const currentRound = this.tournamentData.rounds[this.currentRoundIndex];
@@ -301,6 +304,7 @@ class TournamentApp extends HTMLElement {
             })
             .then((data) => console.log('Torneo guardado:', data))
             .catch((err) => console.error(err));
+
     }
 
     showRoundView() {
