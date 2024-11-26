@@ -3,8 +3,6 @@ import { handleRouteChange } from "../mainScript.js";
 class PongGame extends HTMLElement {
     constructor() {
         super();
-        this.ballSpeedX = 0.10;
-        this.ballSpeedY = 0.005;
         this.velocity;
         this.ballDireccionX = (Math.random() < 0.5 ? -1 : 1);
         this.ballDireccionY = (Math.random() < 0.5 ? -1 : 1);
@@ -53,6 +51,7 @@ class PongGame extends HTMLElement {
         this.pointsG = 0;
         this.pointsR = 0;
         this.pointsY = 0;
+        this.speed = 0.10;
         this.handleKeyDown = this.handleKeyDown.bind(this);
         this.handleKeyUp = this.handleKeyUp.bind(this);
         this.handleKeyDownRed = this.handleKeyDownRed.bind(this);
@@ -431,14 +430,17 @@ class PongGame extends HTMLElement {
         const geometry = new THREE.SphereGeometry(0.1, 8, 8);
         const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
         const marker = new THREE.Mesh(geometry, material);
-
+        console.log(center)
         marker.position.copy(center)
-        this.scene.add(marker);
+        // this.scene.add(marker);
 
         return center;
     }
 
-    calculateDistance(point1, point2) {
+    calculateDistance(point1, point2)
+    {
+        // console.log("Distancia: " , point1.distanceTo(point2))
+        // console.log("Radio:", this.radio);
         return point1.distanceTo(point2);
     }
 
@@ -489,8 +491,8 @@ class PongGame extends HTMLElement {
             { start: p3, end: p1 },
         ];
 
-        this.radio = this.calculateDistance(this.center, this.points[1]);
-        this.connectTwoPoints(this.center, this.points[1]);
+        this.radio = this.calculateDistance(this.center, this.points[2]);
+        this.connectTwoPoints(this.center, this.points[2]);
     }
 
     createpaddles()
@@ -502,7 +504,7 @@ class PongGame extends HTMLElement {
         var m = Math.sqrt(((this.L / 2) * (this.L / 2)) + 25)
         this.RedPosX = (-this.L / 2) + 8 * ((0 - (-this.L / 2)) / m) + 0.1
         this.RedPosY = (-5) + 8 * ((0 + 5) / m) + 0.4
-        this.paddle1.position.set(this.RedPosX, this.RedPosY, 0);
+        this.paddle1.position.set(this.RedPosX + 0.25, this.RedPosY + 0.25, 0);
         this.paddle1.lookAt(new THREE.Vector3(0, 1, 0));
         this.scene.add(this.paddle1);
 
@@ -511,7 +513,7 @@ class PongGame extends HTMLElement {
         var m2 = Math.sqrt(((this.L / 2) * (this.L / 2)) + 25);
         this.GreenposX = (this.L / 2) - 8 * ((this.L / 2 - 0) / m2) + 0.1;
         this.GreenposY = (-5) + 8 * ((0 + 5) / m2) + 0.4;
-        this.paddle2.position.set(this.GreenposX, this.GreenposY, 0);
+        this.paddle2.position.set(this.GreenposX - 0.25, this.GreenposY + 0.25, 0);
         this.paddle2.lookAt(new THREE.Vector3(0, 1, 0));
         this.scene.add(this.paddle2);
 
@@ -520,10 +522,10 @@ class PongGame extends HTMLElement {
         this.paddle3 = new THREE.Mesh(paddleGeometry2, paddleMaterial3);
         this.YellPosX = 0;
         this.YellPosY = 10.3
-        this.paddle3.position.set(this.YellPosX , this.YellPosY, 0);
+        this.paddle3.position.set(this.YellPosX, this.YellPosY - 0.5, 0);
         this.scene.add(this.paddle3);
 
-        this.velocity = new THREE.Vector3(0.10, 0.005, 0);
+        this.velocity = new THREE.Vector3(0.1, 0.075, 0);
     }
 
     conectingpoints()
@@ -556,7 +558,7 @@ class PongGame extends HTMLElement {
         });
     
         const connectingLine = new THREE.Line(lineGeometry, lineMaterial);
-        this.scene.add(connectingLine);
+        // this.scene.add(connectingLine);
     }
     
     async startGame()
@@ -581,17 +583,10 @@ class PongGame extends HTMLElement {
         
         this.initObjects();
                         
-        if (this.calculateDistance(this.center, this.ball.position) < this.radio)
-        {
-            console.log("Entras!")
-            this.ball.position.set(0, 2, 0);
-        }
-
         const animate = async () => 
         {
             if (this.gameStarted) return;
 
-            // await this.moveBall();
             await this.detectAndReflect();
 
             await this.isSomePoint();
@@ -636,8 +631,8 @@ class PongGame extends HTMLElement {
         const end = this.connectionPoints[index + 1];
         
         const direction = new THREE.Vector3().subVectors(end, start).normalize();
-        const speed = 0.10;
-        const movement = direction.multiplyScalar(speed * moveDirection);
+
+        const movement = direction.multiplyScalar(this.speed * moveDirection);
         
         // Comprobar si el nuevo movimiento sale de los límites de la línea
         // const newPosition = paddle.position.clone().add(movement);
@@ -759,7 +754,7 @@ class PongGame extends HTMLElement {
 
     checkPaddleCollision() {
         // Tolerancia para las colisiones (ancho de la pala)
-        const paddleWidth = 0.5;
+        const paddleWidth = 0.1;
     
         // Colisión con la pala horizontal (paddle3)
         if (this.ball.position.y >= this.paddle3.position.y - paddleWidth &&
@@ -767,21 +762,34 @@ class PongGame extends HTMLElement {
             this.ball.position.x >= this.paddle3.position.x - 1 &&
             this.ball.position.x <= this.paddle3.position.x + 1) {
             this.lastTouch = "Y";
+            console.log(this.lastTouch);
             this.ballDireccionY *= -1;
         }
         else if (this.ball.position.y >= this.paddle1.position.y - paddleWidth &&
             this.ball.position.y <= this.paddle1.position.y + paddleWidth &&
             this.ball.position.x >= this.paddle1.position.x - 1 &&
             this.ball.position.x <= this.paddle1.position.x + 1) {
-            this.lastTouch = "G";
+            this.lastTouch = "R";
+            console.log(this.lastTouch);
             this.ballDireccionY *= -1;
+            this.ballDireccionX *= -1;
+            const tmp = this.velocity.x;
+            this.velocity.x = this.velocity.y;
+            this.velocity.y = tmp;
+            // this.velocity.x += 0.02;
             }
         else if (this.ball.position.y >= this.paddle2.position.y - paddleWidth &&
             this.ball.position.y <= this.paddle2.position.y + paddleWidth &&
             this.ball.position.x >= this.paddle2.position.x - 1 &&
             this.ball.position.x <= this.paddle2.position.x + 1) {
-            this.lastTouch = "R";
+            this.lastTouch = "G";
+            console.log(this.lastTouch);
             this.ballDireccionY *= -1;
+            this.ballDireccionX *= -1;
+            const tmp = this.velocity.x;
+            this.velocity.x = this.velocity.y;
+            this.velocity.y = tmp;
+            // this.velocity.x += 0.02;
         }
     }
 
@@ -790,8 +798,8 @@ class PongGame extends HTMLElement {
         this.ball.position.set(0, 2, 0);
         this.ballDireccionX = (Math.random() < 0.5 ? -1 : 1);
         this.ballDireccionY = (Math.random() < 0.5 ? -1 : 1);
-        this.ballSpeedX = 0.10;
-        this.ballSpeedY = 0.005;
+        this.velocity.x = 0.1;
+        this.velocity.y = 0.075;
         this.lastTouch = "N";
     }
 
@@ -860,8 +868,8 @@ class PongGame extends HTMLElement {
                 Math.abs(this.Custom.position.y - this.ball.position.y) <= proximityRange)
             {
                 // Aumentar velocidad pelota
-                this.ballSpeedX += 0.0015;
-                this.ballSpeedY += 0.0005;
+                this.velocity.x += 0.005;
+                this.velocity.y += 0.005;
                 this.Custom.position.set(Math.floor(Math.random() * (4 - (-5) + 1)) + (-5), Math.floor(Math.random() * (5 - (-3) + 1)) + (-3), 0);
                 console.log("Aumento velocidad pelota");
             }
@@ -872,8 +880,8 @@ class PongGame extends HTMLElement {
                 Math.abs(this.Custom1.position.y - this.ball.position.y) <= proximityRange)
             {
                 // Disminuir velocidad de la pelota
-                this.ballSpeedX -= 0.015;
-                this.ballSpeedY -= 0.005;
+                this.velocity.x -= 0.005;
+                this.velocity.y -= 0.005;
                 this.Custom1.position.set(Math.floor(Math.random() * (4 - (-5) + 1)) + (-5), Math.floor(Math.random() * (5 - (-3) + 1)) + (-3), 0);
                 console.log("Disminuir velocidad pelota");
             }
@@ -884,12 +892,7 @@ class PongGame extends HTMLElement {
                 Math.abs(this.Custom2.position.y - this.ball.position.y) <= proximityRange)
             {
                 // Disminuir velocidad de palas
-                if (this.ballDireccionX < 0)
-                    this.aiSpeed -= 0.03;
-                else
-                    this.paddleSpeed -= 0.03;
-                if (this.aiSpeed < 0.03)
-                    this.aiSpeed = 0.03;
+                this.speed -= 0.003;
                 if (this.paddleSpeed < 0.03)
                     this.paddleSpeed = 0.03;
                 this.Custom2.position.set(Math.floor(Math.random() * (4 - (-5) + 1)) + (-5), Math.floor(Math.random() * (5 - (-3) + 1)) + (-3), 0);
@@ -899,44 +902,119 @@ class PongGame extends HTMLElement {
     }
 
 
-     async detectAndReflect() 
-     {
-        this.ball.position.x += this.velocity.x * this.ballDireccionX;
-        this.ball.position.y += this.velocity.y * this.ballDireccionY;
+    //  async detectAndReflect() {
+    //     // Calcula la nueva posición de la pelota sin actualizarla aún
+    //     var nextPosition = new THREE.Vector3(
+    //         this.ball.position.x + this.velocity.x * this.ballDireccionX,
+    //         this.ball.position.y + this.velocity.y * this.ballDireccionY,
+    //         this.ball.position.z
+    //     );
 
-        const ballPos = this.ball.position;
-        for (let edge of this.edges) {
-            const start = edge.start;
-            const end = edge.end;
-    
-            const edgeVector = new THREE.Vector3().subVectors(end, start);
-            const edgeLength = edgeVector.length();
-    
-            // Vector del punto inicial de la arista a la pelota
-            const toBall = new THREE.Vector3().subVectors(ballPos, start);
-    
-            // Proyección de `toBall` sobre el vector de la arista
-            const projection = edgeVector.clone().normalize().multiplyScalar(toBall.dot(edgeVector) / edgeLength);
-    
-            // Punto más cercano en la arista
-            const closestPoint = start.clone().add(projection);
-    
-            // Comprueba si el punto más cercano está dentro de la arista
-            const t = projection.length() / edgeLength;
-            if (t >= 0 && t <= 1) {
-                // Distancia entre la pelota y el punto más cercano
-                const distanceToEdge = ballPos.distanceTo(closestPoint);
-    
-                if (distanceToEdge <= 0.5) {
-                    const normal = new THREE.Vector3().subVectors(ballPos, closestPoint).normalize();
-    
-                    // Refleja la velocidad sobre la normal
-                    this.velocity.reflect(normal);
-                    return;
-                }
-            }
-        }
-    }
+    //     if (this.calculateDistance(this.center, nextPosition) > this.radio + 2) {
+    //         await this.pauseGameAndShowCountdown();
+    //         return;
+    //     }
+
+    //     // Revisa colisión con cada borde
+    //     for (let edge of this.edges) {
+    //         const start = edge.start;
+    //         const end = edge.end;
+
+    //         const edgeVector = new THREE.Vector3().subVectors(end, start);
+    //         const edgeLength = edgeVector.length();
+
+    //         if (edgeLength === 0) continue; // Previene divisiones por cero
+
+    //         const toBall = new THREE.Vector3().subVectors(nextPosition, start);
+    //         const projection = edgeVector.clone().normalize().multiplyScalar(toBall.dot(edgeVector) / edgeLength);
+    //         const closestPoint = start.clone().add(projection);
+
+    //         // Verifica si el punto más cercano está dentro de la arista
+    //         const t = projection.length() / edgeLength;
+    //         if (t >= 0 && t <= 1) {
+    //             const distanceToEdge = nextPosition.distanceTo(closestPoint);
+
+    //             if (distanceToEdge <= 0.5) {
+    //                 const normal = new THREE.Vector3().subVectors(nextPosition, closestPoint);
+    //                 if (normal.length() === 0) continue; // Evita normalización de un vector nulo
+
+    //                 normal.normalize();
+
+    //                 // Refleja la dirección de la velocidad
+    //                 const velocityVector = new THREE.Vector3(
+    //                     this.velocity.x * this.ballDireccionX,
+    //                     this.velocity.y * this.ballDireccionY,
+    //                     0 // Asume 2D
+    //                 );
+
+    //                 const reflectedVelocity = velocityVector.reflect(normal);
+    //                 // nextPosition = new THREE.Vector3(
+    //                 //     this.ball.position.x - this.velocity.x * this.ballDireccionX,
+    //                 //     this.ball.position.y - this.velocity.y * this.ballDireccionY,
+    //                 //     this.ball.position.z
+    //                 // );
+    //                 this.ballDireccionX = reflectedVelocity.x > 0 ? 1 : -1;
+    //                 this.ballDireccionY = reflectedVelocity.y > 0 ? 1 : -1;
+
+    //                 return; // Evita múltiples colisiones en un solo frame
+    //             }
+    //         }
+    //     }
+
+    //     // Actualiza la posición de la pelota solo si no hay colisión
+    //     this.ball.position.copy(nextPosition);
+    // }
+    async detectAndReflect() 
+    {
+       this.ball.position.x += this.velocity.x * this.ballDireccionX;
+       this.ball.position.y += this.velocity.y * this.ballDireccionY;
+
+       if (this.calculateDistance(this.center, this.ball.position) > this.radio + 2)
+       {
+           // console.log("Entras!")
+           await this.pauseGameAndShowCountdown()
+       }
+       const ballPos = this.ball.position;
+       for (let edge of this.edges) {
+           const start = edge.start;
+           const end = edge.end;
+   
+           const edgeVector = new THREE.Vector3().subVectors(end, start);
+           const edgeLength = edgeVector.length();
+   
+           // Vector del punto inicial de la arista a la pelota
+           const toBall = new THREE.Vector3().subVectors(ballPos, start);
+   
+           // Proyección de toBall sobre el vector de la arista
+           const projection = edgeVector.clone().normalize().multiplyScalar(toBall.dot(edgeVector) / edgeLength);
+   
+           // Punto más cercano en la arista
+           const closestPoint = start.clone().add(projection);
+   
+           // Comprueba si el punto más cercano está dentro de la arista
+           const t = projection.length() / edgeLength;
+           if (t >= 0 && t <= 1) {
+               // Distancia entre la pelota y el punto más cercano
+               const distanceToEdge = ballPos.distanceTo(closestPoint);
+               
+            //    this.ball.position.x -= this.velocity.x * this.ballDireccionX;
+            //    this.ball.position.y -= this.velocity.y * this.ballDireccionY;
+               const dir = new THREE.Vector3(this.ballDireccionX, this.ballDireccionY, 0);
+               if (distanceToEdge <= 0.8) {
+                   const normal = new THREE.Vector3().subVectors(ballPos, closestPoint).normalize();
+                //    console.log(normal)
+                   // Refleja la velocidad sobre la normal
+                   this.velocity.reflect(normal);
+
+                //    dir.reflect(normal);
+                //    this.ballDireccionX = this.dir.x;
+                //    this.ballDireccionY = this.dir.y;
+                   return;
+               }
+           }
+       }
+   }
+
 
     async isSomePoint()
     {
@@ -1005,10 +1083,9 @@ class PongGame extends HTMLElement {
     {
         // console.log("CUANTAS VEZES ENTRAS");
         this.gameStarted = false;
-        this.ball.position.set(5, 2, 50);
-        this.ballSpeedX = 0.10;
-        this.ballSpeedY = 0.005;
-        this.lastTouch = "N"
+        this.ball.position.set(0, 2, 0);
+        this.ballDireccionX = (Math.random() < 0.5 ? -1 : 1);
+        this.ballDireccionY = (Math.random() < 0.5 ? -1 : 1);
         this.scene.remove(this.ball);
         await this.showCountdown(this.scene, this.loadfont, this.renderer, this.camera);
     }

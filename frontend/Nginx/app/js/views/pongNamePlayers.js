@@ -5,26 +5,21 @@ class PongGame extends HTMLElement {
         super();
         this.ballSpeedX = 0.15;
         this.ballSpeedY = 0.05;
-        this.velocity;
         this.ballDireccionX = (Math.random() < 0.5 ? -1 : 1);
         this.ballDireccionY = (Math.random() < 0.5 ? -1 : 1);
-        this.ptsred = 0;
-        this.ptsgreen = 0;
-        this.ptsyellow = 0;
+        this.pointsPlayer = 0;
+        this.pointsIA = 0;
         this.aiSpeed = 0.16;
         this.paddleSpeed = 0.16;
-        this.movePaddle1 = 0;
-        this.movePaddle2 = 0;
-        this.movePaddle3 = 0;
-        this.targetPaddle1Y = 0;
-        this.targetPaddle2Y = 0;
-        this.targetPaddle3Y = 0;
+        this.movePaddleLeft = 0;
+        this.movePaddleRight = 0;
+        this.targetPaddleLeftY = 0;
+        this.targetPaddleRightY = 0;
         this.ball = null; // ocultar pelota
         this.countdownText = null;
         this.loadfont = null;
-        this.textred = null;
-        this.textgreen = null;
-        this.textyellow = null;
+        this.playerText = null;
+        this.IAText = null;
         this.gameStarted = false;
         this.gameHeight = 12;
         this.paddleHeight = 2;
@@ -35,21 +30,12 @@ class PongGame extends HTMLElement {
         this.firstSelect = false;
         this.SecondSelect = false;
         this.lastSelect = false;
-        this.edges;
-        this.GreenposX = 0;
-        this.GreenposY = 0;
-        this.YellPosX = 0;
-        this.YellPosY = 0;
-        this.RedPosX = 0;
-        this.RedPosY = 0;
-        this.hexagonRadius = 0;
         this.handleKeyDown = this.handleKeyDown.bind(this);
         this.handleKeyUp = this.handleKeyUp.bind(this);
         this.handleKeyDownL = this.handleKeyDownL.bind(this);
         this.handleKeyUpL = this.handleKeyUpL.bind(this);
-        this.handleKMouseDown = this.handleMouseDown.bind(this);
-        this.handleMouseUp = this.handleMouseUp.bind(this);
-
+        this.player1;
+        this.player2;
     }
 
     async connectedCallback() {
@@ -57,8 +43,8 @@ class PongGame extends HTMLElement {
         window.addEventListener('keyup', this.handleKeyUp);
         window.addEventListener('keydown', this.handleKeyDownL);
         window.addEventListener('keyup', this.handleKeyUpL);
-        window.addEventListener('mousedown', this.handleMouseDown);
-        window.addEventListener('mouseup', this.handleMouseUp);
+        this.player1 = this.getAttribute('player1');
+        this.player2 = this.getAttribute('player2');
         this.createModalData();
     }
 
@@ -109,7 +95,7 @@ z
         if (btnTryAgain) {
             btnTryAgain.addEventListener('click', () => {
                 myModal.dispose()
-                history.pushState('', '', '/localgameMulti');
+                history.pushState('', '', '/localgame1vs1');
                 handleRouteChange();
             });
         }
@@ -321,15 +307,11 @@ z
             loader.load('https://threejs.org/examples/fonts/helvetiker_bold.typeface.json', (font) => {
                 console.log("Font loaded successfully.");
                 this.loadfont = font;
-                const textMaterial = new THREE.MeshStandardMaterial({ color: 0xff0000 });
-                this.textred = this.createText("Team Red: " + this.ptsred, new THREE.Vector3(-18, -5.5, 0), font, textMaterial);
-                const textMaterial1 = new THREE.MeshStandardMaterial({ color: 0x00ff00});
-                this.textgreen = this.createText("Team Green: " + this.ptsgreen, new THREE.Vector3(12, -5.5, 0), font, textMaterial1);
-                const textMaterial2 = new THREE.MeshStandardMaterial({ color: 0xffff00 });
-                this.textyellow = this.createText("Team Yellow: " + this.ptsyellow, new THREE.Vector3(-3.5, 14.5, 0), font, textMaterial2);
-                this.scene.add(this.textred);
-                this.scene.add(this.textgreen);
-                this.scene.add(this.textyellow);
+                const textMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff });
+                this.playerText = this.createText(this.player1 + ": " + this.pointsPlayer, new THREE.Vector3(-15, 9.5, 0), font, textMaterial);
+                this.IAText = this.createText(this.player2 + ": " + this.pointsIA, new THREE.Vector3(8, 9.5, 0), font, textMaterial);
+                this.scene.add(this.playerText);
+                this.scene.add(this.IAText);
                 resolve(font); // Resolvemos la promesa con la fuente
             }, undefined, (error) => {
                 console.error("Error loading font:", error);
@@ -355,62 +337,67 @@ z
         this.scene.remove(countdownMesh);
     }
 
-    initObjects() {
+    initObjects()
+    {   
+  
         const sphereGeometry = new THREE.SphereGeometry(0.5, 27, 27);
         const sphereMaterial = new THREE.MeshStandardMaterial({ color: 0x87CEEB, metalness: 0.5, roughness: 0.5 });
         this.ball = new THREE.Mesh(sphereGeometry, sphereMaterial);
         this.ball.position.set(0, 2, 0);
         this.camera.position.set(0, 1, 20);
         this.scene.add(this.ball);
-    
-        this.hexagonRadius = 11; // Radio del hexágono
-        const hexagonGeometry = new THREE.CylinderGeometry(this.hexagonRadius, this.hexagonRadius, 0.1, 6, 1); 
-        const hexagonEdges = new THREE.EdgesGeometry(hexagonGeometry);
-        const hexagonEdgeMaterial = new THREE.LineBasicMaterial({ color: 0x808080 });
-        this.hexagon = new THREE.LineSegments(hexagonEdges, hexagonEdgeMaterial);
-        this.hexagon.rotation.x = Math.PI / 2; // Asegura que esté plano
-        this.hexagon.position.set(0, 3, 0);
-        this.scene.add(this.hexagon);
-    
-        const paddleGeometry = new THREE.BoxGeometry(0.4, 2, 0.1);
-        const paddleMaterial1 = new THREE.MeshStandardMaterial({ color: 0xff0000 });
-        const paddleMaterial2 = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
-        const paddleMaterial3 = new THREE.MeshStandardMaterial({ color: 0xffff00 });
-    
-        const paddlePositions = [
-            { x: this.hexagonRadius * Math.cos(Math.PI / 3), y: 10, z: 0 },  // Lado 0
-            { x: this.hexagonRadius * Math.cos(3.6 * Math.PI / 3), y: 3, z: 0 },  // Lado 2
-            { x: this.hexagonRadius * Math.cos(5 * Math.PI / 3), y: -4, z: 0 },  // Lado 4
-        ];
-    
-        const paddleOrientations = [
-            Math.PI / 3, 
-            3 * Math.PI / 3, 
-            5 * Math.PI / 3
-        ];
 
-        const paddleLines = [
-            { start: { x: 5.5, y: 9.5 }, end: { x: 0, y: 12.5 } },  // Línea del lado 0 (pala roja)
-            { start: { x: -11.5, y: 15 }, end: { x: -5.5, y: -9.5 } },   // Línea del lado 2 (pala verde)
-            { start: { x: -5.5, y: -7.5 }, end: { x: 11, y: 0 } },     // Línea del lado 4 (pala amarilla)
+        const CustomGeometry = new THREE.ConeGeometry(0.5, 1, 16);
+        const CustomMaterial = new THREE.MeshStandardMaterial({ color: 0xFFC0CB, metalness: 0.5, roughness: 0.5 });
+        this.Custom = new THREE.Mesh(CustomGeometry, CustomMaterial);
+        this.Custom.position.set(4, -2, 0);
+        this.camera.position.set(0, 1, 20);
+        if (this.addCustom)
+            this.scene.add(this.Custom);
+
+        const Custom1Geometry = new THREE.IcosahedronGeometry(0.5);
+        const Custom1Material = new THREE.MeshStandardMaterial({ color: 0x00FF00, metalness: 0.5, roughness: 0.5 });
+        this.Custom1 = new THREE.Mesh(Custom1Geometry, Custom1Material);
+        this.Custom1.position.set(-1, 4, 0);
+        this.camera.position.set(0, 1, 20);
+        if (this.addCustom1)
+            this.scene.add(this.Custom1);
+
+        const Custom2Geometry =  new THREE.TorusKnotGeometry(0.4, 0.12, 47, 7);
+        const Custom2Material = new THREE.MeshStandardMaterial({ color: 0x00FFFF, metalness: 0.5, roughness: 0.5 });
+        this.Custom2 = new THREE.Mesh(Custom2Geometry, Custom2Material);
+        this.Custom2.position.set(-4, -2, 0);
+        this.camera.position.set(0, 1, 20);
+        if (this.addCustom2)
+            this.scene.add(this.Custom2);
+
+        const paddleGeometry = new THREE.BoxGeometry(0.4, 2, 0.1);
+        const paddleMaterial = new THREE.MeshStandardMaterial({ color: 0xff0000 });
+        this.paddleLeft = new THREE.Mesh(paddleGeometry, paddleMaterial);
+        this.paddleLeft.position.x = -14;
+        this.paddleLeft.position.y = 2;
+        this.targetPaddleLeftY = 2;
+        this.scene.add(this.paddleLeft);
+
+        this.paddleRight = new THREE.Mesh(paddleGeometry, paddleMaterial);
+        this.paddleRight.position.x = 12.5;
+        this.targetPaddleRightY = 2;
+        this.paddleRight.position.y = 2;
+        this.scene.add(this.paddleRight);
+
+        const borderMaterial = new THREE.LineBasicMaterial({ color: 0xffffff });
+        const points = [
+            new THREE.Vector3(-15, 8, 0),
+            new THREE.Vector3(13.5, 8, 0),
+            new THREE.Vector3(13.5, -4, 0),
+            new THREE.Vector3(-15, -4, 0)
         ];
-    
-        this.paddles = [];
-        const paddleMaterials = [paddleMaterial1, paddleMaterial2, paddleMaterial3];
-        for (let i = 0; i < 3; i++) {
-            const paddle = {
-                mesh: new THREE.Mesh(paddleGeometry, paddleMaterials[i]),
-                position: { x: paddlePositions[i].x, y: paddlePositions[i].y, z: paddlePositions[i].z },
-                orientation: paddleOrientations[i],
-                line: paddleLines[i],
-            };
-            paddle.mesh.position.set(paddle.position.x, paddle.position.y, paddle.position.z);
-            paddle.mesh.rotation.z = paddle.orientation;
-            this.scene.add(paddle.mesh);
-            this.paddles.push(paddle);
-        }
-    }
         
+        const geometry = new THREE.BufferGeometry().setFromPoints(points);
+        const border = new THREE.LineSegments(geometry, borderMaterial);
+        this.scene.add(border);
+    }
+    
     async startGame()
     {
         this.scene = new THREE.Scene();
@@ -429,7 +416,7 @@ z
 
         this.renderer.render(this.scene, this.camera);
         
-        // await this.startCountdown();
+        await this.startCountdown();
         
         this.initObjects();
                         
@@ -437,13 +424,16 @@ z
         {
             if (this.gameStarted) return;
 
-            // await this.moveBall();
-            // await this.detectAndReflect();
+            await this.moveBall();
 
-            // this.customGame();
-                        
-            this.updatePaddleMovement();
-
+            this.customGame();
+            
+            this.checkPaddleCollision();
+            
+            this.movaPaddles();
+            
+            this.paddleLeft.position.y = THREE.MathUtils.clamp(this.targetPaddleLeftY, -3, 7);
+            this.paddleRight.position.y  = THREE.MathUtils.clamp(this.targetPaddleRightY, -3, 7);
             this.renderer.render(this.scene, this.camera);
             
             if (!this.checkIfLost())
@@ -453,83 +443,6 @@ z
         animate();
     }
 
-    updatePaddleMovement() {
-        const movementSpeed = 0.2; // Velocidad de movimiento de las palas
-    
-        // Mover pala 1 (Teclas W y S)
-        this.movePaddle(0, this.movePaddle1 * movementSpeed);
-    
-        // Mover pala 2 (Raton izquierdo y derecho)
-        this.movePaddle(1, this.movePaddle2 * movementSpeed);
-    
-        // Mover pala 3 (Teclas Flecha arriba y abajo)
-        this.movePaddle(2, this.movePaddle3 * movementSpeed);
-    }
-    
-    movePaddle(index, movement) {
-        const paddle = this.paddles[index];
-        const paddleMesh = paddle.mesh;
-        const angle = -paddle.orientation;
-    
-        // Calculamos el movimiento en X y Y con respecto a la orientación de la pala
-        const movementInX = movement * Math.sin(angle);
-        const movementInY = movement * Math.cos(angle);
-    
-        // Nueva posición de la pala después del movimiento
-        const newPosition = {
-            x: paddle.position.x + movementInX,
-            y: paddle.position.y + movementInY,
-        };
-    
-        // Proyectamos la nueva posición sobre la línea del hexágono correspondiente
-        const lineStart = paddle.line.start; // Punto inicial de la línea
-        const lineEnd = paddle.line.end;     // Punto final de la línea
-    
-        const lineVector = {
-            x: lineEnd.x - lineStart.x,
-            y: lineEnd.y - lineStart.y,
-        };
-    
-        const lineLengthSquared = lineVector.x ** 2 + lineVector.y ** 2;
-    
-        const paddleToStart = {
-            x: newPosition.x - lineStart.x,
-            y: newPosition.y - lineStart.y,
-        };
-    
-        // Proyección escalar de la posición de la pala sobre el vector de la línea
-        const t = Math.max(
-            0,
-            Math.min(1, (paddleToStart.x * lineVector.x + paddleToStart.y * lineVector.y) / lineLengthSquared)
-        );
-    
-        // Calculamos la posición limitada en la línea
-        const limitedPosition = {
-            x: lineStart.x + t * lineVector.x,
-            y: lineStart.y + t * lineVector.y,
-        };
-    
-        // Actualizamos la posición de la pala
-        paddle.position.x = limitedPosition.x;
-        paddle.position.y = limitedPosition.y;
-    
-        // Actualizamos la posición de la pala en el escenario
-        paddleMesh.position.set(paddle.position.x, paddle.position.y, paddle.position.z);
-    }
-    
-    
-
-    isPointInTriangle(p, p1, p2, p3) {
-        const area = (p1, p2, p3) => Math.abs((p1.x * (p2.y - p3.y) + p2.x * (p3.y - p1.y) + p3.x * (p1.y - p2.y)) / 2.0);
-    
-        const A = area(p1, p2, p3);
-        const A1 = area(p, p2, p3);
-        const A2 = area(p1, p, p3);
-        const A3 = area(p1, p2, p);
-    
-        return Math.abs(A - (A1 + A2 + A3)) < 0.01; // Ajustar el margen de error
-    }
-    
     printCountdown(countdown,countdownMesh, scene, font) {
         scene.remove(countdownMesh);
         countdownMesh.geometry.dispose();
@@ -582,70 +495,39 @@ z
 
     handleKeyDown(event) {
         if (event.key === "ArrowUp") {
-            this.movePaddle3 = 1;
+            this.movePaddleRight = 1;
         } else if (event.key === "ArrowDown") {
-            this.movePaddle3 = -1;
+            this.movePaddleRight = -1;
         }
     }
 
     handleKeyUp(event) {
         if (event.key === "ArrowUp" || event.key === "ArrowDown") {
-            this.movePaddle3 = 0;
+            this.movePaddleRight = 0;
         }
     }
 
     handleKeyDownL(event) {
-        if (event.key === 'W' || event.key === 'w') {
-            this.movePaddle1 = 1;
-        } else if (event.key === 'S' || event.key === 's') {
-            this.movePaddle1 = -1; 
+        if (event.key === 'w' || event.key === 'W') {
+            this.movePaddleLeft = 1;
+        } else if (event.key === 's' || event.key === 'S') {
+            this.movePaddleLeft = -1; 
         }
     }
 
     handleKeyUpL(event) {
-        if (event.key === 's' || event.key === 'S' || event.key === 'w' || event.key === 'W') {
-            this.movePaddle1 = 0;
+        if (event.key === 'w' || event.key === 's' || event.key === 'W' || event.key === 'S') {
+            this.movePaddleLeft = 0;
         }
     }
 
-    handleMouseDown(event) {
-        if (event.key === 'T' || event.key === 't') {
-            this.movePaddle2 = 1;
-        } else if (event.key === 'G' || event.key === 'g') {
-            this.movePaddle2 = -1; 
-        }
-        // console.log('MouseDown:', event.button);
-        // if (event.button === 0) { // Botón izquierdo del ratón
-        //     this.movePaddle2 = 1;
-        // } else if (event.button === 2) { // Botón derecho del ratón
-        //     this.movePaddle2 = -1;
-        // }
-    }
-    
-    handleMouseUp(event) {
-        if (event.key === 'T' || event.key === 't' || event.key === 'G' || event.key === 'g') {
-            this.movePaddle2 = 0;
-        }
-        // console.log('MouseUp:', event.button);
-        // if (event.button === 0 || event.button === 2) { // Ambos botones
-        //     this.movePaddle2 = 0;
-        // }
-    }
-
-
-    checkPaddleCollision()
-    {
-        if (this.ball.position.x >= this.paddle3.position.x - 0.7 && this.ball.position.y < this.paddle3.position.y + 1 && this.ball.position.y > this.paddle3.position.y - 1) {
+    checkPaddleCollision() {
+        if (this.ball.position.x <= this.paddleLeft.position.x + 0.7 && this.ball.position.y < this.paddleLeft.position.y + 1 && this.ball.position.y > this.paddleLeft.position.y - 1) {
             this.ballDireccionX *= -1;
             this.ballSpeedX += 0.009;
             this.ballSpeedY += 0.0009;
         }
-        if (this.ball.position.x >= this.paddle1.position.x - 0.7 && this.ball.position.y < this.paddle1.position.y + 1 && this.ball.position.y > this.paddle1.position.y - 1) {
-            this.ballDireccionX *= -1;
-            this.ballSpeedX += 0.009;
-            this.ballSpeedY += 0.0009;
-        }
-        if (this.ball.position.x <= this.paddle2.position.x + 0.7 && this.ball.position.y < this.paddle2.position.y + 1 && this.ball.position.y > this.paddle2.position.y - 1) {
+        if (this.ball.position.x >= this.paddleRight.position.x - 0.7 && this.ball.position.y < this.paddleRight.position.y + 1 && this.ball.position.y > this.paddleRight.position.y - 1) {
             this.ballDireccionX *= -1;
             this.ballSpeedX += 0.009;
             this.ballSpeedY += 0.0009;
@@ -667,7 +549,7 @@ z
         if (name == 'Player2')
         {
             this.IAText.geometry.dispose(); // Eliminamos anterior
-            this.IAText.geometry = new THREE.TextGeometry(name + ": " + points, {
+            this.IAText.geometry = new THREE.TextGeometry(this.player2 + ": " + points, {
                 font: this.loadfont,
                 size: 0.8,
                 height: 0.1,
@@ -681,7 +563,7 @@ z
         else
         {
             this.playerText.geometry.dispose();
-            this.playerText.geometry = new THREE.TextGeometry(name + ": " + points, {
+            this.playerText.geometry = new THREE.TextGeometry(this.player1 + ": " + points, {
                     font: this.loadfont,
                     size: 0.8,
                     height: 0.1,
@@ -747,15 +629,15 @@ z
     {
         this.ball.position.x += this.ballSpeedX * this.ballDireccionX;
         this.ball.position.y += this.ballSpeedY * this.ballDireccionY;
-        if (this.ball.position.x > 15) {
+        if (this.ball.position.x > 17) {
             this.pointsPlayer++;
-            this.reprint("Team1", this.pointsPlayer);
+            this.reprint("Player1", this.pointsPlayer);
             await this.pauseGameAndShowCountdown()
             this.resetBall();
         }
-        if (this.ball.position.x < -15) {
+        if (this.ball.position.x < -17) {
             this.pointsIA++;
-            this.reprint("Team2", this.pointsIA);
+            this.reprint("Player2", this.pointsIA);
             await this.pauseGameAndShowCountdown()
             this.resetBall();
         }
@@ -764,42 +646,16 @@ z
         }
     }
 
-     async detectAndReflect() 
-     {
-        this.ball.position.x += this.velocity.x * this.ballDireccionX;
-        this.ball.position.y += this.velocity.y * this.ballDireccionY;
-
-        const ballPos = this.ball.position;
-        for (let edge of this.edges) {
-            const start = edge.start;
-            const end = edge.end;
-    
-            const edgeVector = new THREE.Vector3().subVectors(end, start);
-            const edgeLength = edgeVector.length();
-    
-            // Vector del punto inicial de la arista a la pelota
-            const toBall = new THREE.Vector3().subVectors(ballPos, start);
-    
-            // Proyección de `toBall` sobre el vector de la arista
-            const projection = edgeVector.clone().normalize().multiplyScalar(toBall.dot(edgeVector) / edgeLength);
-    
-            // Punto más cercano en la arista
-            const closestPoint = start.clone().add(projection);
-    
-            // Comprueba si el punto más cercano está dentro de la arista
-            const t = projection.length() / edgeLength;
-            if (t >= 0 && t <= 1) {
-                // Distancia entre la pelota y el punto más cercano
-                const distanceToEdge = ballPos.distanceTo(closestPoint);
-    
-                if (distanceToEdge <= 0.5) {
-                    const normal = new THREE.Vector3().subVectors(ballPos, closestPoint).normalize();
-    
-                    // Refleja la velocidad sobre la normal
-                    this.velocity.reflect(normal);
-                    return;
-                }
-            }
+    movaPaddles()
+    {
+        if (this.movePaddleLeft === 1 && this.targetPaddleLeftY < 8) {
+            this.targetPaddleLeftY += this.aiSpeed;
+        } else if (this.movePaddleLeft === -1 && this.targetPaddleLeftY > -4)
+            this.targetPaddleLeftY -= this.aiSpeed;
+        if (this.movePaddleRight === 1 && this.targetPaddleRightY < 8) {
+            this.targetPaddleRightY += this.paddleSpeed;
+        } else if (this.movePaddleRight === -1 && this.targetPaddleRightY > -4) {
+            this.targetPaddleRightY -= this.paddleSpeed;
         }
     }
 
@@ -838,16 +694,18 @@ z
     {
         this.pointsIA = 0;
         this.pointsPlayer = 0;
-        this.reprint("Team1", this.pointsPlayer);
-        this.reprint("Team2", this.pointsIA);
+        this.reprint("Player X", this.pointsPlayer);
+        this.reprint("IA", this.pointsIA);
         this.ball = null;
         this.gameStarted = false;
     }
 
 }
 
-customElements.define('pong-gamemulti', PongGame);
+customElements.define('pong-gamename', PongGame);
 
-export default function renderPongGameMulti() {
-    return '<pong-gamemulti></pong-gamemulti>';
+export default function renderPongGameName(player1, player2) 
+{
+    return `<pong-gamename player1="${player1}" player2="${player2}"></pong-gamename>`;
 }
+
