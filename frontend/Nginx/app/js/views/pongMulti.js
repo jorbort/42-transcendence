@@ -52,6 +52,7 @@ class PongGame extends HTMLElement {
         this.pointsR = 0;
         this.pointsY = 0;
         this.speed = 0.10;
+        this.sohard;
         this.handleKeyDown = this.handleKeyDown.bind(this);
         this.handleKeyUp = this.handleKeyUp.bind(this);
         this.handleKeyDownRed = this.handleKeyDownRed.bind(this);
@@ -333,9 +334,12 @@ class PongGame extends HTMLElement {
                 this.textgreen = this.createText("Team Green: " + this.ptsgreen, new THREE.Vector3(12, -5.5, 0), font, textMaterial1);
                 const textMaterial2 = new THREE.MeshStandardMaterial({ color: 0xffff00 });
                 this.textyellow = this.createText("Team Yellow: " + this.ptsyellow, new THREE.Vector3(-3.5, 14.5, 0), font, textMaterial2);
+                const sohardMaterial = new THREE.MeshStandardMaterial({ color: 0x808080 });
+                this.sohard = this.createText("Don't hit too hard!", new THREE.Vector3(10, 7.5, 0), font, sohardMaterial);
                 this.scene.add(this.textred);
                 this.scene.add(this.textgreen);
                 this.scene.add(this.textyellow);
+                this.scene.add(this.sohard);
                 resolve(font); // Resolvemos la promesa con la fuente
             }, undefined, (error) => {
                 console.error("Error loading font:", error);
@@ -430,7 +434,7 @@ class PongGame extends HTMLElement {
         const geometry = new THREE.SphereGeometry(0.1, 8, 8);
         const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
         const marker = new THREE.Mesh(geometry, material);
-        console.log(center)
+        // console.log(center)
         marker.position.copy(center)
         // this.scene.add(marker);
 
@@ -497,7 +501,7 @@ class PongGame extends HTMLElement {
 
     createpaddles()
     {
-        const paddleGeometry = new THREE.BoxGeometry(0.3, 2, 0.1);
+        const paddleGeometry = new THREE.BoxGeometry(0.6, 2, 0.1);
 
         const paddleMaterial = new THREE.MeshStandardMaterial({ color: 0xff0000 });
         this.paddle1 = new THREE.Mesh(paddleGeometry, paddleMaterial);
@@ -518,7 +522,7 @@ class PongGame extends HTMLElement {
         this.scene.add(this.paddle2);
 
         const paddleMaterial3 = new THREE.MeshStandardMaterial({ color: 0xffff00 });
-        const paddleGeometry2 = new THREE.BoxGeometry(2, 0.15, 0.1);
+        const paddleGeometry2 = new THREE.BoxGeometry(2, 0.25, 0.1);
         this.paddle3 = new THREE.Mesh(paddleGeometry2, paddleMaterial3);
         this.YellPosX = 0;
         this.YellPosY = 10.3
@@ -725,36 +729,36 @@ class PongGame extends HTMLElement {
     }
 
     handleKeyDownRed(event) {
-        if (event.key === 'Q' || event.key === 'q') {
+        if (event.key === 'W' || event.key === 'w') {
             this.movePaddle1 = -1;
-        } else if (event.key === 'A' || event.key === 'a') {
+        } else if (event.key === 'S' || event.key === 's') {
             this.movePaddle1 = 1; 
         }
     }
 
     handleKeyUpRed(event) {
-        if (event.key === 'Q' || event.key === 'q' || event.key === 'A' || event.key === 'a') {
+        if (event.key === 'W' || event.key === 'w' || event.key === 'S' || event.key === 'S') {
             this.movePaddle1 = 0;
         }
     }
 
     handleKeyDownGreen(event) {
-        if (event.key === 'U' || event.key === 'u') {
+        if (event.key === 'I' || event.key === 'i') {
             this.movePaddle2 = 1;
-        } else if (event.key === 'H' || event.key === 'h') {
+        } else if (event.key === 'K' || event.key === 'k') {
             this.movePaddle2 = -1;
         }
     }
     
     handleKeyUpGreen(event) {
-        if (event.key === 'U' || event.key === 'u' || event.key === 'H' || event.key === 'h') {
+        if (event.key === 'I' || event.key === 'i' || event.key === 'K' || event.key === 'k') {
             this.movePaddle2 = 0;
         }
     }
 
     checkPaddleCollision() {
         // Tolerancia para las colisiones (ancho de la pala)
-        const paddleWidth = 0.1;
+        const paddleWidth = 0.3;
     
         // Colisión con la pala horizontal (paddle3)
         if (this.ball.position.y >= this.paddle3.position.y - paddleWidth &&
@@ -762,7 +766,7 @@ class PongGame extends HTMLElement {
             this.ball.position.x >= this.paddle3.position.x - 1 &&
             this.ball.position.x <= this.paddle3.position.x + 1) {
             this.lastTouch = "Y";
-            console.log(this.lastTouch);
+            // console.log(this.lastTouch);
             this.ballDireccionY *= -1;
         }
         else if (this.ball.position.y >= this.paddle1.position.y - paddleWidth &&
@@ -770,7 +774,9 @@ class PongGame extends HTMLElement {
             this.ball.position.x >= this.paddle1.position.x - 1 &&
             this.ball.position.x <= this.paddle1.position.x + 1) {
             this.lastTouch = "R";
-            console.log(this.lastTouch);
+            // console.log(this.lastTouch);
+            this.ball.position.x -= this.velocity.x * this.ballDireccionX;
+            this.ball.position.y -= this.velocity.y * this.ballDireccionY;
             this.ballDireccionY *= -1;
             this.ballDireccionX *= -1;
             const tmp = this.velocity.x;
@@ -783,7 +789,9 @@ class PongGame extends HTMLElement {
             this.ball.position.x >= this.paddle2.position.x - 1 &&
             this.ball.position.x <= this.paddle2.position.x + 1) {
             this.lastTouch = "G";
-            console.log(this.lastTouch);
+            // console.log(this.lastTouch);
+            this.ball.position.x -= this.velocity.x * this.ballDireccionX;
+            this.ball.position.y -= this.velocity.y * this.ballDireccionY;
             this.ballDireccionY *= -1;
             this.ballDireccionX *= -1;
             const tmp = this.velocity.x;
@@ -803,59 +811,68 @@ class PongGame extends HTMLElement {
         this.lastTouch = "N";
     }
 
-    reprint(name, reset)
+    detectLineGoal(i)
     {
-        if (name == "N")
-            return ;
-        if (name == "Y")
+        if (i == 0)
+            return "G";
+        else if (i == 2)
+            return "Y";
+        else if (i == 4)
+            return "R";
+    }
+    
+    creategeometry(text, points)
+    {
+        return (new THREE.TextGeometry(text + ": " + points, {
+            font: this.loadfont,
+            size: 0.8,
+            height: 0.1,
+            curveSegments: 12, // Suavidad
+            bevelEnabled: true, // biselado para el borde
+            bevelThickness: 0.03,
+            bevelSize: 0.02,
+            bevelSegments: 5
+        }))
+    }
+
+    goalsothertwo(lineGoal)
+    {
+        if (lineGoal == "Y")
         {
-            this.textgreen.geometry.dispose(); // Eliminamos anterior
-            if (reset != "reset")
-                this.pointsG++;
-            this.textgreen.geometry = new THREE.TextGeometry("Team Green" + ": " + this.pointsY, {
-                font: this.loadfont,
-                size: 0.8,
-                height: 0.1,
-                curveSegments: 12, // Suavidad
-                bevelEnabled: true, // biselado para el borde
-                bevelThickness: 0.03,
-                bevelSize: 0.02,
-                bevelSegments: 5
-            });
+            this.pointsG++;
+            this.pointsR++;
         }
-        else if (name == "R")
+        else if (lineGoal == "R")
         {
-            this.textred.geometry.dispose();
-            if (reset != "reset")
-                this.pointsR++;
-            this.textred.geometry = new THREE.TextGeometry("Team Red" + ": " + this.pointsR, {
-                    font: this.loadfont,
-                    size: 0.8,
-                    height: 0.1,
-                    curveSegments: 12, // Suavidad
-                    bevelEnabled: true, // biselado para el borde
-                    bevelThickness: 0.03,
-                    bevelSize: 0.02,
-                    bevelSegments: 5
-                });
+            this.pointsG++;
+            this.pointsY++;
         }
+        else if (lineGoal == "G")
+        {
+            this.pointsR++;
+            this.pointsY++;
+        }
+    }
+
+    reprint(name, reset, lineGoal = undefined)
+    {   
+        if (name == lineGoal || name == "N")
+            this.goalsothertwo(lineGoal);
         else
         {
-            this.textyellow.geometry.dispose();
-            if (reset != "reset")
+            if (name == "G")
+                this.pointsG++;
+            else if (name == "R")
+                this.pointsR++;
+            else
                 this.pointsY++;
-            this.textyellow.geometry = new THREE.TextGeometry("Team Yellow" + ": " + this.pointsY, {
-                    font: this.loadfont,
-                    size: 0.8,
-                    height: 0.1,
-                    curveSegments: 12, // Suavidad
-                    bevelEnabled: true, // biselado para el borde
-                    bevelThickness: 0.03,
-                    bevelSize: 0.02,
-                    bevelSegments: 5
-                });
         }
-
+        this.textgreen.geometry.dispose();
+        this.textgreen.geometry = this.creategeometry("Team Green", this.pointsG);
+        this.textred.geometry.dispose();
+        this.textred.geometry = this.creategeometry("Team Red", this.pointsR);
+        this.textyellow.geometry.dispose();
+        this.textyellow.geometry = this.creategeometry("Team Yellow", this.pointsY);
     }
 
     customGame() {
@@ -997,18 +1014,19 @@ class PongGame extends HTMLElement {
                // Distancia entre la pelota y el punto más cercano
                const distanceToEdge = ballPos.distanceTo(closestPoint);
                
-            //    this.ball.position.x -= this.velocity.x * this.ballDireccionX;
-            //    this.ball.position.y -= this.velocity.y * this.ballDireccionY;
                const dir = new THREE.Vector3(this.ballDireccionX, this.ballDireccionY, 0);
                if (distanceToEdge <= 0.8) {
                    const normal = new THREE.Vector3().subVectors(ballPos, closestPoint).normalize();
-                //    console.log(normal)
+                   //    console.log(normal)
                    // Refleja la velocidad sobre la normal
-                   this.velocity.reflect(normal);
+                   //    this.dir.reflect(normal);
+                   this.ball.position.x -= this.velocity.x * this.ballDireccionX;
+                   this.ball.position.y -= this.velocity.y * this.ballDireccionY;
 
-                //    dir.reflect(normal);
-                //    this.ballDireccionX = this.dir.x;
-                //    this.ballDireccionY = this.dir.y;
+                   dir.reflect(normal);
+                   this.ballDireccionX = dir.x;
+                   this.ballDireccionY = dir.y;
+                //    console.log(this.ballDireccionX, this.ballDireccionY);
                    return;
                }
            }
@@ -1045,10 +1063,10 @@ class PongGame extends HTMLElement {
                 if (distanceToEdge <= 0.2) {
                     const normal = new THREE.Vector3().subVectors(ballPos, closestPoint).normalize();
                         this.velocity.reflect(normal);
-                    this.pointsPlayer++;
-                    console.log(this.lastTouch)
-                    this.reprint(this.lastTouch, "noreset");
-                    await this.pauseGameAndShowCountdown()
+                    // console.log(this.lastTouch)
+                    this.reprint(this.lastTouch, "noreset", this.detectLineGoal(i));
+                    if (this.pointsG != 3 && this.pointsR != 3 && this.pointsY != 3)
+                        await this.pauseGameAndShowCountdown()
                     this.resetBall();
                     return;
                 }
