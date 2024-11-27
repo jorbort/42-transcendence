@@ -34,6 +34,9 @@ class LoginView(generics.GenericAPIView):
 				[user.email],
 				fail_silently=False,
 			)
+			request.session['username'] = username
+			request.session.save()
+			logger.debug(f"Username stored in session: {request.session['username']}")
 			return Response({'detail': 'Verification code sent successfully.'}, status=status.HTTP_200_OK)
 		logger.warning(f"Invalid login attempt for username: {username}")
 		return Response({'detail': 'Invalid credentials.'}, status=status.HTTP_401_UNAUTHORIZED)
@@ -42,11 +45,12 @@ class LoginView(generics.GenericAPIView):
 @api_view(['POST'])
 def OtpVerify(request):
 	username= request.data.get('username')
-	password = request.data.get('password')
+	password= request.data.get('password')
 	otp = request.data.get('otp')
 
 	user = authenticate(request, username=username, password=password)
 
+	
 	if user is not None:
 		if (
 			user.otp == otp and

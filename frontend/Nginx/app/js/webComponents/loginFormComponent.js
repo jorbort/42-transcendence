@@ -1,3 +1,6 @@
+
+//import  handleRouteChange from "../mainScript";
+
 export default class loginFormComponent extends HTMLElement{
 	constructor(){
 		super();
@@ -255,7 +258,6 @@ export default class loginFormComponent extends HTMLElement{
 	}
 	signin() {
         const form = this.shadowRoot.getElementById('loginForm');
-        const signInButton = this.shadowRoot.getElementById('sign_in');
 
         if (form) {
             form.addEventListener('submit', async function(event) {
@@ -284,7 +286,10 @@ export default class loginFormComponent extends HTMLElement{
                         console.log(data);
                         if (data.detail === 'Verification code sent successfully.') {
                             console.log('Verification code sent successfully.');
-                            // Call otp function here if needed
+                            localStorage.setItem('username', username);
+							localStorage.setItem('pass', password);
+							window.location.pathname = '/otpView';
+							handleRouteChange();
                         }
                     } else {
                         const errorData = await response.json();
@@ -333,8 +338,10 @@ export default class loginFormComponent extends HTMLElement{
                         const data = await response.json();
                         console.log(data);
                         alert("User created successfully");
-                        window.history.pushState({}, '', '/login');
-                        handleRouteChange();
+                        // window.history.pushState({}, '', '/login');
+						localStorage.setItem('username', username);
+						window.location.pathname = '/otpView';
+						handleRouteChange();
                     }
                     else{
                         const errorData = await response.json();
@@ -345,12 +352,16 @@ export default class loginFormComponent extends HTMLElement{
                     }
                 } catch (error) {
                     console.error('Error:', error);
-                } finally {
-                    hideSpinner();
                 }
             });
         } else {
             console.error('Signup form not found');
+        }
+    }
+	disconnectedCallback() {
+        const signupForm = this.querySelector('#signupForm');
+        if (signupForm) {
+            signupForm.removeEventListener('submit', this.handleSubmit);
         }
     }
 }

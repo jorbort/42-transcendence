@@ -1,4 +1,4 @@
-import {otpView, otp} from './otpView.js';
+
 import loginFormComponent from '../webComponents/loginFormComponent.js';
 import  TitleComponent  from '../webComponents/TitleComponent.js';
 

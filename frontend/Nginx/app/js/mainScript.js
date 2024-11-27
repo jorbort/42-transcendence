@@ -2,7 +2,9 @@ import {createUser, signup} from './views/createUser.js';
 import {loginView} from './views/loginView.js';
 import {} from './views/loginView.js';
 
-// import {otpView, otp} from './views/otpView.js';
+import OTPComponent from './webComponents/OTPInputComponent.js';
+
+import {otpView} from './views/otpView.js';
 // import {getCookie} from './utils/sessionToken.js';
 import tableView from './views/highScores.js';
 import renderPongGameIA from './views/pongIA.js';
@@ -23,7 +25,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	accessToken = getCookie('access_token');
 });
 
-export function handleRouteChange() {
+export function handleRouteChange(userName, passWord) {
 	let path = window.location.pathname;
 	console.log('Path:', path);
 	let view;
@@ -53,6 +55,9 @@ export function handleRouteChange() {
 				break;
 			case '/localgame1vsIA':
 				view = renderPongGameIA();
+				break;
+			case '/otpView':
+				view = otpView(userName, passWord);
 				break;
 			case '/localgame1vs1':
 				view = renderPongGame();
