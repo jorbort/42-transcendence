@@ -3,7 +3,7 @@ up:
 	@if [ ! -d "/home/${USER}/data/postgres_data" ]; then \
 		mkdir "/home/${USER}/data/postgres_data"; \
 	fi
-	docker compose -f docker-compose.yaml up --detach --build
+	docker compose -f docker-compose.yaml up  --build
 down:
 	docker-compose down
 	@if [ -n "$$(docker image ls -aq)" ]; then \
