@@ -22,20 +22,24 @@ export function fortyTwoCallback(){
 				document.cookie = `refresh_token=${data.refresh_token}`;
 				// updateNav();
 				window.location.href = '/Profile';
+				console.log('Access-token:', data.access_token);
 				handleRouteChange();
 			}else{
-				console.error('Error: Failed to obtain access-tokens', data);
+				console.log('Error: Failed to obtain access-tokens', data);
+				console.log('Access-token:', data.access_token);
 				window.location.href = '/';
 				handleRouteChange();
 			}
 		})
 		.catch(error => {
-			console.error('Error: failed token exchange', error);
+			console.log('Error: failed token exchange', error);
+			console.log('Access-token:', data.access_token);
 			window.location.href = '/';
 			handleRouteChange();
 		});
 	}else{
-		console.error('Error: Missing code or state');
+		console.log('Error: Missing code or state');
+		console.log('Access-token:', data.access_token);
 		window.location.href = '/';
 		handleRouteChange();
 	}
