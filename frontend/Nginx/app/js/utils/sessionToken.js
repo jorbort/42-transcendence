@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function() {
+addEventListenerdocument.addEventListener('DOMContentLoaded', function() {
   const accessToken = getCookie('access_token');
   const refreshToken = getCookie('refresh_token');
 
