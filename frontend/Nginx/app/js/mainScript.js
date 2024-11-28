@@ -33,11 +33,14 @@ export function handleRouteChange() {
 	if (path === '/') {
 		path = '/login';
 	}
+	
 	let pathParts = path.split('/');
+	console.log("pathSplit: " + pathParts[1]);
+	console.log("path: " + path);
 
 	if (accessToken){
 		// updateNav();
-		switch (pathParts[1]) {
+		switch ("/" + pathParts[1]) {
 				case '/Profile':
 					view = tableView();
 					break;
@@ -61,9 +64,6 @@ export function handleRouteChange() {
 				view = '<h1>404 Not Found</h1>';
 		}
 	}else{
-		console.log("pathSplit: " + pathParts[1]);
-		console.log("path: " + path);
-
 		switch ("/" + pathParts[1]) {
 			case '/login':
 				view = loginView();

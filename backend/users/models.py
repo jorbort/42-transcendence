@@ -27,6 +27,16 @@ class MatchHistory(models.Model):
 	player1_score = models.IntegerField()
 	player2_score=models.IntegerField()
 	winner=models.ForeignKey(PongUser, related_name='matches_won', on_delete=models.CASCADE)
+	tournament_id = models.ForeignKey(tournament, related_name='tournament_id', on_delete=models.CASCADE, null=True)
 
 	def __str__(self):
 		return f"Match on {self.date} between {self.player1.username} and {self.player2.username}"
+
+class tournament(models.Model):
+	number_of_players = models.PositiveInteger(default=4)
+	custom_one = models.BooleanField(default=False)
+	custom_two = models.BooleanField(default=False)
+	custom_three = models.BooleanField(default=False)
+	custom_is_saved = models.BooleanField(default=False)
+	winner = models.CharField(blank=True, null=True)
+
