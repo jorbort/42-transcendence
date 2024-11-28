@@ -10,6 +10,9 @@ import renderPongGame from './views/pong.js';
 import renderPongGameMulti from './views/pongMulti.js';
 import { fortyTwoCallback } from './views/fortyTwoCallback.js';
 import { updateNav } from './utils/updateNav.js';
+import renderPongGameName from './views/pongNamePlayers.js';
+import rendertorneo from './views/torneo.js';
+
 
 const userlogged = 0;
 let accessToken = 0;
@@ -26,15 +29,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
 export function handleRouteChange() {
 	let path = window.location.pathname;
-	console.log('Path:', path);
 	let view;
 	if (path === '/') {
 		path = '/login';
 	}
-	console.log('Path:', path);
+	let pathParts = path.split('/');
+
 	if (accessToken){
 		// updateNav();
-		switch (path) {
+		switch (pathParts[1]) {
 				case '/Profile':
 					view = tableView();
 					break;
@@ -42,16 +45,26 @@ export function handleRouteChange() {
 					view = renderPongGameIA();
 					break;
 				case '/localgame1vs1':
-					view =  renderPongGame();
+					if (pathParts.length == 4)
+						view = renderPongGameName(pathParts[2], pathParts[3]);
+					else
+						view =  renderPongGame();
+					// view = renderPongGameName("Marc", "Edgar");
 					break;
 				case '/localgameMulti':
 					view = renderPongGameMulti();
+					break;
+				case '/torneo':
+					view = rendertorneo();
 					break;
 				default:
 				view = '<h1>404 Not Found</h1>';
 		}
 	}else{
-		switch (path) {
+		console.log("pathSplit: " + pathParts[1]);
+		console.log("path: " + path);
+
+		switch ("/" + pathParts[1]) {
 			case '/login':
 				view = loginView();
 				break;
@@ -59,8 +72,11 @@ export function handleRouteChange() {
 				view = renderPongGameIA();
 				break;
 			case '/localgame1vs1':
-				view = renderPongGame();
-				break;
+				if (pathParts.length == 4)
+					view = renderPongGameName(pathParts[2], pathParts[3]);
+				else
+					view =  renderPongGame();
+					break;
 			case '/localgameMulti':
 				view = renderPongGameMulti();
 				break;
@@ -70,11 +86,16 @@ export function handleRouteChange() {
 			case '/Signup':
 				view = createUser();
 				break;
+			case '/torneo':
+				view = rendertorneo();
+				break;
 			default:
 				view = '<h1>404 Not Found</h1>';
-				
 		}
 	}
+	console.log("print view: " + view)
+	const appElement = document.getElementById('app');
+	console.log("app: " + appElement); 
 	document.getElementById('app').innerHTML = view;
 	handleEventListeners(path);
 }
