@@ -1,377 +1,253 @@
-import renderPongGame1 from './ponTornamentGame.js'; // Importamos la función renderPongGame
+import renderPonTournament from "./ponTornament.js";
 
-class TournamentApp extends HTMLElement {
+class TournamentView extends HTMLElement {
     constructor() {
         super();
-        this.attachShadow({ mode: 'open' });
         this.tournamentData = {
             name: '',
             players: [],
-            rounds: [],
-            winner: null,
+            rounds: []
         };
-        this.currentRoundIndex = 0;
+        this.currentMatch = null;
     }
 
     connectedCallback() {
-        this.render();
+        this.addStyles();
+        this.renderConfigView();
     }
 
-    render() {
-        this.shadowRoot.innerHTML = `
-            <style>
-                :host {
-                    display: block;
-                    font-family: 'Arial', sans-serif;
-                    max-width: 800px;
-                    margin: 20px auto;
-                    border: 2px solid #e0e0e0;
-                    border-radius: 12px;
-                    padding: 16px;
-                    background-color: #fdfdfd;
-                    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-                }
+    addStyles() {
+        const style = document.createElement('style');
+        style.textContent = `
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #f4f4f9;
+                margin: 0;
+                padding: 0;
+                display: flex;
+                flex-direction: row;
+                height: 100vh;
+                overflow: hidden;
+            }
 
-                h1, h2 {
-                    text-align: center;
-                    color: #333;
-                }
+            #config-view, #edit-players-view, #tournament-view {
+                flex: 1;
+                padding: 20px;
+                background: #ffffff;
+                border-radius: 10px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                margin: 20px;
+                overflow-y: auto;
+            }
 
-                label {
-                    display: block;
-                    margin-top: 12px;
-                    font-size: 1rem;
-                    color: #555;
-                    font-weight: bold;
-                }
+            #tournament-view {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+            }
 
-                input, button {
-                    width: 100%;
-                    padding: 10px;
-                    margin: 8px 0;
-                    border: 1px solid #ccc;
-                    border-radius: 6px;
-                    font-size: 1rem;
-                }
+            h2 {
+                text-align: center;
+                color: #333;
+            }
 
-                button {
-                    background-color: #007bff;
-                    color: #fff;
-                    cursor: pointer;
-                    transition: background-color 0.3s ease;
-                }
+            label {
+                display: block;
+                margin-bottom: 10px;
+                font-size: 1rem;
+                color: #555;
+            }
 
-                button:hover {
-                    background-color: #0056b3;
-                }
+            input {
+                padding: 5px 10px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                width: calc(100% - 20px);
+                margin-bottom: 15px;
+            }
 
-                .player-list {
-                    display: grid;
-                    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-                    gap: 16px;
-                    padding: 0;
-                    list-style: none;
-                    margin: 20px 0;
-                }
+            button {
+                padding: 10px 20px;
+                background: #007bff;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                font-size: 1rem;
+                transition: background 0.3s;
+            }
 
-                .player-item {
-                    padding: 16px;
-                    border: 1px solid #ddd;
-                    border-radius: 8px;
-                    background-color: #fff;
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
-                }
+            button:hover {
+                background: #0056b3;
+            }
 
-                .player-item input {
-                    margin-top: 10px;
-                    font-size: 1rem;
-                    padding: 6px;
-                    width: 90%;
-                    border: 1px solid #ccc;
-                    border-radius: 6px;
-                    text-align: center;
-                }
+            .round {
+                margin: 10px;
+                padding: 10px;
+                background: #f4f4f9;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+            }
 
-                .player-item label {
-                    font-weight: bold;
-                    margin-bottom: 8px;
-                }
+            .match {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                margin: 10px 0;
+            }
 
-                #start-tournament {
-                    width: auto;
-                    margin: 20px auto;
-                    display: block;
-                    padding: 12px 24px;
-                    font-size: 1.2rem;
-                }
-            </style>
-            <div id="tournament-container">
-                <form id="tournament-form">
-                    <h1>Crear Torneo</h1>
-                    <label for="name">Nombre del Torneo:</label>
-                    <input type="text" id="name" required placeholder="Nombre del torneo">
-                    <label for="players">Cantidad de Jugadores:</label>
-                    <input type="number" id="players" min="2" step="2" required placeholder="Número par de jugadores">
-                    <button type="submit">Crear</button>
-                </form>
+            .match div {
+                margin-bottom: 5px;
+                font-weight: bold;
+            }
+
+            #game-container {
+                flex: 2;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                background: #ffffff;
+                border-radius: 10px;
+                margin: 20px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            }
+
+            #bracket {
+                flex: 1;
+                max-height: 90vh;
+                overflow-y: auto;
+                border-right: 1px solid #ddd;
+                padding-right: 20px;
+            }
+
+            canvas {
+                border: 1px solid #000;
+                background: #000;
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
+    renderConfigView() {
+        this.innerHTML = `
+            <div id="config-view">
+                <label>Nombre del Torneo: <input id="tournament-name" type="text" /></label>
+                <label>Cantidad de Jugadores: <input id="player-count" type="number" min="2" step="2" /></label>
+                <button id="create-tournament">Crear</button>
+            </div>
+        `;
+        this.querySelector('#create-tournament').addEventListener('click', () => {
+            const name = this.querySelector('#tournament-name').value;
+            const playerCount = parseInt(this.querySelector('#player-count').value, 10);
+
+            if (name && playerCount >= 2) {
+                this.tournamentData.name = name;
+                this.tournamentData.players = Array.from(
+                    { length: playerCount },
+                    (_, i) => `Player${i + 1}`
+                );
+                this.renderEditPlayersView();
+            } else {
+                alert('Por favor, ingrese un nombre y una cantidad válida de jugadores.');
+            }
+        });
+    }
+
+    renderEditPlayersView() {
+        this.innerHTML = `
+            <div id="edit-players-view">
+                <h2>Editar Jugadores</h2>
+                ${this.tournamentData.players.map((player, index) => `
+                    <div>
+                        <label>Jugador ${index + 1}: 
+                            <input data-index="${index}" value="${player}" />
+                        </label>
+                    </div>
+                `).join('')}
+                <button id="accept-players">Aceptar</button>
+            </div>
+        `;
+        this.querySelector('#accept-players').addEventListener('click', () => {
+            this.tournamentData.players = Array.from(
+                this.querySelectorAll('input[data-index]'),
+                input => input.value
+            );
+            this.initializeTournament();
+        });
+    }
+
+    initializeTournament() {
+        const { players } = this.tournamentData;
+
+        this.tournamentData.rounds = [];
+        let currentRound = players.slice();
+
+        while (currentRound.length > 1) {
+            const nextRound = [];
+            const roundMatches = [];
+            for (let i = 0; i < currentRound.length; i += 2) {
+                const match = {
+                    player1: currentRound[i],
+                    player2: currentRound[i + 1] || null,
+                    winner: null
+                };
+                roundMatches.push(match);
+                nextRound.push(null);
+            }
+            this.tournamentData.rounds.push(roundMatches);
+            currentRound = nextRound;
+        }
+
+        this.renderTournamentView();
+    }
+
+    renderTournamentView() {
+        this.innerHTML = `
+            <div id="tournament-view">
+                <div id="bracket">
+                    ${this.tournamentData.rounds.map((round, roundIndex) => `
+                        <div class="round">
+                            <h3>Ronda ${roundIndex + 1}</h3>
+                            ${round.map(match => `
+                                <div class="match">
+                                    <div>${match.player1 || ''} vs ${match.player2 || ''}</div>
+                                    <button ${!match.player1 || !match.player2 ? 'disabled' : ''} 
+                                            data-round-index="${roundIndex}" 
+                                            class="start-match">Comenzar Partida</button>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `).join('')}
+                </div>
+                <div id="game-container"></div>
             </div>
         `;
 
-        this.shadowRoot
-            .querySelector('#tournament-form')
-            .addEventListener('submit', (e) => this.handleTournamentCreation(e));
-    }
-
-    handleTournamentCreation(event) {
-        event.preventDefault();
-        const name = this.shadowRoot.querySelector('#name').value;
-        const playersCount = parseInt(this.shadowRoot.querySelector('#players').value, 10);
-
-        this.tournamentData.name = name;
-        this.tournamentData.players = Array.from({ length: playersCount }, (_, i) => `Player${i + 1}`);
-        this.showPlayerEditingView();
-    }
-
-    showPlayerEditingView() {
-        const playersList = this.tournamentData.players
-            .map(
-                (player, index) => `
-                <li class="player-item">
-                    <label for="player-${index}">Jugador ${index + 1}</label>
-                    <input type="text" id="player-${index}" value="${player}">
-                </li>
-            `
-            )
-            .join('');
-
-        this.shadowRoot.innerHTML = `
-            <style>
-                :host {
-                    display: block;
-                    font-family: 'Arial', sans-serif;
-                    max-width: 800px;
-                    margin: 20px auto;
-                    border: 2px solid #e0e0e0;
-                    border-radius: 12px;
-                    padding: 16px;
-                    background-color: #fdfdfd;
-                    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-                }
-
-                h1 {
-                    text-align: center;
-                    color: #444;
-                }
-
-                .player-list {
-                    display: grid;
-                    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-                    gap: 16px;
-                    padding: 0;
-                    list-style: none;
-                    margin: 20px 0;
-                }
-
-                .player-item {
-                    padding: 16px;
-                    border: 1px solid #ddd;
-                    border-radius: 8px;
-                    background-color: #fff;
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
-                }
-
-                .player-item input {
-                    margin-top: 10px;
-                    font-size: 1rem;
-                    padding: 6px;
-                    width: 90%;
-                    border: 1px solid #ccc;
-                    border-radius: 6px;
-                    text-align: center;
-                }
-
-                #start-tournament {
-                    display: block;
-                    margin: 20px auto;
-                    padding: 12px 24px;
-                    font-size: 1.2rem;
-                    color: #fff;
-                    background-color: #28a745;
-                    border: none;
-                    border-radius: 6px;
-                    cursor: pointer;
-                    transition: background-color 0.3s ease;
-                }
-
-                #start-tournament:hover {
-                    background-color: #218838;
-                }
-            </style>
-            <h1>${this.tournamentData.name}</h1>
-            <ul class="player-list">
-                ${playersList}
-            </ul>
-            <button id="start-tournament">Comenzar Torneo</button>
-        `;
-
-        this.shadowRoot
-            .querySelector('#start-tournament')
-            .addEventListener('click', () => this.startTournament());
-    }
-
-    startTournament() {
-        this.tournamentData.players = this.tournamentData.players.map((_, index) =>
-            this.shadowRoot.querySelector(`#player-${index}`).value
-        );
-        this.generateRounds();
-        this.showRoundView();
-    }
-
-    generateRounds() {
-        const shuffledPlayers = [...this.tournamentData.players].sort(() => Math.random() - 0.5);
-        while (shuffledPlayers.length > 1) {
-            const round = [];
-            for (let i = 0; i < shuffledPlayers.length; i += 2) {
-                round.push({
-                    player1: shuffledPlayers[i],
-                    player2: shuffledPlayers[i + 1],
-                    winner: null,
-                });
-            }
-            this.tournamentData.rounds.push(round);
-            shuffledPlayers.length = Math.ceil(shuffledPlayers.length / 2);
-        }
-    }
-
-    async startMatch(event) {
-        const matchIndex = parseInt(event.target.getAttribute('data-index'), 10);
-        const match = this.tournamentData.rounds[this.currentRoundIndex][matchIndex];
-        const isAI = match.player2 === 'AI';
-    
-        try {
-            // Crear y renderizar el juego Pong
-            this.style.display = "none";
-            const pongElement = renderPongGame1(match.player1, match.player2, isAI, (winner) => {
-                match.winner = winner;
-                alert(`Ganador: ${winner}`);
-                
-                // Actualizamos el estado del torneo
-                const matchElement = this.shadowRoot.querySelector(`[data-index="${matchIndex}"]`).parentElement;
-                matchElement.innerHTML = `<p>Ganador: <strong>${winner}</strong></p>`;
+        this.querySelectorAll('.start-match').forEach(button => {
+            button.addEventListener('click', (event) => {
+                const roundIndex = parseInt(event.target.dataset.roundIndex, 10);
+                const match = this.tournamentData.rounds[roundIndex];
+                this.currentMatch = match;
+                this.startGame1(match.player1, match.player2);
             });
-    
-            // Mostrar el juego
-            document.getElementById('app').appendChild(pongElement);
-        } catch (error) {
-            console.error('Error al iniciar el partido:', error);
-        }
+        });
     }
-    
-    
-    
-    completeRound() {
-        const currentRound = this.tournamentData.rounds[this.currentRoundIndex];
-        if (currentRound.some((match) => !match.winner)) {
-            alert('Debes completar todos los partidos de la ronda.');
-            return;
-        }
-
-        if (this.currentRoundIndex < this.tournamentData.rounds.length - 1) {
-            this.currentRoundIndex++;
-            this.showRoundView();
-        } else {
-            this.tournamentData.winner = currentRound[0].winner;
-            this.saveTournament();
-            this.showWinnerView();
-        }
+    startGame1(player1, player2) {
+        const gameContainer = this.querySelector('#game-container');
+        gameContainer.innerHTML = renderPonTournament(player1, player2, (winner) => {
+            this.finishMatch(winner);
+        });
     }
-
-    saveTournament() {
-        fetch('/api/tournaments', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(this.tournamentData),
-        })
-            .then((response) => {
-                if (!response.ok) throw new Error('Error al guardar el torneo.');
-                return response.json();
-            })
-            .then((data) => console.log('Torneo guardado:', data))
-            .catch((err) => console.error(err));
-
-    }
-
-    showRoundView() {
-        const currentRound = this.tournamentData.rounds[this.currentRoundIndex];
-        const matchesList = currentRound
-            .map(
-                (match, index) => `
-                <li>
-                    <p>${match.player1} vs ${match.player2}</p>
-                    <button data-index="${index}" class="start-match">Comenzar Partido</button>
-                </li>
-            `
-            )
-            .join('');
-
-        this.shadowRoot.innerHTML = `
-            <style>
-                ${this.styles()} /* Inserta estilos reutilizables */
-            </style>
-            <h1>${this.tournamentData.name}</h1>
-            <h2>Ronda ${this.currentRoundIndex + 1}</h2>
-            <ul class="matches-list">
-                ${matchesList}
-            </ul>
-            <button id="complete-round">Completar Ronda</button>
-        `;
-
-        this.shadowRoot.querySelectorAll('.start-match').forEach((button) =>
-            button.addEventListener('click', (e) => this.startMatch(e))
-        );
-
-        this.shadowRoot
-            .querySelector('#complete-round')
-            .addEventListener('click', () => this.completeRound());
-    }
-
-    showWinnerView() {
-        this.shadowRoot.innerHTML = `
-            <style>
-                ${this.styles()} /* Inserta estilos reutilizables */
-            </style>
-            <h1>¡Tenemos un ganador!</h1>
-            <h2 class="winner">${this.tournamentData.winner}</h2>
-            <button id="restart">Iniciar otro Torneo</button>
-        `;
-
-        this.shadowRoot
-            .querySelector('#restart')
-            .addEventListener('click', () => this.restart());
-    }
-
-    restart() {
-        this.tournamentData = { name: '', players: [], rounds: [], winner: null };
-        this.currentRoundIndex = 0;
-        this.render();
-    }
-
-    styles() {
-        return `
-            :host { font-family: Arial, sans-serif; }
-            button { cursor: pointer; background: #28a745; color: white; padding: 10px; border: none; }
-        `;
+    finishMatch(winner) {
+        this.currentMatch.winner = winner;
+        this.renderTournamentView();
     }
 }
 
-customElements.define('tournament-app', TournamentApp);
+customElements.define('tournament-view', TournamentView);
+
+//document.body.innerHTML = '<tournament-view></tournament-view>';
 
 export default function renderTournamentApp() {
-    return '<tournament-app></tournament-app>';
+    return '<tournament-view></tournament-view>';
 }

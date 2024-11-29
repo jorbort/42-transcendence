@@ -1,6 +1,6 @@
 import { handleRouteChange } from "../mainScript.js";
 
-class PongGame extends HTMLElement {
+class PongGame1 extends HTMLElement {
     constructor() {
         super();
         this.ballSpeedX = 0.15;
@@ -697,8 +697,8 @@ class PongGame extends HTMLElement {
 
 }
 
-customElements.define('pong-game', PongGame);
+customElements.define('pong-game1', PongGame1);
 
-export default function renderPongGame() {
-    return '<pong-game></pong-game>';
+export default function renderPongGame1() {
+    return '<pong-game1></pong-game1>';
 }
