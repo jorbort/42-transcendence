@@ -208,34 +208,33 @@ class TournamentView extends HTMLElement {
         this.innerHTML = `
             <div id="tournament-view">
                 <div id="bracket">
-                ${this.tournamentData.rounds.map((round, roundIndex) => `
-                    <div class="round">
-                        <h3>Ronda ${roundIndex + 1}</h3>
-                        ${round.map((match, matchIndex) => `
-                            <div class="match">
-                                <div class="match-info">
-                                    <span>${match.player1 || 'Jugador 1'} vs ${match.player2 || 'Jugador 2'}</span>
+                    ${this.tournamentData.rounds.map((round, roundIndex) => `
+                        <div class="round">
+                            <h3>Ronda ${roundIndex + 1}</h3>
+                            ${round.map((match, matchIndex) => `
+                                <div class="match">
+                                    <div class="match-info">
+                                        <span>${match.player1 || 'Jugador 1'} vs ${match.player2 || 'Jugador 2'}</span>
+                                    </div>
+                                    <div class="match-action">
+                                        ${
+                                            match.winner
+                                                ? `<span class="winner">${match.winner}</span>` // Muestra el ganador si ya existe
+                                                : `<button 
+                                                    class="start-match" 
+                                                    ${!match.player1 || !match.player2 || this.currentMatch ? 'disabled' : ''}
+                                                    data-round-index="${roundIndex}" 
+                                                    data-match-index="${matchIndex}">
+                                                    Jugar
+                                                   </button>`
+                                        }
+                                    </div>
                                 </div>
-                                <div class="match-action">
-                                    ${
-                                        match.winner
-                                            ? `<span class="winner">${match.winner}</span>`
-                                            : `<button 
-                                                class="start-match" 
-                                                ${!match.player1 || !match.player2 || this.currentMatch ? 'disabled' : ''}
-                                                data-round-index="${roundIndex}" 
-                                                data-match-index="${matchIndex}">
-                                                Jugar
-                                            </button>`
-                                    }
-                                </div>
-                                ${roundIndex < this.tournamentData.rounds.length - 1 ? `<div class="line"></div>` : ''}
-                            </div>
-                        `).join('')}
-                    </div>
-                `).join('')}
-            </div>
-            <div id="game-container"></div>
+                            `).join('')}
+                        </div>
+                    `).join('')}
+                </div>
+                <div id="game-container"></div>
             </div>
         `;
     
