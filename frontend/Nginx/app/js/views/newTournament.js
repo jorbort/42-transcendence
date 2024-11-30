@@ -1,5 +1,4 @@
 import renderPonTournament from "./ponTornament.js";
-
 class TournamentView extends HTMLElement {
     constructor() {
         super();
@@ -48,7 +47,12 @@ class TournamentView extends HTMLElement {
                 justify-content: space-between;
             }
 
-            h2 {
+            #final-view {
+                text-align: center;
+                padding: 20px;
+            }
+
+            h2, h1 {
                 text-align: center;
                 color: #333;
             }
@@ -84,42 +88,32 @@ class TournamentView extends HTMLElement {
             }
 
             .round {
-                margin: 10px;
-                padding: 10px;
-                background: #f4f4f9;
-                border: 1px solid #ddd;
-                border-radius: 5px;
-            }
-
-            .match {
                 display: flex;
                 flex-direction: column;
                 align-items: center;
-                margin: 10px 0;
+                margin-bottom: 20px;
             }
 
-            .match div {
-                margin-bottom: 5px;
+            .match {
+                position: relative;
+                margin: 20px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .match span {
                 font-weight: bold;
             }
 
-            #game-container {
-                flex: 2;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                background: #ffffff;
-                border-radius: 10px;
-                margin: 20px;
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            }
-
-            #bracket {
-                flex: 1;
-                max-height: 90vh;
-                overflow-y: auto;
-                border-right: 1px solid #ddd;
-                padding-right: 20px;
+            .match .line {
+                width: 2px;
+                height: 50px;
+                background: #333;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
             }
 
             canvas {
@@ -180,10 +174,10 @@ class TournamentView extends HTMLElement {
     }
 
     initializeTournament() {
-        const { players } = this.tournamentData;
+        const shuffledPlayers = this.tournamentData.players.sort(() => Math.random() - 0.5);
 
         this.tournamentData.rounds = [];
-        let currentRound = players.slice();
+        let currentRound = [...shuffledPlayers];
 
         while (currentRound.length > 1) {
             const nextRound = [];
@@ -204,7 +198,6 @@ class TournamentView extends HTMLElement {
     }
 
     renderTournamentView() {
-        // Limpia el contenedor actual
         this.innerHTML = `
             <div id="tournament-view">
                 <div id="bracket">
@@ -213,22 +206,17 @@ class TournamentView extends HTMLElement {
                             <h3>Ronda ${roundIndex + 1}</h3>
                             ${round.map((match, matchIndex) => `
                                 <div class="match">
-                                    <div class="match-info">
-                                        <span>${match.player1 || 'Jugador 1'} vs ${match.player2 || 'Jugador 2'}</span>
-                                    </div>
-                                    <div class="match-action">
-                                        ${
-                                            match.winner
-                                                ? `<span class="winner">${match.winner}</span>` // Muestra el ganador si ya existe
-                                                : `<button 
-                                                    class="start-match" 
-                                                    ${!match.player1 || !match.player2 || this.currentMatch ? 'disabled' : ''}
-                                                    data-round-index="${roundIndex}" 
-                                                    data-match-index="${matchIndex}">
-                                                    Jugar
-                                                   </button>`
-                                        }
-                                    </div>
+                                    <span>${match.player1 || '---'} vs ${match.player2 || '---'}</span>
+                                    ${match.winner
+                ? `<span>Ganador: ${match.winner}</span>`
+                : `<button 
+                                                class="start-match" 
+                                                data-round-index="${roundIndex}" 
+                                                data-match-index="${matchIndex}"
+                                                ${!match.player1 || !match.player2 || this.currentMatch ? 'disabled' : ''}>
+                                                Jugar
+                                               </button>`
+            }
                                 </div>
                             `).join('')}
                         </div>
@@ -237,35 +225,53 @@ class TournamentView extends HTMLElement {
                 <div id="game-container"></div>
             </div>
         `;
-    
-        // Agregar eventos a los botones de jugar
+
         this.querySelectorAll('.start-match').forEach(button => {
-            button.addEventListener('click', (event) => {
-                const roundIndex = parseInt(event.target.dataset.roundIndex, 10);
-                const matchIndex = parseInt(event.target.dataset.matchIndex, 10);
-    
-                // Obtiene el partido correspondiente
+            button.addEventListener('click', (e) => {
+                const roundIndex = parseInt(button.dataset.roundIndex, 10);
+                const matchIndex = parseInt(button.dataset.matchIndex, 10);
+
                 const match = this.tournamentData.rounds[roundIndex][matchIndex];
-    
-                // Configura el partido actual y deshabilita botones
                 this.currentMatch = match;
-    
-                // Inicia la partida
-                this.startGame1(match.player1, match.player2);
+
+                this.startGame1(match.player1, match.player2, (winner) => {
+                    match.winner = winner;
+                    if (roundIndex + 1 < this.tournamentData.rounds.length) {
+                        const nextMatchIndex = Math.floor(matchIndex / 2);
+                        this.tournamentData.rounds[roundIndex + 1][nextMatchIndex][
+                            matchIndex % 2 === 0 ? 'player1' : 'player2'
+                        ] = winner;
+                    } else {
+                        this.tournamentData.winner = winner;
+                      //  this.renderFinalView();
+                    }
+                    this.currentMatch = null;
+                    this.renderTournamentView();
+                });
             });
         });
     }
-    
-    startGame1(player1, player2) {
+
+    // startGame1(player1, player2, onGameEnd) {
+    //     // const gameContainer = this.querySelector('#game-container');
+    //     // const pongGame = renderPonTournament(player1, player2, onGameEnd);
+    //     // gameContainer.innerHTML = '';
+    //     // gameContainer.appendChild(pongGame);
+    //     const gameContainer = this.querySelector('#game-container');
+    //     const pongGame = renderPonTournament(player1, player2, (winner) => {
+    //         console.log("tenemos ganador" + winner);
+    //         this.currentMatch.winner = winner;
+    //         this.renderTournamentView();
+    //     });
+    //     // Verifica que pongGame sea un nodo antes de insertarlo
+    //         gameContainer.innerHTML = ''; // Limpia el contenedor
+    //         gameContainer.appendChild(pongGame); // Inserta el nodo válido
+    // }
+    startGame1(player1, player2, onGameEnd) {
         const gameContainer = this.querySelector('#game-container');
-        const pongGame = renderPonTournament(player1, player2, (winner) => {
-            console.log("tenemos ganador" + winner);
-            this.currentMatch.winner = winner;
-            this.renderTournamentView();
-        });
-        // Verifica que pongGame sea un nodo antes de insertarlo
-            gameContainer.innerHTML = ''; // Limpia el contenedor
-            gameContainer.appendChild(pongGame); // Inserta el nodo válido
+        const pongGame = renderPonTournament(player1, player2, onGameEnd);
+        gameContainer.innerHTML = ''; 
+        gameContainer.appendChild(pongGame);
     }
 }
 customElements.define('tournament-view', TournamentView);
