@@ -251,22 +251,6 @@ class TournamentView extends HTMLElement {
             });
         });
     }
-
-    // startGame1(player1, player2, onGameEnd) {
-    //     // const gameContainer = this.querySelector('#game-container');
-    //     // const pongGame = renderPonTournament(player1, player2, onGameEnd);
-    //     // gameContainer.innerHTML = '';
-    //     // gameContainer.appendChild(pongGame);
-    //     const gameContainer = this.querySelector('#game-container');
-    //     const pongGame = renderPonTournament(player1, player2, (winner) => {
-    //         console.log("tenemos ganador" + winner);
-    //         this.currentMatch.winner = winner;
-    //         this.renderTournamentView();
-    //     });
-    //     // Verifica que pongGame sea un nodo antes de insertarlo
-    //         gameContainer.innerHTML = ''; // Limpia el contenedor
-    //         gameContainer.appendChild(pongGame); // Inserta el nodo válido
-    // }
     startGame1(player1, player2, onGameEnd) {
         const gameContainer = this.querySelector('#game-container');
         const pongGame = renderPonTournament(player1, player2, onGameEnd);
