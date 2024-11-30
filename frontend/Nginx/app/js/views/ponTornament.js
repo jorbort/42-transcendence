@@ -42,7 +42,8 @@ class PongGameTournament extends HTMLElement {
         window.addEventListener('keyup', this.handleKeyUp);
         window.addEventListener('keydown', this.handleKeyDownL);
         window.addEventListener('keyup', this.handleKeyUpL);
-        await this.startGame();
+       return await this.startGame();
+
     }
 
     disconnectedCallback() {
@@ -166,10 +167,10 @@ class PongGameTournament extends HTMLElement {
             this.paddleLeft.position.y = THREE.MathUtils.clamp(this.targetPaddleLeftY, -3, 7);
             this.paddleRight.position.y = THREE.MathUtils.clamp(this.targetPaddleRightY, -3, 7);
             this.renderer.render(this.scene, this.camera);
-            if (!this.checkIfLost(this.ball)) {
-                console.log(this.onGameEnd);
+            if (!this.checkIfLost(this.ball))
                 requestAnimationFrame(animate);
-            }
+            else
+                return this.onGameEnd;
         };
         animate();
     }
@@ -362,22 +363,17 @@ class PongGameTournament extends HTMLElement {
     }
     // Verificar si alguien perdió
     checkIfLost() {
-        if (this.pointsPlayer >= 3) {
-            this.endGame(this.player1);
-            return true;
-        } else if (this.pointsIA >= 3) {
-            this.endGame(this.player2);
-            return true;
-        }
+        if (this.pointsPlayer >= 3)
+            return this.endGame(this.player1);
+        else if (this.pointsIA >= 3)
+            return this.endGame(this.player2);
         return false;
     }
     // Terminar el juego e invocar el callback
     endGame(winner) {
         this.gameStarted = false;
-        if (this.onGameEnd) {
-            this.onGameEnd(winner); // Llamar al callback con el ganador
-            console.log(winner);
-        }
+        this.onGameEnd(winner); // Llamar al callback con el ganador
+        const gameContainer = this.querySelector('#game-container');
         return winner;
     }
     async pauseGameAndShowCountdown() {
@@ -392,13 +388,11 @@ class PongGameTournament extends HTMLElement {
             await this.showCountdown(this.scene, this.loadfont, this.renderer, this.camera);
     }
 }
-
 customElements.define('pong-game', PongGameTournament);
-
 export default function renderPonTournament(player1, player2, onGameEnd) {
-    let element = document.createElement('pong-game');
+    const element = document.createElement('pong-game');
     element.player1 = player1;
     element.player2 = player2;
     element.onGameEnd = onGameEnd;
-    return element.outerHTML;
+    return element;
 }

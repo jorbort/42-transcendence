@@ -6,9 +6,11 @@ class TournamentView extends HTMLElement {
         this.tournamentData = {
             name: '',
             players: [],
-            rounds: []
+            rounds: [],
+            winner: null,
         };
         this.currentMatch = null;
+        this.currentRoundIndex = 0;
     }
 
     connectedCallback() {
@@ -131,6 +133,7 @@ class TournamentView extends HTMLElement {
     renderConfigView() {
         this.innerHTML = `
             <div id="config-view">
+                <h1>Crear Torneo</h1>
                 <label>Nombre del Torneo: <input id="tournament-name" type="text" /></label>
                 <label>Cantidad de Jugadores: <input id="player-count" type="number" min="2" step="2" /></label>
                 <button id="create-tournament">Crear</button>
@@ -197,57 +200,76 @@ class TournamentView extends HTMLElement {
             this.tournamentData.rounds.push(roundMatches);
             currentRound = nextRound;
         }
-
         this.renderTournamentView();
     }
 
     renderTournamentView() {
+        // Limpia el contenedor actual
         this.innerHTML = `
             <div id="tournament-view">
                 <div id="bracket">
-                    ${this.tournamentData.rounds.map((round, roundIndex) => `
-                        <div class="round">
-                            <h3>Ronda ${roundIndex + 1}</h3>
-                            ${round.map(match => `
-                                <div class="match">
-                                    <div>${match.player1 || ''} vs ${match.player2 || ''}</div>
-                                    <button ${!match.player1 || !match.player2 ? 'disabled' : ''} 
-                                            data-round-index="${roundIndex}" 
-                                            class="start-match">Comenzar Partida</button>
+                ${this.tournamentData.rounds.map((round, roundIndex) => `
+                    <div class="round">
+                        <h3>Ronda ${roundIndex + 1}</h3>
+                        ${round.map((match, matchIndex) => `
+                            <div class="match">
+                                <div class="match-info">
+                                    <span>${match.player1 || 'Jugador 1'} vs ${match.player2 || 'Jugador 2'}</span>
                                 </div>
-                            `).join('')}
-                        </div>
-                    `).join('')}
-                </div>
-                <div id="game-container"></div>
+                                <div class="match-action">
+                                    ${
+                                        match.winner
+                                            ? `<span class="winner">${match.winner}</span>`
+                                            : `<button 
+                                                class="start-match" 
+                                                ${!match.player1 || !match.player2 || this.currentMatch ? 'disabled' : ''}
+                                                data-round-index="${roundIndex}" 
+                                                data-match-index="${matchIndex}">
+                                                Jugar
+                                            </button>`
+                                    }
+                                </div>
+                                ${roundIndex < this.tournamentData.rounds.length - 1 ? `<div class="line"></div>` : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+                `).join('')}
+            </div>
+            <div id="game-container"></div>
             </div>
         `;
-
+    
+        // Agregar eventos a los botones de jugar
         this.querySelectorAll('.start-match').forEach(button => {
             button.addEventListener('click', (event) => {
                 const roundIndex = parseInt(event.target.dataset.roundIndex, 10);
-                const match = this.tournamentData.rounds[roundIndex];
+                const matchIndex = parseInt(event.target.dataset.matchIndex, 10);
+    
+                // Obtiene el partido correspondiente
+                const match = this.tournamentData.rounds[roundIndex][matchIndex];
+    
+                // Configura el partido actual y deshabilita botones
                 this.currentMatch = match;
+    
+                // Inicia la partida
                 this.startGame1(match.player1, match.player2);
             });
         });
     }
+    
     startGame1(player1, player2) {
         const gameContainer = this.querySelector('#game-container');
-        gameContainer.innerHTML = renderPonTournament(player1, player2, (winner) => {
-            this.finishMatch(winner);
+        const pongGame = renderPonTournament(player1, player2, (winner) => {
+            console.log("tenemos ganador" + winner);
+            this.currentMatch.winner = winner;
+            this.renderTournamentView();
         });
-    }
-    finishMatch(winner) {
-        this.currentMatch.winner = winner;
-        this.renderTournamentView();
+        // Verifica que pongGame sea un nodo antes de insertarlo
+            gameContainer.innerHTML = ''; // Limpia el contenedor
+            gameContainer.appendChild(pongGame); // Inserta el nodo válido
     }
 }
-
 customElements.define('tournament-view', TournamentView);
-
-//document.body.innerHTML = '<tournament-view></tournament-view>';
-
 export default function renderTournamentApp() {
     return '<tournament-view></tournament-view>';
 }
