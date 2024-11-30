@@ -20,7 +20,8 @@ python3 -m venv .venv && source .venv/bin/activate\
 #python manage.py crontab run 89b108a04c1e9d09c7bf36ceecf7f0e3 comando para debuggear el cron antes que se ejecute el servidor de gunicorn
 
 
-# python manage.py makemigrations admin
+
+python manage.py makemigrations
 # python manage.py makemigrations app
 
 # # python manage.py migrate admin zero --fake

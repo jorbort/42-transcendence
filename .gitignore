@@ -2,3 +2,4 @@
 /backend/staticfiles/admin/*
 __pycache__
 .venv
+migrations
