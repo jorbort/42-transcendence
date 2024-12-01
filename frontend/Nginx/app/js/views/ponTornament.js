@@ -42,7 +42,7 @@ class PongGameTournament extends HTMLElement {
         window.addEventListener('keyup', this.handleKeyUp);
         window.addEventListener('keydown', this.handleKeyDownL);
         window.addEventListener('keyup', this.handleKeyUpL);
-       return await this.startGame();
+        return await this.startGame();
 
     }
 
@@ -389,10 +389,17 @@ class PongGameTournament extends HTMLElement {
     }
 }
 customElements.define('pong-game', PongGameTournament);
-export default function renderPonTournament(player1, player2, onGameEnd) {
+export default function renderPonTournament(currentMatch, currentRoundIndex, lastSelect, addCustom,
+    addCustom1, addCustom2, player1, player2, onGameEnd) {
     const element = document.createElement('pong-game');
     element.player1 = player1;
     element.player2 = player2;
     element.onGameEnd = onGameEnd;
+    element.currentMatch = currentMatch;
+    element.currentRoundIndex = currentRoundIndex;
+    element.lastSelect = lastSelect;
+    element.addCustom = addCustom;
+    element.addCustom1 = addCustom1;
+    element.addCustom2 = addCustom2;
     return element;
 }

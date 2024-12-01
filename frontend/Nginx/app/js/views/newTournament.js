@@ -10,11 +10,188 @@ class TournamentView extends HTMLElement {
         };
         this.currentMatch = null;
         this.currentRoundIndex = 0;
+        this.lastSelect = false;
+        this.addCustom = false;
+        this.addCustom1 = false;
+        this.addCustom2 = false;
+        this.firstSelect = false;
+        this.SecondSelect = false;
+        this.configsaved = false;
+        this.app = document.getElementById("app");
+        this.container = null;;
     }
 
     connectedCallback() {
+        this.container = app;
         this.addStyles();
-        this.renderConfigView();
+        this.createModalData(this.container);
+    }
+    ModalData() {
+        const modalContainer = document.createElement('div');
+
+        modalContainer.innerHTML = `
+        <div class="modal fade" id="customModal" tabindex="-1" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalCenterTitle">Custom Game</h5>
+                    </div>
+                    <div class="modal-body">
+                        <div id="config-view">
+                            <h1>Crear Torneo</h1>
+                            <label>Nombre del Torneo: <input id="tournament-name" type="text" /></label>
+                            <label>Cantidad de Jugadores: <input id="player-count" type="number" min="2" step="2" /></label>
+                        </div>
+                        <form>
+                            <!-- Primer Modal Footer con la pregunta -->
+                            <div class="modal-footer d-flex justify-content-between align-items-center">
+                                <p class="text-start mb-0">¿Quieres aumentar la velocidad de la pelota con el cono?</p>
+                                <div>
+                                    <button id="btnSpeedYes" type="button" class="btn btn-success btn-sm">Sí</button>
+                                    <button id="btnSpeedNo" type="button" class="btn btn-danger btn-sm">No</button>
+                                </div>
+                            </div>
+                            <!-- Segundo Modal Footer con la pregunta -->
+                            <div class="modal-footer d-flex justify-content-between align-items-center">
+                                <p class="text-start mb-0">¿Quieres disminuir la velocidad de la pelota con el Icosahedron?</p>
+                                <div>
+                                    <button id="btnSizeYes" type="button" class="btn btn-success btn-sm">Sí</button>
+                                    <button id="btnSizeNo" type="button" class="btn btn-danger btn-sm">No</button>
+                                </div>
+                            </div>
+                            <!-- Tercer Modal Footer con la pregunta -->
+                            <div class="modal-footer d-flex justify-content-between align-items-center">
+                                <p class="text-start mb-0">¿Quieres disminuir la velocidad de las palas con el TorusKnot?</p>
+                                <div>
+                                    <button id="btnDecreaseYes" type="button" class="btn btn-success btn-sm">Sí</button>
+                                    <button id="btnDecreaseNo" type="button" class="btn btn-danger btn-sm">No</button>
+                                </div>
+                            </div>
+                            <!-- Botón para guardar la configuración -->
+                            <button id="btnSave" type="button" class="btn btn-primary" disabled>Guardar Configuración</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>`;
+        return modalContainer;
+    }
+
+
+    checkSavebtn() {
+        if (this.firstSelect && this.SecondSelect && this.lastSelect) {
+            const btnSave = document.getElementById("btnSave");
+            btnSave.disabled = false; // Habilita el botón
+            btnSave.style.backgroundColor = "#007bff"; // Cambia el color a azul (color por defecto de Bootstrap)
+            btnSave.style.cursor = "pointer";
+        }
+    }
+
+    createModalData(container) {
+        const newModal = this.ModalData();
+        container.appendChild(newModal);
+        const myModal = new bootstrap.Modal(document.getElementById('customModal'), { keyboard: false });
+        myModal.show();
+
+        function resetButtonStyles(buttonYesId, buttonNoId) {
+            const btnYes = document.getElementById(buttonYesId);
+            const btnNo = document.getElementById(buttonNoId);
+            btnYes.style.backgroundColor = "#888";
+            btnYes.style.borderColor = "#888"
+            btnYes.style.color = "#fff";
+            btnNo.style.backgroundColor = "#888";
+            btnNo.style.borderColor = "#888"
+            btnNo.style.color = "#fff";
+        }
+
+        function initializeButtons() {
+            const buttons = ["btnSpeedYes", "btnSpeedNo", "btnSizeYes", "btnSizeNo", "btnDecreaseYes", "btnDecreaseNo"];
+            buttons.forEach(buttonId => {
+                const btn = document.getElementById(buttonId);
+                btn.style.backgroundColor = "#888";
+                btn.style.borderColor = "#888"
+                btn.style.color = "#fff";
+            });
+        }
+        initializeButtons();
+
+        document.getElementById("btnSpeedYes").addEventListener('click', () => {
+            resetButtonStyles("btnSpeedYes", "btnSpeedNo");
+            const btn = document.getElementById("btnSpeedYes");
+            btn.style.backgroundColor = "green";
+            btn.style.color = "#fff";
+            this.addCustom = true;
+            this.firstSelect = true;
+            this.checkSavebtn();
+        });
+
+        document.getElementById("btnSpeedNo").addEventListener('click', () => {
+            resetButtonStyles("btnSpeedYes", "btnSpeedNo");
+            const btn = document.getElementById("btnSpeedNo");
+            btn.style.backgroundColor = "red";
+            btn.style.color = "#fff";
+            this.addCustom = false;
+            this.firstSelect = true;
+            this.checkSavebtn();
+        });
+
+        document.getElementById("btnSizeYes").addEventListener('click', () => {
+            resetButtonStyles("btnSizeYes", "btnSizeNo");
+            const btn = document.getElementById("btnSizeYes");
+            btn.style.backgroundColor = "green";
+            btn.style.color = "#fff";
+            this.addCustom1 = true;
+            this.SecondSelect = true;
+            this.checkSavebtn();
+        });
+
+        document.getElementById("btnSizeNo").addEventListener('click', () => {
+            resetButtonStyles("btnSizeYes", "btnSizeNo");
+            const btn = document.getElementById("btnSizeNo");
+            btn.style.backgroundColor = "red";
+            btn.style.color = "#fff";
+            this.SecondSelect = true;
+            this.addCustom1 = false;
+            this.checkSavebtn();
+        });
+
+        document.getElementById("btnDecreaseYes").addEventListener('click', () => {
+            resetButtonStyles("btnDecreaseYes", "btnDecreaseNo");
+            const btn = document.getElementById("btnDecreaseYes");
+            btn.style.backgroundColor = "green";
+            btn.style.color = "#fff";
+            this.addCustom2 = true;
+            this.lastSelect = true;
+            this.checkSavebtn();
+        });
+
+        document.getElementById("btnDecreaseNo").addEventListener('click', () => {
+            resetButtonStyles("btnDecreaseYes", "btnDecreaseNo");
+            const btn = document.getElementById("btnDecreaseNo");
+            btn.style.backgroundColor = "red";
+            btn.style.color = "#fff";
+            this.lastSelect = true;
+            this.addCustom2 = false;
+            this.checkSavebtn();
+        });
+
+        document.getElementById("btnSave").addEventListener('click', async () => {
+            if (this.firstSelect && this.SecondSelect && this.lastSelect) {
+                const name = document.getElementById('tournament-name').value;
+                const playerCount = parseInt(document.getElementById('player-count').value, 10);
+                if (name && playerCount % 2 == 0) {
+                    this.tournamentData.name = name;
+                    this.tournamentData.players = Array.from(
+                        { length: playerCount },
+                        (_, i) => `Player${i + 1}`
+                    );
+                    myModal.dispose()
+                    document.getElementById('customModal').remove();
+                    this.renderEditPlayersView();
+                } else 
+                    alert('Por favor, ingrese un nombre y una cantidad válida de jugadores.'); 
+            }
+        });
     }
 
     addStyles() {
@@ -58,7 +235,7 @@ class TournamentView extends HTMLElement {
             }
 
             label {
-                display: block;
+                display: flex;
                 margin-bottom: 10px;
                 font-size: 1rem;
                 color: #555;
@@ -124,32 +301,6 @@ class TournamentView extends HTMLElement {
         document.head.appendChild(style);
     }
 
-    renderConfigView() {
-        this.innerHTML = `
-            <div id="config-view">
-                <h1>Crear Torneo</h1>
-                <label>Nombre del Torneo: <input id="tournament-name" type="text" /></label>
-                <label>Cantidad de Jugadores: <input id="player-count" type="number" min="2" step="2" /></label>
-                <button id="create-tournament">Crear</button>
-            </div>
-        `;
-        this.querySelector('#create-tournament').addEventListener('click', () => {
-            const name = this.querySelector('#tournament-name').value;
-            const playerCount = parseInt(this.querySelector('#player-count').value, 10);
-
-            if (name && playerCount >= 2) {
-                this.tournamentData.name = name;
-                this.tournamentData.players = Array.from(
-                    { length: playerCount },
-                    (_, i) => `Player${i + 1}`
-                );
-                this.renderEditPlayersView();
-            } else {
-                alert('Por favor, ingrese un nombre y una cantidad válida de jugadores.');
-            }
-        });
-    }
-
     renderEditPlayersView() {
         this.innerHTML = `
             <div id="edit-players-view">
@@ -175,10 +326,8 @@ class TournamentView extends HTMLElement {
 
     initializeTournament() {
         const shuffledPlayers = this.tournamentData.players.sort(() => Math.random() - 0.5);
-
         this.tournamentData.rounds = [];
         let currentRound = [...shuffledPlayers];
-
         while (currentRound.length > 1) {
             const nextRound = [];
             const roundMatches = [];
@@ -230,10 +379,8 @@ class TournamentView extends HTMLElement {
             button.addEventListener('click', (e) => {
                 const roundIndex = parseInt(button.dataset.roundIndex, 10);
                 const matchIndex = parseInt(button.dataset.matchIndex, 10);
-
                 const match = this.tournamentData.rounds[roundIndex][matchIndex];
                 this.currentMatch = match;
-
                 this.startGame1(match.player1, match.player2, (winner) => {
                     match.winner = winner;
                     if (roundIndex + 1 < this.tournamentData.rounds.length) {
@@ -243,7 +390,7 @@ class TournamentView extends HTMLElement {
                         ] = winner;
                     } else {
                         this.tournamentData.winner = winner;
-                      //  this.renderFinalView();
+                        //  this.renderFinalView();
                     }
                     this.currentMatch = null;
                     this.renderTournamentView();
@@ -251,10 +398,12 @@ class TournamentView extends HTMLElement {
             });
         });
     }
+
     startGame1(player1, player2, onGameEnd) {
         const gameContainer = this.querySelector('#game-container');
-        const pongGame = renderPonTournament(player1, player2, onGameEnd);
-        gameContainer.innerHTML = ''; 
+        const pongGame = renderPonTournament(this.currentMatch, this.currentRoundIndex, this.lastSelect, this.addCustom,
+            this.addCustom1, this.addCustom2, player1, player2, onGameEnd);
+        gameContainer.innerHTML = '';
         gameContainer.appendChild(pongGame);
     }
 }
