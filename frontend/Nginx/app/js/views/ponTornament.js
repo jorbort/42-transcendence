@@ -23,6 +23,7 @@ class PongGameTournament extends HTMLElement {
         this.player1 = 'TMP1';
         this.player2 = 'TMP2';
         this.onGameEnd = null;
+        this.gameStarted = false;
     }
 
     async connectedCallback() {
@@ -36,6 +37,15 @@ class PongGameTournament extends HTMLElement {
 
     disconnectedCallback() {
         cancelAnimationFrame(this.animationFrameId);
+        this.resetGame();
+    }
+    resetGame() {
+        this.pointsIA = 0;
+        this.pointsPlayer = 0;
+        this.reprint("Player X", this.pointsPlayer);
+        this.reprint("IA", this.pointsIA);
+        this.ball = null;
+        this.gameStarted = false;
     }
 
     initObjects() {
@@ -96,7 +106,7 @@ class PongGameTournament extends HTMLElement {
                 this.scene.add(this.playerText);
                 this.scene.add(this.IAText);
                 resolve(font); // Resolvemos la promesa con la fuente
-            }, undefined, (error) => {console.error("Error loading font:", error);reject(error);}); // Rechazamos la promesa en caso de error     
+            }, undefined, (error) => { console.error("Error loading font:", error); reject(error); }); // Rechazamos la promesa en caso de error     
         });
     }
 
@@ -130,6 +140,7 @@ class PongGameTournament extends HTMLElement {
         await this.startCountdown();
         this.initObjects();
         const animate = async () => {
+            if (this.gameStarted) return;
             await this.moveBall();
             this.customGame();
             this.checkPaddleCollision(this.ball, this.paddleLeft, this.paddleRight);
@@ -139,6 +150,8 @@ class PongGameTournament extends HTMLElement {
             this.renderer.render(this.scene, this.camera);
             if (!this.checkIfLost(this.ball))
                 requestAnimationFrame(animate);
+            else
+                return false;
         };
         animate();
     }
@@ -330,10 +343,14 @@ class PongGameTournament extends HTMLElement {
     }
     // Verificar si alguien perdió
     checkIfLost() {
-        if (this.pointsPlayer >= 3)
-            return this.onGameEnd(this.player1);// Llamar al callback con el ganador
-        else if (this.pointsIA >= 3)
-            return this.onGameEnd(this.player2);// Llamar al callback con el ganador
+        if (this.pointsPlayer >= 3) {
+            this.onGameEnd(this.player1);// Llamar al callback con el ganador
+            return true;
+        }
+        else if (this.pointsIA >= 3) {
+            this.onGameEnd(this.player2);// Llamar al callback con el ganador
+            return true;
+        }
         return false;
     }
     async pauseGameAndShowCountdown() {

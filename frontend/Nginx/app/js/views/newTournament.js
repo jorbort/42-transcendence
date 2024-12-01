@@ -17,62 +17,48 @@ class TournamentView extends HTMLElement {
         this.firstSelect = false;
         this.SecondSelect = false;
         this.configsaved = false;
-        this.container = null;;
     }
 
     connectedCallback() {
-        this.container = document.getElementById("app");;
         this.addStyles();
-        this.createModalData(this.container);
     }
     ModalData() {
         const modalContainer = document.createElement('div');
-
         modalContainer.innerHTML = `
         <div class="modal fade" id="customModal" tabindex="-1" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalCenterTitle">Custom Game</h5>
-                    </div>
-                    <div class="modal-body">
-                        <div id="config-view">
-                            <h1>Crear Torneo</h1>
-                            <label>Nombre del Torneo: <input id="tournament-name" type="text" /></label>
-                            <label>Cantidad de Jugadores: <input id="player-count" type="number" min="2" step="2" /></label>
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalCenterTitle">Custom Game</h5>
                         </div>
-                        <form>
-                            <!-- Primer Modal Footer con la pregunta -->
-                            <div class="modal-footer d-flex justify-content-between align-items-center">
-                                <p class="text-start mb-0">¿Quieres aumentar la velocidad de la pelota con el cono?</p>
-                                <div>
+                        <div class="modal-body">
+                            <div id="config-view">
+                                <h1>Crear Torneo</h1>
+                                <label>Nombre del Torneo: <input id="tournament-name" type="text" /></label>
+                                <label>Cantidad de Jugadores: <input id="player-count" type="number" min="2" step="2" /></label>
+                            </div>
+                            <form>
+                                <div class="modal-footer">
+                                    <p>¿Aumentar velocidad con el cono?</p>
                                     <button id="btnSpeedYes" type="button" class="btn btn-success btn-sm">Sí</button>
                                     <button id="btnSpeedNo" type="button" class="btn btn-danger btn-sm">No</button>
                                 </div>
-                            </div>
-                            <!-- Segundo Modal Footer con la pregunta -->
-                            <div class="modal-footer d-flex justify-content-between align-items-center">
-                                <p class="text-start mb-0">¿Quieres disminuir la velocidad de la pelota con el Icosahedron?</p>
-                                <div>
+                                <div class="modal-footer">
+                                    <p>¿Disminuir velocidad con el Icosahedron?</p>
                                     <button id="btnSizeYes" type="button" class="btn btn-success btn-sm">Sí</button>
                                     <button id="btnSizeNo" type="button" class="btn btn-danger btn-sm">No</button>
                                 </div>
-                            </div>
-                            <!-- Tercer Modal Footer con la pregunta -->
-                            <div class="modal-footer d-flex justify-content-between align-items-center">
-                                <p class="text-start mb-0">¿Quieres disminuir la velocidad de las palas con el TorusKnot?</p>
-                                <div>
+                                <div class="modal-footer">
+                                    <p>¿Disminuir velocidad de las palas con el TorusKnot?</p>
                                     <button id="btnDecreaseYes" type="button" class="btn btn-success btn-sm">Sí</button>
                                     <button id="btnDecreaseNo" type="button" class="btn btn-danger btn-sm">No</button>
                                 </div>
-                            </div>
-                            <!-- Botón para guardar la configuración -->
-                            <button id="btnSave" type="button" class="btn btn-primary" disabled>Guardar Configuración</button>
-                        </form>
+                                <button id="btnSave" type="button" class="btn btn-primary" disabled>Guardar Configuración</button>
+                            </form>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>`;
+            </div>`;
         return modalContainer;
     }
 
@@ -89,7 +75,10 @@ class TournamentView extends HTMLElement {
     createModalData(container) {
         const newModal = this.ModalData();
         container.appendChild(newModal);
-        const myModal = new bootstrap.Modal(document.getElementById('customModal'), { keyboard: false });
+        const myModal = new bootstrap.Modal(document.getElementById('customModal'), { 
+            keyboard: false, 
+            backdrop: 'static' 
+        });
         myModal.show();
 
         function resetButtonStyles(buttonYesId, buttonNoId) {
@@ -209,7 +198,8 @@ class TournamentView extends HTMLElement {
 
             #config-view, #edit-players-view, #tournament-view {
                 flex: 1;
-                padding: 20px;
+                justify-content: center;
+                padding: 15px;
                 background: #ffffff;
                 border-radius: 10px;
                 box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -218,6 +208,7 @@ class TournamentView extends HTMLElement {
             }
 
             #tournament-view {
+                justify-content: center;
                 display: flex;
                 flex-direction: row;
                 justify-content: space-between;
@@ -229,18 +220,22 @@ class TournamentView extends HTMLElement {
             }
 
             h2, h1 {
+                justify-content: center;
                 text-align: center;
                 color: #333;
             }
 
             label {
+                justify-content: center;
                 display: flex;
+                text-align: center;
                 margin-bottom: 10px;
                 font-size: 1rem;
                 color: #555;
             }
 
             input {
+                justify-content: left;
                 padding: 5px 10px;
                 border: 1px solid #ddd;
                 border-radius: 5px;
@@ -263,21 +258,6 @@ class TournamentView extends HTMLElement {
                 background: #0056b3;
             }
 
-            .round {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                margin-bottom: 20px;
-            }
-
-            .match {
-                position: relative;
-                margin: 20px;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-            }
-
             .match span {
                 font-weight: bold;
             }
@@ -296,8 +276,95 @@ class TournamentView extends HTMLElement {
                 border: 1px solid #000;
                 background: #000;
             }
+        
+        #bracket {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 2rem;
+    gap: 2rem;
+    position: relative;
+}
+
+.round {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+    position: relative;
+}
+
+.match {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 1rem;
+    background-color: #e5e7eb; /* Color de fondo claro */
+    border-radius: 8px;
+    position: relative;
+    min-width: 120px;
+}
+
+.match span {
+    font-size: 1rem;
+    margin: 0.2rem 0;
+}
+
+.match .winner {
+    margin-top: 0.5rem;
+    font-weight: bold;
+    color: #10b981; /* Verde para el ganador */
+}
+
+/* Conexiones entre partidos */
+.match::before,
+.match::after {
+    content: '';
+    position: absolute;
+    width: 2px;
+    height: 50%;
+    background-color: #333;
+}
+
+.match::before {
+    top: -50%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.match::after {
+    bottom: -50%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.round .matches::before {
+    content: '';
+    position: absolute;
+    width: 2px;
+    height: 100%;
+    background-color: #333;
+    left: -10px;
+}
+
+.round .matches:last-child::after {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    #bracket {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    .match::before,
+    .match::after {
+        display: none;
+    }
+}
         `;
         document.head.appendChild(style);
+        this.createModalData(document.getElementById("app"));
     }
 
     renderEditPlayersView() {
@@ -346,37 +413,43 @@ class TournamentView extends HTMLElement {
     }
 
     renderTournamentView() {
+        if (this.tournamentData.winner) {
+            this.renderFinalView();
+            return;
+        }
         this.innerHTML = `
-            <div id="tournament-view">
-                <div id="bracket">
-                    ${this.tournamentData.rounds.map((round, roundIndex) => `
-                        <div class="round">
-                            <h3>Ronda ${roundIndex + 1}</h3>
-                            ${round.map((match, matchIndex) => `
-                                <div class="match">
-                                    <span>${match.player1 || '---'} vs ${match.player2 || '---'}</span>
-                                    ${match.winner
-                ? `<span>Ganador: ${match.winner}</span>`
-                : `<button 
-                                                class="start-match" 
-                                                data-round-index="${roundIndex}" 
-                                                data-match-index="${matchIndex}"
-                                                ${!match.player1 || !match.player2 || this.currentMatch ? 'disabled' : ''}>
-                                                Jugar
-                                               </button>`
-            }
-                                </div>
-                            `).join('')}
-                        </div>
-                    `).join('')}
-                </div>
-                <div id="game-container"></div>
+        <div id="tournament-view">
+            <div id="bracket">
+                ${this.tournamentData.rounds.map((round, roundIndex) => `
+                    <div class="round">
+                        <h3>Ronda ${roundIndex + 1}</h3>
+                        ${round.map((match, matchIndex) => `
+                            <div class="match">
+                                <span>${match.player1 || '---'} vs ${match.player2 || '---'}</span>
+                                ${match.winner
+            ? `<span>Ganador: ${match.winner}</span>`
+            : `<button 
+                                    class="start-match" 
+                                    data-round-index="${roundIndex}" 
+                                    data-match-index="${matchIndex}"
+                                    ${this.currentMatch ? 'disabled' : ''}
+                                    ${!match.player1 || !match.player2 ? 'disabled' : ''}>
+                                    Jugar
+                                   </button>`
+        }
+                            </div>
+                        `).join('')}
+                    </div>
+                `).join('')}
             </div>
-        `;
+            <div id="game-container"></div>
+        </div>
+    `;
 
-        this.querySelectorAll('.start-match').forEach(button => {
+        const buttons = this.querySelectorAll('.start-match');
+        buttons.forEach(button => {
             button.addEventListener('click', (e) => {
-                button.disabled = true;
+                buttons.forEach(btn => btn.disabled = true);
                 const roundIndex = parseInt(button.dataset.roundIndex, 10);
                 const matchIndex = parseInt(button.dataset.matchIndex, 10);
                 const match = this.tournamentData.rounds[roundIndex][matchIndex];
@@ -390,6 +463,7 @@ class TournamentView extends HTMLElement {
                         ] = winner;
                     } else {
                         this.tournamentData.winner = winner;
+                        buttons.forEach(btn => btn.disabled = false);
                         //  this.renderFinalView();
                     }
                     this.currentMatch = null;
@@ -399,12 +473,55 @@ class TournamentView extends HTMLElement {
         });
     }
 
+        renderFinalView() {
+        this.innerHTML = `
+            <div id="tournament-final-view">
+                <div id="bracket">${this.generateBracketHTML()}</div>
+                <div id="winner">
+                    <h2>¡Ganador del Torneo!</h2>
+                    <p>${this.tournamentData.winner}</p>
+                    <button id="save-winner">Guardar Ganador</button>
+                </div>
+            </div>
+        `;
+    
+        this.querySelector('#save-winner').addEventListener('click', () => {
+            this.saveWinner(this.tournamentData.winner);
+        });
+    }
+    
     startGame1(player1, player2, onGameEnd) {
         const gameContainer = this.querySelector('#game-container');
         const pongGame = renderPonTournament(this.currentMatch, this.currentRoundIndex, this.lastSelect, this.addCustom,
             this.addCustom1, this.addCustom2, player1, player2, onGameEnd);
         gameContainer.innerHTML = '';
         gameContainer.appendChild(pongGame);
+    }
+
+    generateBracketHTML() {
+        return this.tournamentData.rounds.map((round, roundIndex) => `
+            <div class="round">
+                <h3>Ronda ${roundIndex + 1}</h3>
+                <div class="matches">
+                    ${round.map(match => `
+                        <div class="match">
+                            <span>${match.player1 || '---'}</span>
+                            <span>vs</span>
+                            <span>${match.player2 || '---'}</span>
+                            ${match.winner ? `<div class="winner">Ganador: ${match.winner}</div>` : ''}
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `).join('');
+    }
+    
+    
+    saveWinner(winner) {
+        // Aquí puedes implementar la lógica para guardar el ganador,
+        // por ejemplo, enviar una solicitud a un servidor o guardar en localStorage
+        console.log(`Ganador ${winner} guardado.`);
+        alert(`El ganador ${winner} ha sido guardado.`);
     }
 }
 customElements.define('tournament-view', TournamentView);
