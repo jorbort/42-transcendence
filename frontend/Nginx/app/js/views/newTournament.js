@@ -17,12 +17,11 @@ class TournamentView extends HTMLElement {
         this.firstSelect = false;
         this.SecondSelect = false;
         this.configsaved = false;
-        this.app = document.getElementById("app");
         this.container = null;;
     }
 
     connectedCallback() {
-        this.container = app;
+        this.container = document.getElementById("app");;
         this.addStyles();
         this.createModalData(this.container);
     }
@@ -377,6 +376,7 @@ class TournamentView extends HTMLElement {
 
         this.querySelectorAll('.start-match').forEach(button => {
             button.addEventListener('click', (e) => {
+                button.disabled = true;
                 const roundIndex = parseInt(button.dataset.roundIndex, 10);
                 const matchIndex = parseInt(button.dataset.matchIndex, 10);
                 const match = this.tournamentData.rounds[roundIndex][matchIndex];

@@ -14,52 +14,37 @@ class PongGameTournament extends HTMLElement {
         this.targetPaddleLeftY = 0;
         this.targetPaddleRightY = 0;
         this.ball = null; // ocultar pelota
-        this.countdownText = null;
         this.loadfont = null;
         this.playerText = null;
         this.IAText = null;
-        this.gameStarted = false;
-        this.gameHeight = 12;
-        this.paddleHeight = 2;
-        this.configsaved = false;
         this.addCustom = false;
         this.addCustom1 = false;
         this.addCustom2 = false;
-        this.firstSelect = false;
-        this.SecondSelect = false;
-        this.lastSelect = false;
-        this.handleKeyDown = this.handleKeyDown.bind(this);
-        this.handleKeyUp = this.handleKeyUp.bind(this);
-        this.handleKeyDownL = this.handleKeyDownL.bind(this);
-        this.handleKeyUpL = this.handleKeyUpL.bind(this);
         this.player1 = 'TMP1';
         this.player2 = 'TMP2';
         this.onGameEnd = null;
     }
 
     async connectedCallback() {
-        window.addEventListener('keydown', this.handleKeyDown);
-        window.addEventListener('keyup', this.handleKeyUp);
-        window.addEventListener('keydown', this.handleKeyDownL);
-        window.addEventListener('keyup', this.handleKeyUpL);
+        window.addEventListener('keydown', this.handleKeyDown.bind(this));
+        window.addEventListener('keyup', this.handleKeyUp.bind(this));
+        window.addEventListener('keydown', this.handleKeyDownL.bind(this));
+        window.addEventListener('keyup', this.handleKeyUpL.bind(this));
         return await this.startGame();
 
     }
 
     disconnectedCallback() {
         cancelAnimationFrame(this.animationFrameId);
-        this.gameStarted = false;
     }
 
     initObjects() {
-
         const sphereGeometry = new THREE.SphereGeometry(0.5, 27, 27);
         const sphereMaterial = new THREE.MeshStandardMaterial({ color: 0x87CEEB, metalness: 0.5, roughness: 0.5 });
         this.ball = new THREE.Mesh(sphereGeometry, sphereMaterial);
         this.ball.position.set(0, 2, 0);
         this.camera.position.set(0, 1, 20);
         this.scene.add(this.ball);
-
         const CustomGeometry = new THREE.ConeGeometry(0.5, 1, 16);
         const CustomMaterial = new THREE.MeshStandardMaterial({ color: 0xFFC0CB, metalness: 0.5, roughness: 0.5 });
         this.Custom = new THREE.Mesh(CustomGeometry, CustomMaterial);
@@ -67,7 +52,6 @@ class PongGameTournament extends HTMLElement {
         this.camera.position.set(0, 1, 20);
         if (this.addCustom)
             this.scene.add(this.Custom);
-
         const Custom1Geometry = new THREE.IcosahedronGeometry(0.5);
         const Custom1Material = new THREE.MeshStandardMaterial({ color: 0x00FF00, metalness: 0.5, roughness: 0.5 });
         this.Custom1 = new THREE.Mesh(Custom1Geometry, Custom1Material);
@@ -75,7 +59,6 @@ class PongGameTournament extends HTMLElement {
         this.camera.position.set(0, 1, 20);
         if (this.addCustom1)
             this.scene.add(this.Custom1);
-
         const Custom2Geometry = new THREE.TorusKnotGeometry(0.4, 0.12, 47, 7);
         const Custom2Material = new THREE.MeshStandardMaterial({ color: 0x00FFFF, metalness: 0.5, roughness: 0.5 });
         this.Custom2 = new THREE.Mesh(Custom2Geometry, Custom2Material);
@@ -83,7 +66,6 @@ class PongGameTournament extends HTMLElement {
         this.camera.position.set(0, 1, 20);
         if (this.addCustom2)
             this.scene.add(this.Custom2);
-
         const paddleGeometry = new THREE.BoxGeometry(0.4, 2, 0.1);
         const paddleMaterial = new THREE.MeshStandardMaterial({ color: 0xff0000 });
         this.paddleLeft = new THREE.Mesh(paddleGeometry, paddleMaterial);
@@ -91,21 +73,13 @@ class PongGameTournament extends HTMLElement {
         this.paddleLeft.position.y = 2;
         this.targetPaddleLeftY = 2;
         this.scene.add(this.paddleLeft);
-
         this.paddleRight = new THREE.Mesh(paddleGeometry, paddleMaterial);
         this.paddleRight.position.x = 12.5;
         this.targetPaddleRightY = 2;
         this.paddleRight.position.y = 2;
         this.scene.add(this.paddleRight);
-
         const borderMaterial = new THREE.LineBasicMaterial({ color: 0xffffff });
-        const points = [
-            new THREE.Vector3(-15, 8, 0),
-            new THREE.Vector3(13.5, 8, 0),
-            new THREE.Vector3(13.5, -4, 0),
-            new THREE.Vector3(-15, -4, 0)
-        ];
-
+        const points = [new THREE.Vector3(-15, 8, 0), new THREE.Vector3(13.5, 8, 0), new THREE.Vector3(13.5, -4, 0), new THREE.Vector3(-15, -4, 0)];
         const geometry = new THREE.BufferGeometry().setFromPoints(points);
         const border = new THREE.LineSegments(geometry, borderMaterial);
         this.scene.add(border);
@@ -122,15 +96,12 @@ class PongGameTournament extends HTMLElement {
                 this.scene.add(this.playerText);
                 this.scene.add(this.IAText);
                 resolve(font); // Resolvemos la promesa con la fuente
-            }, undefined, (error) => {
-                console.error("Error loading font:", error);
-                reject(error); // Rechazamos la promesa en caso de error
-            });
+            }, undefined, (error) => {console.error("Error loading font:", error);reject(error);}); // Rechazamos la promesa en caso de error     
         });
     }
 
     async startCountdown() {
-        const textMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff });
+        const textMaterial = new THREE.MeshStandardMaterial({ color: 0xfffff });
         let countdown = 3;
         const countdownMesh = this.createText(countdown.toString(), new THREE.Vector3(0, 1.5, 0), this.loadfont, textMaterial);
         this.scene.add(countdownMesh);
@@ -159,7 +130,6 @@ class PongGameTournament extends HTMLElement {
         await this.startCountdown();
         this.initObjects();
         const animate = async () => {
-            if (this.gameStarted) return;
             await this.moveBall();
             this.customGame();
             this.checkPaddleCollision(this.ball, this.paddleLeft, this.paddleRight);
@@ -169,8 +139,6 @@ class PongGameTournament extends HTMLElement {
             this.renderer.render(this.scene, this.camera);
             if (!this.checkIfLost(this.ball))
                 requestAnimationFrame(animate);
-            else
-                return this.onGameEnd;
         };
         animate();
     }
@@ -338,19 +306,18 @@ class PongGameTournament extends HTMLElement {
         if (this.ball.position.x > 15) {
             this.pointsPlayer++;
             this.reprint(this.player1, this.pointsPlayer);
-            await this.pauseGameAndShowCountdown()
+            await this.pauseGameAndShowCountdown();
             this.resetBall();
         }
         if (this.ball.position.x < -15) {
             this.pointsIA++;
             this.reprint(this.player2, this.pointsIA);
-            await this.pauseGameAndShowCountdown()
+            await this.pauseGameAndShowCountdown();
             this.resetBall();
         }
         if (this.ball.position.y > 8 || this.ball.position.y < -3.8)
             this.ballDireccionY *= -1;
     }
-
     movaPaddles() {
         if (this.movePaddleLeft === 1) {
             this.targetPaddleLeftY += this.aiSpeed;
@@ -364,20 +331,12 @@ class PongGameTournament extends HTMLElement {
     // Verificar si alguien perdió
     checkIfLost() {
         if (this.pointsPlayer >= 3)
-            return this.endGame(this.player1);
+            return this.onGameEnd(this.player1);// Llamar al callback con el ganador
         else if (this.pointsIA >= 3)
-            return this.endGame(this.player2);
+            return this.onGameEnd(this.player2);// Llamar al callback con el ganador
         return false;
     }
-    // Terminar el juego e invocar el callback
-    endGame(winner) {
-        this.gameStarted = false;
-        this.onGameEnd(winner); // Llamar al callback con el ganador
-        const gameContainer = this.querySelector('#game-container');
-        return winner;
-    }
     async pauseGameAndShowCountdown() {
-        this.gameStarted = false;
         this.ball.position.set(5, 2, 50);
         this.ballSpeedX = 0.15;
         this.ballSpeedY = 0.05;
