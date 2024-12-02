@@ -71,6 +71,7 @@ class friendsList extends HTMLElement{
 				throw new Error('Error en la peticion');
 			}
 			let friends = await response.json();
+			console.log(friends);
 			this.renderFriends(friends);
 		}catch(error){
 			let fallbackFriends = [{name: 'amigo 1'}, {name:"amigo 2"}, {name:"amigo 3"}];
@@ -79,7 +80,8 @@ class friendsList extends HTMLElement{
 	}
 	renderFriends(friends){
 		this.container.innerHTML = '';
-		if(friends.lenght === 0){
+		console.log(friends.length);
+		if(friends.length === 0){
 			let noFriends = document.createElement('div');
 			noFriends.className = 'friend-div';
 			noFriends.textContent = 'No tienes amigos';

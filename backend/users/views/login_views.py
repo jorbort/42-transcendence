@@ -5,13 +5,15 @@ from django.utils import timezone
 from django.contrib.auth import authenticate, login as django_login, logout as django_logout
 from django.core.mail import send_mail
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework import status, generics
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.permissions import AllowAny
 
 logger = logging.getLogger(__name__)
 
 class LoginView(generics.GenericAPIView):
+	permission_classes = [AllowAny]
 
 	def post(self,request):
 		username = request.data.get('username')
@@ -43,6 +45,7 @@ class LoginView(generics.GenericAPIView):
 	
 
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def OtpVerify(request):
 	username= request.data.get('username')
 	password= request.data.get('password')
@@ -72,6 +75,7 @@ def OtpVerify(request):
 
 
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def logout_view(request):
 
 	django_logout(request)
