@@ -17,12 +17,13 @@ export function fortyTwoCallback(){
 		})
 		.then(response => response.json())
 		.then(data => {
+			console.log('Data:', data);
 			if (data.access_token && data.refresh_token){
 				document.cookie = `access_token=${data.access_token}`;
 				document.cookie = `refresh_token=${data.refresh_token}`;
-				// updateNav();
+				localStorage.setItem('username', data.username);
+				localStorage.setItem('user_img', data.user_img);
 				window.location.href = '/Profile';
-				console.log('Access-token:', data.access_token);
 				handleRouteChange();
 			}else{
 				console.log('Error: Failed to obtain access-tokens', data);

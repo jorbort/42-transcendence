@@ -4,10 +4,8 @@ import  TitleComponent  from '../webComponents/TitleComponent.js';
 
 export function loginView() {
 	return /*html*/`
-		<div id='app'>
 			<title-tag></title-tag>
 			<login-form></login-form>
-		<div>
 	`;
 }
 

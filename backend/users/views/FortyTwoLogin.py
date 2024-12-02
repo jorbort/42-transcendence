@@ -83,7 +83,11 @@ def callback_42(request):
 	refresh_token = RefreshToken.for_user(user)
 	access_token = str(refresh_token.access_token)
 
-	response = Response({'access_token': access_token, 'refresh_token': str(refresh_token)}, status=status.HTTP_200_OK)
+	response = Response({'access_token': access_token,
+		'refresh_token': str(refresh_token),
+		'user_img' : user_info['image']['link'],
+		'username' : user_info['login'] },
+		status=status.HTTP_200_OK)
 	response.set_cookie('access_token', access_token)
 	response.set_cookie('refresh_token', str(refresh_token))
 	return response

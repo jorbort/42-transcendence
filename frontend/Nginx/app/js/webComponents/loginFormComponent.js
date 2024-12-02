@@ -338,7 +338,6 @@ export default class loginFormComponent extends HTMLElement{
                         const data = await response.json();
                         console.log(data);
                         alert("User created successfully");
-                        // window.history.pushState({}, '', '/login');
 						localStorage.setItem('username', username);
 						window.location.pathname = '/otpView';
 						handleRouteChange();
