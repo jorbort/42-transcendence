@@ -239,65 +239,119 @@ class profileconfig extends HTMLElement {
             font-family: "Press Start 2p";
             margin-top: 5px; /* Espacio entre el label y el input */
         }
-        .imgContainer{
-            width: 35%;
-            height: 65%;
-            display: flex;
-            justify-content: center;
-            align-items:center;
-            margin-bottom: 0px;
-        }
-        img{
-            border-radius: 50%;
-            width: 16em;
-            height: 16em;
-            box-shadow:rgba(30, 30, 30, 0.9) 2px 3px  10px 5px;
-        }
         #textconf{
             margin-bottom: 1em;
             color: #e67e80;
-        }`;
+        }
+		#imageUpload {
+			display: none;
+		}
+
+		.upload-icon {
+			width: 50px;
+			height: 50px;
+			cursor: pointer;
+			transition: transform 0.2s ease;
+		}
+
+		.upload-icon:hover {
+			transform: scale(1.1);
+		}
+
+		.upload-icon:active {
+			transform: scale(0.9);
+		}
+		.imgContainer {
+			position: relative;
+			width: 150px;
+			height: 150px;
+			margin: auto;
+		}
+
+		#profileImage {
+			width: 100%;
+			height: 100%;
+			border-radius: 50%;
+			object-fit: cover;
+			border: 2px solid #A0D7A0;
+		}
+
+		/* Botón para subir imagen */
+		.uploadimg {
+			position: absolute;
+			top: -10px;
+			right: -10px;
+			background-color: #A0D7A0;
+			border-radius: 50%;
+			width: 40px;
+			height: 40px;
+			box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			cursor: pointer;
+			transition: transform 0.2s ease;
+		}
+
+		.uploadimg:hover {
+			transform: scale(1.1);
+		}
+
+		#imageUpload {
+			display: none;
+		}
+
+		.upload-icon {
+			width: 60%;
+			height: auto;
+		}
+		#imgup{
+			display: block;
+			margin: 0 auto;
+		}`;
 
 		shadow.appendChild(style);
 		let container = document.createElement('div');
 		container.classList.add('wrapper');
 		container.innerHTML = /*html*/`
-        <div id="testing">
-        <div class="card-switch">
-            <label class="switch">
-                <div class="flip-card__inner">
-                    <div class="flip-card__front">
-                        <form action="" id="loginForm" class="flip-card__form">
-                            <div class="imgContainer">
-                                <img src="${localStorage.getItem('user_img')}" id="profileImage"></img>
-                            </div>
-                            <h3 id="textconf">Configura la informacion de tu perfil</h3>
-                            <div class="form-row">
-                                <label for="Alies" class="form-label">Alias</label>
-                                <input type="name" id="Alies" placeholder="${localStorage.getItem('username')}" name="Alies" class="flip-card__input">
-                            </div>
-                            <div class="form-row">
-                                <label for="nombre" class="form-label">Nombre</label>
-                                <input type="nombre" id="nombre" placeholder="Pepito" name="nombre" class="flip-card__input" disabled>
-                            </div>
-                            <div class="form-row">
-                                <label for="segundoname" class="form-label">Segundo Nombre</label>
-                                <input type="name" id="segundoname" placeholder="Grillo" name="segundoname" class="flip-card__input" disabled>
-                            </div>
-                            <!-- Botón para cargar nueva imagen 
-                            <div class="form-row">
-                                <label for="imageUpload" class="form-label">Cargar nueva imagen</label>
-                                <input type="file" id="imageUpload" class="flip-card__input" accept="image/*" onchange="loadImage(event)">
-                            </div>-->
-                            <div class="flip-card__btn" id="intra-button" href="">    
-                                <a href="">Actualizar</a>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </label>
-        </div> 
-    </div>`;    
+		<div id="testing">
+			<div class="card-switch">
+				<label class="switch">
+					<div class="flip-card__inner">
+						<div class="flip-card__front">
+							<form action="" id="loginForm" class="flip-card__form">
+								<div class="imgContainer">
+									<img src="${localStorage.getItem('user_img')}" id="profileImage">
+									<!-- Botón para subir imagen -->
+									<div class="uploadimg">
+										<label for="imageUpload" class="form-label">
+											<img id="imgup" src="../images/uploadimg.png" alt="upload img" class="upload-icon">
+										</label>
+										<input type="file" id="imageUpload" class="flip-card__input" accept="image/*" onchange="loadImage(event)">
+									</div>
+								</div>
+								<h3 id="textconf">Configura la informacion de tu perfil</h3>
+								<div class="form-row">
+									<label for="Alies" class="form-label">Alias</label>
+									<input type="name" id="Alies" placeholder="${localStorage.getItem('username')}" name="Alies" class="flip-card__input">
+								</div>
+								<div class="form-row">
+									<label for="nombre" class="form-label">Nombre</label>
+									<input type="nombre" id="nombre" placeholder="Pepito" name="nombre" class="flip-card__input" disabled>
+								</div>
+								<div class="form-row">
+									<label for="segundoname" class="form-label">Segundo Nombre</label>
+									<input type="name" id="segundoname" placeholder="Grillo" name="segundoname" class="flip-card__input" disabled>
+								</div>
+								<div class="flip-card__btn" id="intra-button" href="">
+									<a href="">Actualizar</a>
+								</div>
+							</form>
+						</div>
+					</div>
+				</label>
+			</div>
+		</div>`;
 		shadow.appendChild(container);
     }
     connectedCallback(){
