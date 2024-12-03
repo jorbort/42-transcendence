@@ -1,16 +1,18 @@
 import {createUser, signup} from './views/createUser.js';
-import {loginView, signin} from './views/loginView.js';
+import {loginView} from './views/loginView.js';
 import {} from './views/loginView.js';
+import homePage from './views/homeProfile.js';
 
-// import {otpView, otp} from './views/otpView.js';
-// import {getCookie} from './utils/sessionToken.js';
+import OTPComponent from './webComponents/OTPInputComponent.js';
+
+import {otpView} from './views/otpView.js';
+
 import tableView from './views/highScores.js';
 import renderPongGameIA from './views/pongIA.js';
 import renderPongGame from './views/pong.js';
 import { fortyTwoCallback } from './views/fortyTwoCallback.js';
-import { updateNav } from './utils/updateNav.js';
 
-const userlogged = 0;
+
 let accessToken = 0;
 
 function getCookie(name) {
@@ -32,10 +34,9 @@ export function handleRouteChange() {
 	}
 	console.log('Path:', path);
 	if (accessToken){
-		// updateNav();
 		switch (path) {
 				case '/Profile':
-					view = tableView();
+					view = homePage();
 					break;
 				case '/localgame1vsIA':
 					view = renderPongGameIA();
@@ -43,6 +44,8 @@ export function handleRouteChange() {
 				case '/localgame1vs1':
 					view =  renderPongGame();
 					break;
+				case '/login':
+					view = tableView();
 				default:
 				view = '<h1>404 Not Found</h1>';
 		}
@@ -53,6 +56,9 @@ export function handleRouteChange() {
 				break;
 			case '/localgame1vsIA':
 				view = renderPongGameIA();
+				break;
+			case '/otpView':
+				view = otpView();
 				break;
 			case '/localgame1vs1':
 				view = renderPongGame();
@@ -78,7 +84,6 @@ function handleEventListeners(path) {
 			signup();
 			break;
 		case '/login':
-			signin();
 			break;
 	}
 }

@@ -1,4 +1,3 @@
-
 from pathlib import Path
 import os
 from datetime import timedelta
@@ -63,6 +62,8 @@ CORS_ALLOW_HEADERS = [
     "origin",
     "user-agent",
 ]
+
+CORS_ALLOW_CREDENTIALS = True
 
 TEMPLATES = [
     {
@@ -194,7 +195,7 @@ LOGGING = {
 #42API
 CLIENT_ID=os.environ['CLIENT_ID']
 CLIENT_SECRET=os.environ['CLIENT_SECRET']
-REDIRECT_URI='http://localhost:80/callback_42'
+REDIRECT_URI='http://localhost:2080/callback_42'
 
 #django sesion configurations
 
@@ -205,3 +206,13 @@ SESSION_COOKIE_NAME = 'sessionid'
 SESSION_COOKIE_SECURE = False  
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SAMESITE = 'Lax'
+
+# REST framework settings
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+}
