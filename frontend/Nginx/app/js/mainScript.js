@@ -1,9 +1,12 @@
 import {createUser, signup} from './views/createUser.js';
-import {loginView, signin} from './views/loginView.js';
+import {loginView} from './views/loginView.js';
 import {} from './views/loginView.js';
+import homePage from './views/homeProfile.js';
 
-// import {otpView, otp} from './views/otpView.js';
-// import {getCookie} from './utils/sessionToken.js';
+import OTPComponent from './webComponents/OTPInputComponent.js';
+
+import {otpView} from './views/otpView.js';
+
 import tableView from './views/highScores.js';
 import renderPongGameIA from './views/pongIA.js';
 import renderPongGame from './views/pong.js';
@@ -14,7 +17,6 @@ import renderPongGameName from './views/pongNamePlayers.js';
 import rendertorneo from './views/torneo.js';
 
 
-const userlogged = 0;
 let accessToken = 0;
 
 function getCookie(name) {
@@ -33,16 +35,11 @@ export function handleRouteChange() {
 	if (path === '/') {
 		path = '/login';
 	}
-	
-	let pathParts = path.split('/');
-	console.log("pathSplit: " + pathParts[1]);
-	console.log("path: " + path);
-
+  
 	if (accessToken){
-		// updateNav();
-		switch ("/" + pathParts[1]) {
-				case '/Profile':
-					view = tableView();
+		switch (path) {
+      case '/Profile':
+					view = homePage();
 					break;
 				case '/localgame1vsIA':
 					view = renderPongGameIA();
@@ -51,8 +48,8 @@ export function handleRouteChange() {
 					// if (pathParts.length == 4)
 						// view = renderPongGameName(pathParts[2], pathParts[3]);
 					// else
-						// view =  renderPongGame();
-					view = renderPongGameName("Marc", "Edgar");
+						view =  renderPongGame();
+					//view = renderPongGameName("Marc", "Edgar");
 					break;
 				case '/localgameMulti':
 					view = renderPongGameMulti();
@@ -60,23 +57,28 @@ export function handleRouteChange() {
 				case '/torneo':
 					view = rendertorneo();
 					break;
+				case '/login':
+					view = tableView();
 				default:
 				view = '<h1>404 Not Found</h1>';
 		}
 	}else{
-		switch ("/" + pathParts[1]) {
+		switch (path) {
 			case '/login':
 				view = loginView();
 				break;
 			case '/localgame1vsIA':
 				view = renderPongGameIA();
 				break;
+			case '/otpView':
+				view = otpView();
+				break;
 			case '/localgame1vs1':
 				// if (pathParts.length == 4)
 				// 	view = renderPongGameName(pathParts[2], pathParts[3]);
 				// else
-				// 	view =  renderPongGame();
-				view = renderPongGameName("Marc", "Edgar");
+				 	view =  renderPongGame();
+				//view = renderPongGameName("Marc", "Edgar");
 					break;
 			case '/localgameMulti':
 				view = renderPongGameMulti();
@@ -107,7 +109,6 @@ function handleEventListeners(path) {
 			signup();
 			break;
 		case '/login':
-			signin();
 			break;
 	}
 }

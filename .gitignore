@@ -1,5 +1,6 @@
 /backend/staticfiles/rest_framework/*
 /backend/staticfiles/admin/*
 __pycache__
-.venv
 migrations
+.venv
+/postgres/res

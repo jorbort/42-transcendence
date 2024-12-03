@@ -4,7 +4,8 @@ import requests
 import logging
 from django.conf import settings
 from django.shortcuts import redirect
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth import login as django_login
@@ -18,6 +19,7 @@ def gen_state():
 	return ''.join(random.choices(string.ascii_letters + string.digits, k=16))
 
 @api_view(['GET'])
+@permission_classes([AllowAny])
 def login_42(request):
     state = gen_state()
     authorize_url = (
@@ -31,6 +33,7 @@ def login_42(request):
     return redirect(authorize_url)
 
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def callback_42(request):
 	state = request.data.get('state')
 	code = request.data.get('code')
@@ -83,7 +86,11 @@ def callback_42(request):
 	refresh_token = RefreshToken.for_user(user)
 	access_token = str(refresh_token.access_token)
 
-	response = Response({'access_token': access_token, 'refresh_token': str(refresh_token)}, status=status.HTTP_200_OK)
+	response = Response({'access_token': access_token,
+		'refresh_token': str(refresh_token),
+		'user_img' : user_info['image']['link'],
+		'username' : user_info['login'] },
+		status=status.HTTP_200_OK)
 	response.set_cookie('access_token', access_token)
 	response.set_cookie('refresh_token', str(refresh_token))
 	return response

@@ -1,7 +1,7 @@
 from django.urls import path
 from users.views.crud_user import (
 	hello_world, addUser, getUser, update_user_info, getUsers, 
-	 add_friend, upload_avatar
+	 add_friend, upload_avatar, get_friends
 )
 from users.views.match import record_match, match_history
 from users.views.refresh_tokens import refreshTokens
@@ -24,4 +24,5 @@ urlpatterns = [
 	path('TokenRefresh', refreshTokens), #http://localhost:8000/users/TokenRefresh
 	path('login_42', login_42, name='login_42'), #http://localhost:8000/users/login_42
     path('callback_42', callback_42, name='callback_42'),#http://localhost:8000/users/callback_42
+	path('listFriends', get_friends) #http://localhost:8000/users/listFriends
 ]

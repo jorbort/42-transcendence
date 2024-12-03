@@ -1,11 +1,13 @@
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 from users.models import MatchHistory
 from users.serializer import MatcHistorySerializer
 
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def match_history(request):
 	if request.user.is_authenticated:
 		matches_as_player1= MatchHistory.objects.filter(player1=request.user)
@@ -17,6 +19,7 @@ def match_history(request):
 		return Response({'detail': 'Authentication credentials were not provided'})
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def record_match(request):
 	if request.user.is_authenticated:
 		serializer= MatcHistorySerializer(data=request.data)
@@ -26,4 +29,3 @@ def record_match(request):
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 	else:
 		return Response({'detail': 'authentication credential where not provided'})
-	

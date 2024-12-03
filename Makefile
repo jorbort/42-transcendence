@@ -1,7 +1,7 @@
 
 up:	
-	@if [ ! -d "/home/${USER}/data/postgres_data" ]; then \
-		mkdir "/home/${USER}/data/postgres_data"; \
+	@if [ ! -d "./postgres/res" ]; then \
+		mkdir "./postgres/res"; \
 	fi
 	docker compose -f docker-compose.yaml up  --build
 down:
