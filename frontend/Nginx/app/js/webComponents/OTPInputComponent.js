@@ -200,10 +200,19 @@ export default class OTPComponent extends HTMLElement{
 			font-size: 0.6rem;
 			font-family: "Press Start 2P";
 		}
+		#testing{
+			width: 100vw;
+			height: 65vh;
+			display: flex;
+			align-items: center;
+			justify-content: space-evenly;
+			flex-direction: column;
+		}
 		`;
 		shadow.appendChild(style);
 		let container = document.createElement('div');
 		container.innerHTML = /*html*/`
+		<div id="testing">
 		<div class="brutalist-container">
 			<input
 				placeholder="Enter OTP"
@@ -212,6 +221,7 @@ export default class OTPComponent extends HTMLElement{
 			/>
 			<label class="brutalist-label">Enter One Time Password</label>
 			<button class="flip-card__btn" type="submit">Submit!</button>
+		</div>
 		</div>
 
 		`;

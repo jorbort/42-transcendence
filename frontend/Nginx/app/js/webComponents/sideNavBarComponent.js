@@ -178,7 +178,7 @@ export default class SideNavBar extends HTMLElement{
 					<div class="dropdown">
 							<div class="dropdown-content">
 								<ul class="dropdown-menu" aria-labelledby="gameDropdown">
-									<li><a class="dropdown-item" href="/ConfigProfile">Profile</a></li>
+									<li><a class="dropdown-item" href="/configProfile">Profile</a></li>
 								</ul>
 							</div>
 						</div>

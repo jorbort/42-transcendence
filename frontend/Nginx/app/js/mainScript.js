@@ -15,6 +15,8 @@ import { fortyTwoCallback } from './views/fortyTwoCallback.js';
 import { updateNav } from './utils/updateNav.js';
 import renderPongGameName from './views/pongNamePlayers.js';
 import rendertorneo from './views/torneo.js';
+import configProfile from './views/configProfile.js';
+
 
 
 let accessToken = 0;
@@ -38,28 +40,32 @@ export function handleRouteChange() {
   
 	if (accessToken){
 		switch (path) {
-      case '/Profile':
-					view = homePage();
-					break;
-				case '/localgame1vsIA':
-					view = renderPongGameIA();
-					break;
-				case '/localgame1vs1':
-					// if (pathParts.length == 4)
-						// view = renderPongGameName(pathParts[2], pathParts[3]);
-					// else
-						view =  renderPongGame();
-					//view = renderPongGameName("Marc", "Edgar");
-					break;
-				case '/localgameMulti':
-					view = renderPongGameMulti();
-					break;
-				case '/torneo':
-					view = rendertorneo();
-					break;
-				case '/login':
-					view = tableView();
-				default:
+			case '/Profile':
+				view = homePage();
+				break;
+			case '/localgame1vsIA':
+				view = renderPongGameIA();
+				break;
+			case '/localgame1vs1':
+				// if (pathParts.length == 4)
+					// view = renderPongGameName(pathParts[2], pathParts[3]);
+				// else
+					view =  renderPongGame();
+				//view = renderPongGameName("Marc", "Edgar");
+				break;
+			case '/localgameMulti':
+				view = renderPongGameMulti();
+				break;
+			case '/torneo':
+				view = rendertorneo();
+				break;
+			case '/login':
+				view = loginView();
+				break;
+			case '/configProfile':
+				view = configProfile();
+				break;
+			default:
 				view = '<h1>404 Not Found</h1>';
 		}
 	}else{
@@ -91,6 +97,9 @@ export function handleRouteChange() {
 				break;
 			case '/torneo':
 				view = rendertorneo();
+				break;
+			case '/configProfile':
+				view = configProfile();
 				break;
 			default:
 				view = '<h1>404 Not Found</h1>';

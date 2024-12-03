@@ -31,10 +31,10 @@ export default class loginFormComponent extends HTMLElement{
 		.wrapper {
 			--input-focus: rgba(60, 69, 75,1);
 			--font-color: #e67e80;
-			--font-color-sub: #a7c080;
+			--font-color-sub: #A0D7A0;
 			--bg-color: #2b3339;
 			--bg-color-alt: #0000;
-			--main-color: #a7c080;
+			--main-color: #A0D7A0;
 		}
 		a{
 			text-decoration: none;
