@@ -8,6 +8,8 @@ class NAME extends HTMLElement {
     }
 }
 
+
+
 customElements.define('NAME-NAME', NAME);
 
 export default function RENDERNAME () {

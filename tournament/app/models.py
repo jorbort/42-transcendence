@@ -1,4 +1,7 @@
 from django.db import models
+
+# Create your models here.
+from django.db import models
 from django.contrib.auth.models import AbstractUser
 # Create your models here.
 
@@ -27,6 +30,8 @@ class tournament(models.Model):
 	custom_three = models.BooleanField(default=False)
 	custom_is_saved = models.BooleanField(default=False)
 	winner = models.CharField(blank=True, null=True)
+
+
 class MatchHistory(models.Model):
 	player1=models.ForeignKey(PongUser, related_name='match_as_player1', on_delete=models.CASCADE)
 	player2=models.ForeignKey(PongUser,related_name='match_as_player2',on_delete=models.CASCADE)
@@ -38,6 +43,5 @@ class MatchHistory(models.Model):
 
 	def __str__(self):
 		return f"Match on {self.date} between {self.player1.username} and {self.player2.username}"
-
 
 

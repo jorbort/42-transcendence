@@ -112,10 +112,10 @@ class PongGame extends HTMLElement {
         this.scene.add(border);
     }
 
-    newModal( goHome, tryAgain, btncruz) {
+    newModal(goHome, tryAgain, btncruz, winnerMessage) {
         const modalContainer = document.createElement('div');
         modalContainer.innerHTML = /* html */`
-            <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalCenterTitle" data-bs-backdrop="static" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -124,6 +124,7 @@ class PongGame extends HTMLElement {
                         </div>
                         <div class="modal-body d-flex flex-column justify-content-center align-items-center">
                             <p>!Game Over!</p>
+                            <p>${winnerMessage}</p>
                         </div>
                         <div class="modal-footer">
                             ${goHome}
@@ -134,23 +135,35 @@ class PongGame extends HTMLElement {
             </div>`;
         return modalContainer;
     }
+    
+    createModal() {
+        const goHome = `<button id="Go-Home" type="button" class="btn btn-secondary">Go Home</button>`;
+        const tryAgain = `<button id="try-again" type="button" class="btn btn-primary">Try Again</button>`;
+        const btncruzend = `<button id="btn-cruz" type="button" class="btn-close" aria-label="Close"></button>`;
+    
+        // Determinar el ganador
+        const winners = [];
+        if (this.pointsPlayer >= 3) winners.push("Local Player"); // Nombre del jugador
+        if (this.pointsIA >= 3) winners.push("IA");         // Nombre de la IA
+    
+        let winnerMessage;
+        if (winners.length === 0) {
+            winnerMessage = "No winners yet!";
+        } else if (winners.length === 1) {
+            winnerMessage = `${winners[0]} wins!`;
 
-    createModal(){
-        const   goHome = `<button id="Go-Home" type="button" class="btn btn-secondary">Go Home</button>`
-        const   tryAgain = `<button id="try-again" type="button" class="btn btn-primary">Try Againg</button>`
-        const   btncruzend = `<button id="btn-cruz" type="button" class="btn-close" aria-label="Close"></button>`
-        const   newModal = this.newModal( goHome, tryAgain, btncruzend);
-        
+        const newModal = this.newModal(goHome, tryAgain, btncruzend, winnerMessage);
+    
         this.appendChild(newModal);
         const myModal = new bootstrap.Modal(document.getElementById('myModal'), {
             keyboard: false
         });
         myModal.show();
-
+    
         const btnTryAgain = document.getElementById("try-again");
         if (btnTryAgain) {
             btnTryAgain.addEventListener('click', () => {
-                myModal.dispose()
+                myModal.dispose();
                 history.pushState('', '', '/localgame1vsIA');
                 handleRouteChange();
             });
@@ -158,7 +171,7 @@ class PongGame extends HTMLElement {
         const btnGoHome = document.getElementById("Go-Home");
         if (btnGoHome) {
             btnGoHome.addEventListener('click', () => {
-                myModal.dispose()
+                myModal.dispose();
                 history.pushState('', '', '/Profile');
                 handleRouteChange();
             });
@@ -166,15 +179,16 @@ class PongGame extends HTMLElement {
         const btncruz = document.getElementById("btn-cruz");
         if (btncruz) {
             btncruz.addEventListener('click', () => {
-                myModal.hide()
+                myModal.hide();
             });
         }
-    }
+    }  
+}
 
     ModalData() {
         const modalContainer = document.createElement('div');
         modalContainer.innerHTML = /* html */`
-        <div class="modal fade" id="customModal" tabindex="-1" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal fade" id="customModal" tabindex="-1" aria-labelledby="exampleModalCenterTitle" data-bs-backdrop="static" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
@@ -423,7 +437,7 @@ class PongGame extends HTMLElement {
 
             this.customGame();
             
-            this.checkPaddleCollision(this.ball, this.paddleLeft, this.paddleRight);
+            this.checkPaddleCollision();
             
             this.movaPaddles();
             
@@ -431,7 +445,7 @@ class PongGame extends HTMLElement {
             this.paddleRight.position.y  = THREE.MathUtils.clamp(this.targetPaddleRightY, -3, 7);
             this.renderer.render(this.scene, this.camera);
             
-            if (!this.checkIfLost(this.ball))
+            if (!this.checkIfLost())
                 requestAnimationFrame(animate);
         };
 
@@ -513,18 +527,18 @@ class PongGame extends HTMLElement {
     }
 
     handleKeyUpL(event) {
-        if (event.key === 'w' || event.key === 's') {
+        if (event.key === 'w' || event.key === 's' || event.key === 'S' || event.key === 'W') {
             this.movePaddleLeft = 0;
         }
     }
 
     checkPaddleCollision() {
-        if (this.ball.position.x <= this.paddleLeft.position.x + 0.2 && this.ball.position.y < this.paddleLeft.position.y + 1 && this.ball.position.y > this.paddleLeft.position.y - 1) {
+        if (this.ball.position.x <= this.paddleLeft.position.x + 0.7 && this.ball.position.y < this.paddleLeft.position.y + 1 && this.ball.position.y > this.paddleLeft.position.y - 1) {
             this.ballDireccionX *= -1;
             this.ballSpeedX += 0.009;
             this.ballSpeedY += 0.0009;
         }
-        if (this.ball.position.x >= this.paddleRight.position.x - 0.2 && this.ball.position.y < this.paddleRight.position.y + 1 && this.ball.position.y > this.paddleRight.position.y - 1) {
+        if (this.ball.position.x >= this.paddleRight.position.x - 0.7 && this.ball.position.y < this.paddleRight.position.y + 1 && this.ball.position.y > this.paddleRight.position.y - 1) {
             this.ballDireccionX *= -1;
             this.ballSpeedX += 0.009;
             this.ballSpeedY += 0.0009;
@@ -637,17 +651,17 @@ class PongGame extends HTMLElement {
             await this.pauseGameAndShowCountdown()
             this.resetBall();
         }
-        if (this.ball.position.y > 8 || this.ball.position.y < -3.8) {
+        if (this.ball.position.y > 7.5 || this.ball.position.y < -3.5) {
             this.ballDireccionY *= -1;
         }
     }
 
-    movaPaddles() {
-        if (this.movePaddleLeft === 1) {
-            this.targetPaddleLeftY += this.paddleSpeed;
-        } else if (this.movePaddleLeft === -1) {
-            this.targetPaddleLeftY -= this.paddleSpeed;
-        }
+    movaPaddles()
+    {
+        if (this.movePaddleLeft === 1 && this.targetPaddleLeftY < 8) {
+            this.targetPaddleLeftY += this.aiSpeed;
+        } else if (this.movePaddleLeft === -1 && this.targetPaddleLeftY > -4)
+            this.targetPaddleLeftY -= this.aiSpeed;
     
         if (Math.abs(this.targetPaddleRightY - this.futureLeftY) > 0.2)
         {
