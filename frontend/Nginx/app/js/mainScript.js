@@ -44,8 +44,12 @@ export function handleRouteChange() {
 				case '/localgame1vs1':
 					view =  renderPongGame();
 					break;
-				case '/login':
+				// case '/login':
+				// 	view = tableView();
+				// 	break;
+				case '/highScores':
 					view = tableView();
+					break;
 				default:
 				view = '<h1>404 Not Found</h1>';
 		}
