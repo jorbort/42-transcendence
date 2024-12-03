@@ -41,6 +41,8 @@ export default class SideNavBar extends HTMLElement{
 			}
 			.icon{
 				font-size: 2rem;
+				display: true;
+
 			}
 			.tooltip {
 				width: 5rem;
@@ -110,6 +112,41 @@ export default class SideNavBar extends HTMLElement{
 					transform: translateY(-2px);
 				}
 			}
+
+			
+			.dropdown-content {
+				display: none;
+				position: absolute;
+				background-color: #2b3339;
+				border-radius: 10px;
+				overflow: hidden;
+			}
+			
+			.dropdown-menu {
+				list-style: none;
+				padding: 0;
+				margin: 0;
+			}
+			
+			.dropdown-item {
+				display: block;
+				width: 100%;
+				padding: 10px 15px;
+				color: rgba(160, 215, 160, 0.9);
+				text-decoration: none;
+				font-size: 1rem;
+			}
+			
+			.dropdown-item:hover {
+				background-color: rgba(160, 215, 160, 0.1);
+				color: rgba(200, 225, 200, 0.9);
+				cursor: pointer;
+			}
+			
+			.icon-Div:hover .dropdown-content {
+				display: block;
+			}
+			
 		`
 		shadow.appendChild(style);
 		const container = document.createElement('div');
@@ -122,6 +159,14 @@ export default class SideNavBar extends HTMLElement{
 					<div class="tooltip">
     					<p>Home</p>
 					</div>
+					<div class="dropdown">
+							<div class="dropdown-content">
+								<ul class="dropdown-menu" aria-labelledby="gameDropdown">
+									<li><a class="dropdown-item" href="/Profile">Home</a></li>
+								</ul>
+							</div>
+						</div>
+					</div>
 				</div>
 				<div class="icon-Div">
 					<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -130,13 +175,29 @@ export default class SideNavBar extends HTMLElement{
 					 <div class="tooltip">
     					<p>Profile</p>
 					</div>
-				</div>
+					<div class="dropdown">
+							<div class="dropdown-content">
+								<ul class="dropdown-menu" aria-labelledby="gameDropdown">
+									<li><a class="dropdown-item" href="/ConfigProfile">Profile</a></li>
+								</ul>
+							</div>
+						</div>
+					</div>
 				<div class="icon-Div">
 					<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
 						<path d="M5 3H3v18h18V3H5zm14 2v14H5V5h14zM9 7H7v2h2V7zm6 0h2v2h-2V7zm-6 8H7v2h2v-2zm6 0h2v2h-2v-2zm-2-4h-2v2h2v-2z" fill="currentColor"/>
 					</svg>
 					<div class="tooltip">
     					<p>Game</p>
+					</div>
+					<div class="dropdown">
+						<div class="dropdown-content">
+							<ul class="dropdown-menu" aria-labelledby="gameDropdown">
+								<li><a class="dropdown-item" href="/localgame1vs1">1 vs 1</a></li>
+								<li><a class="dropdown-item" href="/localgame1vsIA">1 vs IA</a></li>
+								<li><a class="dropdown-item" href="/localgameMulti">Multiplayer</a></li>
+							</ul>
+						</div>
 					</div>
 				</div>
 				<div class="icon-Div">
@@ -146,6 +207,14 @@ export default class SideNavBar extends HTMLElement{
 					<div class="tooltip">
     					<p>Stats</p>
 					</div>
+					<div class="dropdown">
+							<div class="dropdown-content">
+								<ul class="dropdown-menu" aria-labelledby="gameDropdown">
+									<li><a class="dropdown-item" href="/stats">Stats</a></li>
+								</ul>
+							</div>
+						</div>
+					</div>
 				</div>
 				<div class="icon-Div">
 					<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"> 
@@ -154,13 +223,21 @@ export default class SideNavBar extends HTMLElement{
 					<div class="tooltip">
     					<p>Tournament</p>
 					</div>
+					<div class="dropdown">
+							<div class="dropdown-content">
+								<ul class="dropdown-menu" aria-labelledby="gameDropdown">
+									<li><a class="dropdown-item" href="/tonreo">Tournament</a></li>
+								</ul>
+							</div>
+						</div>
+					</div>
 				</div>`;
 		shadow.appendChild(container);
 		
 	}
 	connectedCallback() {
-		
 	}
+	
 	disconnectedCallback(){}
 }
 customElements.define('side-nav-bar', SideNavBar);

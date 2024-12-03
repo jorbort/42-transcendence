@@ -345,9 +345,9 @@ class PongGame extends HTMLElement {
             loader.load('https://threejs.org/examples/fonts/helvetiker_bold.typeface.json', (font) => {
                 console.log("Font loaded successfully.");
                 this.loadfont = font;
-                const textMaterial = new THREE.MeshStandardMaterial({ color: 0xff0000 });
+                const textMaterial = new THREE.MeshStandardMaterial({ color: 0xe67e80 });
                 this.textred = this.createText("Team Red: " + this.ptsred, new THREE.Vector3(-18, -5.5, 0), font, textMaterial);
-                const textMaterial1 = new THREE.MeshStandardMaterial({ color: 0x00ff00});
+                const textMaterial1 = new THREE.MeshStandardMaterial({ color: 0xA0D7A0});
                 this.textgreen = this.createText("Team Green: " + this.ptsgreen, new THREE.Vector3(12, -5.5, 0), font, textMaterial1);
                 const textMaterial2 = new THREE.MeshStandardMaterial({ color: 0xffff00 });
                 this.textyellow = this.createText("Team Yellow: " + this.ptsyellow, new THREE.Vector3(-3.5, 14.5, 0), font, textMaterial2);
@@ -386,7 +386,7 @@ class PongGame extends HTMLElement {
     {   
   
         const sphereGeometry = new THREE.SphereGeometry(0.5, 27, 27);
-        const sphereMaterial = new THREE.MeshStandardMaterial({ color: 0x87CEEB, metalness: 0.5, roughness: 0.5 });
+        const sphereMaterial = new THREE.MeshStandardMaterial({ color: 0xA0D7A0, metalness: 0.5, roughness: 0.5 });
         this.ball = new THREE.Mesh(sphereGeometry, sphereMaterial);
         this.ball.position.set(0, 2, 0);
         this.camera.position.set(0, 1, 20);
@@ -520,7 +520,7 @@ class PongGame extends HTMLElement {
     {
         const paddleGeometry = new THREE.BoxGeometry(0.6, 2, 0.1);
 
-        const paddleMaterial = new THREE.MeshStandardMaterial({ color: 0xff0000 });
+        const paddleMaterial = new THREE.MeshStandardMaterial({ color: 0xe67e80 });
         this.paddle1 = new THREE.Mesh(paddleGeometry, paddleMaterial);
         var m = Math.sqrt(((this.L / 2) * (this.L / 2)) + 25)
         this.RedPosX = (-this.L / 2) + 8 * ((0 - (-this.L / 2)) / m) + 0.1
@@ -529,7 +529,7 @@ class PongGame extends HTMLElement {
         this.paddle1.lookAt(new THREE.Vector3(0, 1, 0));
         this.scene.add(this.paddle1);
 
-        const paddleMaterial2 = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
+        const paddleMaterial2 = new THREE.MeshStandardMaterial({ color: 0xA0D7A0 });
         this.paddle2 = new THREE.Mesh(paddleGeometry, paddleMaterial2);
         var m2 = Math.sqrt(((this.L / 2) * (this.L / 2)) + 25);
         this.GreenposX = (this.L / 2) - 8 * ((this.L / 2 - 0) / m2) + 0.1;
@@ -589,6 +589,7 @@ class PongGame extends HTMLElement {
         this.camera.position.z = 10;
         this.renderer = new THREE.WebGLRenderer();
         this.renderer.setSize(window.innerWidth, window.innerHeight);
+        this.renderer.setClearColor(0x323b41, 1);
         this.appendChild(this.renderer.domElement);
         const ambientLight = new THREE.AmbientLight(0x404040);
         this.scene.add(ambientLight);
@@ -1143,5 +1144,5 @@ class PongGame extends HTMLElement {
 customElements.define('pong-gamemulti', PongGame);
 
 export default function renderPongGameMulti() {
-    return '<pong-gamemulti></pong-gamemulti>';
+    return '<header-nav-bar></header-nav-bar><side-nav-bar></side-nav-bar><pong-gamemulti></pong-gamemulti>';
 }

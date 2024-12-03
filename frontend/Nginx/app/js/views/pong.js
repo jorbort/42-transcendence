@@ -1,4 +1,6 @@
 import { handleRouteChange } from "../mainScript.js";
+import headerNavBar from '../webComponents/headerNavBar.js';
+import SideNavBar from  '../webComponents/sideNavBarComponent.js';
 
 class PongGame extends HTMLElement {
     constructor() {
@@ -33,7 +35,6 @@ class PongGame extends HTMLElement {
         this.handleKeyDown = this.handleKeyDown.bind(this);
         this.handleKeyUp = this.handleKeyUp.bind(this);
         this.handleKeyDownL = this.handleKeyDownL.bind(this);
-        this.handleKeyUpL = this.handleKeyUpL.bind(this);
     }
 
     async connectedCallback() {
@@ -336,7 +337,7 @@ z
     {   
   
         const sphereGeometry = new THREE.SphereGeometry(0.5, 27, 27);
-        const sphereMaterial = new THREE.MeshStandardMaterial({ color: 0x87CEEB, metalness: 0.5, roughness: 0.5 });
+        const sphereMaterial = new THREE.MeshStandardMaterial({ color: 0xA0D7A0 , metalness: 0.5, roughness: 0.5 });
         this.ball = new THREE.Mesh(sphereGeometry, sphereMaterial);
         this.ball.position.set(0, 2, 0);
         this.camera.position.set(0, 1, 20);
@@ -367,7 +368,7 @@ z
             this.scene.add(this.Custom2);
 
         const paddleGeometry = new THREE.BoxGeometry(0.4, 2, 0.1);
-        const paddleMaterial = new THREE.MeshStandardMaterial({ color: 0xff0000 });
+        const paddleMaterial = new THREE.MeshStandardMaterial({ color: 0xe67e80 });
         this.paddleLeft = new THREE.Mesh(paddleGeometry, paddleMaterial);
         this.paddleLeft.position.x = -14;
         this.paddleLeft.position.y = 2;
@@ -400,6 +401,7 @@ z
         this.camera.position.z = 10;
         this.renderer = new THREE.WebGLRenderer();
         this.renderer.setSize(window.innerWidth, window.innerHeight);
+        this.renderer.setClearColor(0x323b41, 1);
         this.appendChild(this.renderer.domElement);
         const ambientLight = new THREE.AmbientLight(0x404040);
         this.scene.add(ambientLight);
@@ -511,7 +513,7 @@ z
     }
 
     handleKeyUpL(event) {
-        if (event.key === 'w' || event.key === 's' || event.key === 'W' || event.key === 'S') {
+        if (event.key === 'w' || event.key === 's' || event.key === 'S' || event.key === 'W') {
             this.movePaddleLeft = 0;
         }
     }
@@ -700,5 +702,6 @@ z
 customElements.define('pong-game', PongGame);
 
 export default function renderPongGame() {
-    return '<pong-game></pong-game>';
+
+    return '<header-nav-bar></header-nav-bar><side-nav-bar></side-nav-bar><pong-game></pong-game>';
 }

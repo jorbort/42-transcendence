@@ -5,8 +5,8 @@ export default class TitleComponent extends HTMLElement{
 		let style = document.createElement('style');
 		style.textContent = /*css*/`*,
 		:host{
-			margin-top: -50px;
-			margin-bottom: 60px;
+			margin-top: 10px;
+			margin-bottom: 0px;
 			padding: 0px;
 		}
 
@@ -38,7 +38,7 @@ export default class TitleComponent extends HTMLElement{
 		  text-transform: uppercase;
 		  font-size: calc(1.2rem + 2vw);
 		  text-align: center;
-		  margin: 0;
+		  margin-top: 2em;
 		  color: #f6aca2;
 		  //color: transparent;
 		  //background-color: white;

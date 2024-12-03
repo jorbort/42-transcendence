@@ -55,7 +55,7 @@ class PongGame extends HTMLElement {
     {   
   
         const sphereGeometry = new THREE.SphereGeometry(0.5, 27, 27);
-        const sphereMaterial = new THREE.MeshStandardMaterial({ color: 0x87CEEB, metalness: 0.5, roughness: 0.5 });
+        const sphereMaterial = new THREE.MeshStandardMaterial({ color: 0xA0D7A0, metalness: 0.5, roughness: 0.5 });
         this.ball = new THREE.Mesh(sphereGeometry, sphereMaterial);
         this.ball.position.set(0, 2, 0);
         this.camera.position.set(0, 1, 20);
@@ -86,7 +86,7 @@ class PongGame extends HTMLElement {
             this.scene.add(this.Custom2);
 
         const paddleGeometry = new THREE.BoxGeometry(0.4, 2, 0.1);
-        const paddleMaterial = new THREE.MeshStandardMaterial({ color: 0xff0000 });
+        const paddleMaterial = new THREE.MeshStandardMaterial({ color: 0xe67e80 });
         this.paddleLeft = new THREE.Mesh(paddleGeometry, paddleMaterial);
         this.paddleLeft.position.x = -14;
         this.paddleLeft.position.y = 2;
@@ -414,6 +414,7 @@ class PongGame extends HTMLElement {
         this.camera.position.z = 10;
         this.renderer = new THREE.WebGLRenderer();
         this.renderer.setSize(window.innerWidth, window.innerHeight);
+        this.renderer.setClearColor(0x323b41, 1);
         this.appendChild(this.renderer.domElement);
         const ambientLight = new THREE.AmbientLight(0x404040);
         this.scene.add(ambientLight);
@@ -743,5 +744,5 @@ class PongGame extends HTMLElement {
 customElements.define('pong-gameia', PongGame);
 
 export default function renderPongGameIA() {
-    return '<pong-gameia></pong-gameia>';
+    return '<header-nav-bar></header-nav-bar><side-nav-bar></side-nav-bar><pong-gameia></pong-gameia>';
 }

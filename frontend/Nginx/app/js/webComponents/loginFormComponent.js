@@ -7,6 +7,14 @@ export default class loginFormComponent extends HTMLElement{
 		let shadow = this.attachShadow({mode: 'open'});
 		let style = document.createElement('style');
 		style.textContent = /*css*/`
+		#testing{
+			width: 100vw;
+			height: 65vh;
+			display: flex;
+			align-items: center;
+			justify-content: space-evenly;
+			flex-direction: column;
+		}
 		:host{
 			top: 50%;
 			left:50%;
@@ -214,44 +222,46 @@ export default class loginFormComponent extends HTMLElement{
 		let container = document.createElement('div');
 		container.classList.add('wrapper');
 		container.innerHTML = /*html*/`
-	<div class="card-switch">
-		<label class="switch">
-			<input class="toggle" type="checkbox">
-			<span class="slider"></span>
-			<span class="card-side"></span>
-			<div class="flip-card__inner">
-				<div class="flip-card__front">
-					<div class="title">Log in</div>
-					<form action="" id="loginForm" class="flip-card__form">
-						<input type="name" id="username" placeholder="username" name="username" class="flip-card__input">
-						<input type="password" id="password" placeholder="Password" name="password" class="flip-card__input">
-						<button class="flip-card__btn">Lets go!</button>
-					</form>
-					<div class="flip-card__btn" id="intra-button" href="http://localhost:8000/users/login_42">	
-							<a href="http://localhost:8000/users/login_42">
-								Log in with
-								<svg version="1.1"id="Calque_1" sodipodi:docname="42_logo.svg" inkscape:version="0.48.2 r9819" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 -200 960 960"enable-background="new 0 -200 960 960" xml:space="preserve">
-									<polygon id="polygon5" points="32,412.6 362.1,412.6 362.1,578 526.8,578 526.8,279.1 197.3,279.1 526.8,-51.1 362.1,-51.1 32,279.1 "/>
-									<polygon id="polygon7" points="597.9,114.2 762.7,-51.1 597.9,-51.1 "/>
-									<polygon id="polygon9" points="762.7,114.2 597.9,279.1 597.9,443.9 762.7,443.9 762.7,279.1 928,114.2 928,-51.1 762.7,-51.1 "/>
-									<polygon id="polygon11" points="928,279.1 762.7,443.9 928,443.9 "/>
-								</svg>
-							</a>
+		<div id="testing">
+		<div class="card-switch">
+			<label class="switch">
+				<input class="toggle" type="checkbox">
+				<span class="slider"></span>
+				<span class="card-side"></span>
+				<div class="flip-card__inner">
+					<div class="flip-card__front">
+						<div class="title">Log in</div>
+						<form action="" id="loginForm" class="flip-card__form">
+							<input type="name" id="username" placeholder="username" name="username" class="flip-card__input">
+							<input type="password" id="password" placeholder="Password" name="password" class="flip-card__input">
+							<button class="flip-card__btn">Lets go!</button>
+						</form>
+						<div class="flip-card__btn" id="intra-button" href="http://localhost:8000/users/login_42">	
+								<a href="http://localhost:8000/users/login_42">
+									Log in with
+									<svg version="1.1"id="Calque_1" sodipodi:docname="42_logo.svg" inkscape:version="0.48.2 r9819" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 -200 960 960"enable-background="new 0 -200 960 960" xml:space="preserve">
+										<polygon id="polygon5" points="32,412.6 362.1,412.6 362.1,578 526.8,578 526.8,279.1 197.3,279.1 526.8,-51.1 362.1,-51.1 32,279.1 "/>
+										<polygon id="polygon7" points="597.9,114.2 762.7,-51.1 597.9,-51.1 "/>
+										<polygon id="polygon9" points="762.7,114.2 597.9,279.1 597.9,443.9 762.7,443.9 762.7,279.1 928,114.2 928,-51.1 762.7,-51.1 "/>
+										<polygon id="polygon11" points="928,279.1 762.7,443.9 928,443.9 "/>
+									</svg>
+								</a>
+						</div>
+					</div>
+					<div class="flip-card__back">
+						<div class="title">Sign up</div>
+						<form action="" id="signUpForm" class="flip-card__form">
+							<input type="name" placeholder="User Name" id="username" class="flip-card__input">
+							<input type="email" placeholder="Email" id="email" name="email" class="flip-card__input">
+							<input type="password" id="password" placeholder="Password" name="password" class="flip-card__input">
+							<input type="password" id="confirm_password" placeholder="Repeat Password" name="password2" class="flip-card__input">
+							<button class="flip-card__btn">Confirm!</button>
+						</form>
 					</div>
 				</div>
-				<div class="flip-card__back">
-					<div class="title">Sign up</div>
-					<form action="" id="signUpForm" class="flip-card__form">
-						<input type="name" placeholder="User Name" id="username" class="flip-card__input">
-						<input type="email" placeholder="Email" id="email" name="email" class="flip-card__input">
-						<input type="password" id="password" placeholder="Password" name="password" class="flip-card__input">
-						<input type="password" id="confirm_password" placeholder="Repeat Password" name="password2" class="flip-card__input">
-						<button class="flip-card__btn">Confirm!</button>
-					</form>
-				</div>
-			</div>
-		</label>
-	</div> `;
+			</label>
+		</div> 
+		</div>`;
 		shadow.appendChild(container);
 		this.signin();
         this.signup();
