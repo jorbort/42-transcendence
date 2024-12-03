@@ -55,7 +55,7 @@ z
     newModal( goHome, tryAgain, btncruz) {
         const modalContainer = document.createElement('div');
         modalContainer.innerHTML = /* html */`
-            <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalCenterTitle" data-bs-backdrop="static" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -114,45 +114,44 @@ z
     ModalData() {
         const modalContainer = document.createElement('div');
         modalContainer.innerHTML = /* html */`
-        <div class="modal fade" id="customModal" tabindex="-1" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalCenterTitle">Custom Game</h5>
-                    <button id="btncruz" type="button" class="btn-close" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                <form>
-                    <div class="modal-footer d-flex justify-content-between align-items-center">
-                        <p class="text-start mb-0">¿Quieres aumentar la velocidad de la pelota con el cono?</p>
-                        <div>
-                            <button id="btnSpeedYes" type="button" class="btn btn-success btn-sm">Sí</button>
-                            <button id="btnSpeedNo" type="button" class="btn btn-danger btn-sm">No</button>
-                        </div>
+        <div class="modal fade" id="customModal" tabindex="-1" aria-labelledby="exampleModalCenterTitle" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalCenterTitle">Custom Game</h5>
+                        <button id="btncruz" type="button" class="btn-close" aria-label="Close"></button>
                     </div>
-                    <div class="modal-footer d-flex justify-content-between align-items-center">
-                        <p class="text-start mb-0">¿Quieres disminuir la velocidad de la pelota con el Icosahedron?</p>
-                        <div>
-                            <button id="btnSizeYes" type="button" class="btn btn-success btn-sm">Sí</button>
-                            <button id="btnSizeNo" type="button" class="btn btn-danger btn-sm">No</button>
+                    <div class="modal-body">
+                    <form>
+                        <div class="modal-footer d-flex justify-content-between align-items-center">
+                            <p class="text-start mb-0">¿Quieres aumentar la velocidad de la pelota con el cono?</p>
+                            <div>
+                                <button id="btnSpeedYes" type="button" class="btn btn-success btn-sm">Sí</button>
+                                <button id="btnSpeedNo" type="button" class="btn btn-danger btn-sm">No</button>
+                            </div>
                         </div>
-                    </div>
-                    <div class="modal-footer d-flex justify-content-between align-items-center">
-                        <p class="text-start mb-0">¿Quieres disminuir la velocidad de las palas con el TorusKnot?</p>
-                        <div>
-                            <button id="btnDecreaseYes" type="button" class="btn btn-success btn-sm">Sí</button>
-                            <button id="btnDecreaseNo" type="button" class="btn btn-danger btn-sm">No</button>
+                        <div class="modal-footer d-flex justify-content-between align-items-center">
+                            <p class="text-start mb-0">¿Quieres disminuir la velocidad de la pelota con el Icosahedron?</p>
+                            <div>
+                                <button id="btnSizeYes" type="button" class="btn btn-success btn-sm">Sí</button>
+                                <button id="btnSizeNo" type="button" class="btn btn-danger btn-sm">No</button>
+                            </div>
                         </div>
+                        <div class="modal-footer d-flex justify-content-between align-items-center">
+                            <p class="text-start mb-0">¿Quieres disminuir la velocidad de las palas con el TorusKnot?</p>
+                            <div>
+                                <button id="btnDecreaseYes" type="button" class="btn btn-success btn-sm">Sí</button>
+                                <button id="btnDecreaseNo" type="button" class="btn btn-danger btn-sm">No</button>
+                            </div>
+                        </div>
+                        <button id="btnSave" type="button" class="btn btn-primary" disabled>Guardar Configuración</button>
+                        <button id="btnCancel" type="button" class="btn btn-secondary">Cancelar</button>
+                        </form>
                     </div>
-                    <button id="btnSave" type="button" class="btn btn-primary" disabled>Guardar Configuración</button>
-                    <button id="btnCancel" type="button" class="btn btn-secondary">Cancelar</button>
-                    </form>
                 </div>
             </div>
-        </div>
-    </div>`;
+        </div>`;
         return modalContainer;
-        // <button id="btnSave" type="button" class="btn btn-primary">Guardar Configuración</button>
     }
     
     checkSavebtn()

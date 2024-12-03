@@ -77,10 +77,10 @@ class PongGame extends HTMLElement {
         this.gameStarted = false;
     }
 
-    newModal( goHome, tryAgain, btncruz) {
+    newModal(goHome, tryAgain, btncruz, winnerMessage) {
         const modalContainer = document.createElement('div');
         modalContainer.innerHTML = /* html */`
-            <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalCenterTitle" data-bs-backdrop="static" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -89,6 +89,7 @@ class PongGame extends HTMLElement {
                         </div>
                         <div class="modal-body d-flex flex-column justify-content-center align-items-center">
                             <p>!Game Over!</p>
+                            <p>${winnerMessage}</p>
                         </div>
                         <div class="modal-footer">
                             ${goHome}
@@ -99,23 +100,39 @@ class PongGame extends HTMLElement {
             </div>`;
         return modalContainer;
     }
-
-    createModal(){
-        const   goHome = `<button id="Go-Home" type="button" class="btn btn-secondary">Go Home</button>`
-        const   tryAgain = `<button id="try-again" type="button" class="btn btn-primary">Try Againg</button>`
-        const   btncruzend = `<button id="btn-cruz" type="button" class="btn-close" aria-label="Close"></button>`
-        const   newModal = this.newModal( goHome, tryAgain, btncruzend);
-        
+    
+    createModal() {
+        const goHome = `<button id="Go-Home" type="button" class="btn btn-secondary">Go Home</button>`;
+        const tryAgain = `<button id="try-again" type="button" class="btn btn-primary">Try Again</button>`;
+        const btncruzend = `<button id="btn-cruz" type="button" class="btn-close" aria-label="Close"></button>`;
+    
+        // Determinar el ganador
+        const winners = [];
+        if (this.pointsY >= 3) winners.push("Yellow");
+        if (this.pointsG >= 3) winners.push("Green");
+        if (this.pointsR >= 3) winners.push("Red");
+    
+        let winnerMessage;
+        if (winners.length === 0) {
+            winnerMessage = "No winners yet!";
+        } else if (winners.length === 1) {
+            winnerMessage = `Team ${winners[0]} wins!`;
+        } else {
+            winnerMessage = `Teams ${winners.join(" and ")} win!`;
+        }
+    
+        const newModal = this.newModal(goHome, tryAgain, btncruzend, winnerMessage);
+    
         this.appendChild(newModal);
         const myModal = new bootstrap.Modal(document.getElementById('myModal'), {
             keyboard: false
         });
         myModal.show();
-
+    
         const btnTryAgain = document.getElementById("try-again");
         if (btnTryAgain) {
             btnTryAgain.addEventListener('click', () => {
-                myModal.dispose()
+                myModal.dispose();
                 history.pushState('', '', '/localgameMulti');
                 handleRouteChange();
             });
@@ -123,7 +140,7 @@ class PongGame extends HTMLElement {
         const btnGoHome = document.getElementById("Go-Home");
         if (btnGoHome) {
             btnGoHome.addEventListener('click', () => {
-                myModal.dispose()
+                myModal.dispose();
                 history.pushState('', '', '/Profile');
                 handleRouteChange();
             });
@@ -131,15 +148,15 @@ class PongGame extends HTMLElement {
         const btncruz = document.getElementById("btn-cruz");
         if (btncruz) {
             btncruz.addEventListener('click', () => {
-                myModal.hide()
+                myModal.hide();
             });
         }
     }
-
+    
     ModalData() {
         const modalContainer = document.createElement('div');
         modalContainer.innerHTML = /* html */`
-        <div class="modal fade" id="customModal" tabindex="-1" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal fade" id="customModal" tabindex="-1" aria-labelledby="exampleModalCenterTitle" data-bs-backdrop="static" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
@@ -583,7 +600,7 @@ class PongGame extends HTMLElement {
 
         this.renderer.render(this.scene, this.camera);
         
-        // await this.startCountdown();
+        await this.startCountdown();
         
         this.initObjects();
                         
@@ -595,7 +612,7 @@ class PongGame extends HTMLElement {
 
             await this.isSomePoint();
 
-            // this.customGame();
+            this.customGame();
             
             this.checkPaddleCollision();
             
@@ -737,7 +754,7 @@ class PongGame extends HTMLElement {
     }
 
     handleKeyUpRed(event) {
-        if (event.key === 'W' || event.key === 'w' || event.key === 'S' || event.key === 'S') {
+        if (event.key === 'W' || event.key === 'w' || event.key === 'S' || event.key === 's') {
             this.movePaddle1 = 0;
         }
     }

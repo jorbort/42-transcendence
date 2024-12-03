@@ -48,11 +48,11 @@ export function handleRouteChange() {
 					view = renderPongGameIA();
 					break;
 				case '/localgame1vs1':
-					if (pathParts.length == 4)
-						view = renderPongGameName(pathParts[2], pathParts[3]);
-					else
-						view =  renderPongGame();
-					// view = renderPongGameName("Marc", "Edgar");
+					// if (pathParts.length == 4)
+						// view = renderPongGameName(pathParts[2], pathParts[3]);
+					// else
+						// view =  renderPongGame();
+					view = renderPongGameName("Marc", "Edgar");
 					break;
 				case '/localgameMulti':
 					view = renderPongGameMulti();
@@ -72,10 +72,11 @@ export function handleRouteChange() {
 				view = renderPongGameIA();
 				break;
 			case '/localgame1vs1':
-				if (pathParts.length == 4)
-					view = renderPongGameName(pathParts[2], pathParts[3]);
-				else
-					view =  renderPongGame();
+				// if (pathParts.length == 4)
+				// 	view = renderPongGameName(pathParts[2], pathParts[3]);
+				// else
+				// 	view =  renderPongGame();
+				view = renderPongGameName("Marc", "Edgar");
 					break;
 			case '/localgameMulti':
 				view = renderPongGameMulti();

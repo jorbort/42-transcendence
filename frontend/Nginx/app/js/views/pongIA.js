@@ -112,10 +112,10 @@ class PongGame extends HTMLElement {
         this.scene.add(border);
     }
 
-    newModal( goHome, tryAgain, btncruz) {
+    newModal(goHome, tryAgain, btncruz, winnerMessage) {
         const modalContainer = document.createElement('div');
         modalContainer.innerHTML = /* html */`
-            <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalCenterTitle" data-bs-backdrop="static" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -124,6 +124,7 @@ class PongGame extends HTMLElement {
                         </div>
                         <div class="modal-body d-flex flex-column justify-content-center align-items-center">
                             <p>!Game Over!</p>
+                            <p>${winnerMessage}</p>
                         </div>
                         <div class="modal-footer">
                             ${goHome}
@@ -134,23 +135,35 @@ class PongGame extends HTMLElement {
             </div>`;
         return modalContainer;
     }
+    
+    createModal() {
+        const goHome = `<button id="Go-Home" type="button" class="btn btn-secondary">Go Home</button>`;
+        const tryAgain = `<button id="try-again" type="button" class="btn btn-primary">Try Again</button>`;
+        const btncruzend = `<button id="btn-cruz" type="button" class="btn-close" aria-label="Close"></button>`;
+    
+        // Determinar el ganador
+        const winners = [];
+        if (this.pointsPlayer >= 3) winners.push("Local Player"); // Nombre del jugador
+        if (this.pointsIA >= 3) winners.push("IA");         // Nombre de la IA
+    
+        let winnerMessage;
+        if (winners.length === 0) {
+            winnerMessage = "No winners yet!";
+        } else if (winners.length === 1) {
+            winnerMessage = `${winners[0]} wins!`;
 
-    createModal(){
-        const   goHome = `<button id="Go-Home" type="button" class="btn btn-secondary">Go Home</button>`
-        const   tryAgain = `<button id="try-again" type="button" class="btn btn-primary">Try Againg</button>`
-        const   btncruzend = `<button id="btn-cruz" type="button" class="btn-close" aria-label="Close"></button>`
-        const   newModal = this.newModal( goHome, tryAgain, btncruzend);
-        
+        const newModal = this.newModal(goHome, tryAgain, btncruzend, winnerMessage);
+    
         this.appendChild(newModal);
         const myModal = new bootstrap.Modal(document.getElementById('myModal'), {
             keyboard: false
         });
         myModal.show();
-
+    
         const btnTryAgain = document.getElementById("try-again");
         if (btnTryAgain) {
             btnTryAgain.addEventListener('click', () => {
-                myModal.dispose()
+                myModal.dispose();
                 history.pushState('', '', '/localgame1vsIA');
                 handleRouteChange();
             });
@@ -158,7 +171,7 @@ class PongGame extends HTMLElement {
         const btnGoHome = document.getElementById("Go-Home");
         if (btnGoHome) {
             btnGoHome.addEventListener('click', () => {
-                myModal.dispose()
+                myModal.dispose();
                 history.pushState('', '', '/Profile');
                 handleRouteChange();
             });
@@ -166,15 +179,16 @@ class PongGame extends HTMLElement {
         const btncruz = document.getElementById("btn-cruz");
         if (btncruz) {
             btncruz.addEventListener('click', () => {
-                myModal.hide()
+                myModal.hide();
             });
         }
-    }
+    }  
+}
 
     ModalData() {
         const modalContainer = document.createElement('div');
         modalContainer.innerHTML = /* html */`
-        <div class="modal fade" id="customModal" tabindex="-1" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal fade" id="customModal" tabindex="-1" aria-labelledby="exampleModalCenterTitle" data-bs-backdrop="static" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
