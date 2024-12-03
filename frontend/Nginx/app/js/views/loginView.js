@@ -12,7 +12,7 @@ export function loginView() {
 					<form id="loginForm">
 						<br>
 						<div class="form_separator">
-							--------------- or ----------------
+							------------- or -------------
 						</div>
 						<br>
 						<div class="mb-3">
