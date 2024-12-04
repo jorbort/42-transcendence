@@ -104,7 +104,7 @@ class friendsList extends HTMLElement{
 window.customElements.define("friends-list", friendsList);
 export default friendsList;
 
-function getCookie(name) {
+export function getCookie(name) {
     let cookieArr = document.cookie.split(";");
     for(let i = 0; i < cookieArr.length; i++) {
         let cookiePair = cookieArr[i].split("=");

@@ -1,3 +1,8 @@
+import { getCookie } from '../webComponents/friendsListComponent.js';
+
+
+const	TWO_MEGABYTES = 2*1024*1024;
+
 class profileconfig extends HTMLElement {
     constructor() {
         super();
@@ -327,7 +332,6 @@ class profileconfig extends HTMLElement {
 										<label for="imageUpload" class="form-label">
 											<img id="imgup" src="../images/uploadimg.png" alt="upload img" class="upload-icon">
 										</label>
-										<input type="file" id="imageUpload" class="flip-card__input" accept="image/*" onchange="loadImage(event)">
 									</div>
 								</div>
 								<h3 id="textconf">Configura la informacion de tu perfil</h3>
@@ -337,14 +341,14 @@ class profileconfig extends HTMLElement {
 								</div>
 								<div class="form-row">
 									<label for="nombre" class="form-label">Nombre</label>
-									<input type="nombre" id="nombre" placeholder="Pepito" name="nombre" class="flip-card__input" disabled>
+									<input type="nombre" id="nombre" placeholder="${localStorage.getItem('name')}" name="nombre" class="flip-card__input" disabled>
 								</div>
 								<div class="form-row">
 									<label for="segundoname" class="form-label">Segundo Nombre</label>
-									<input type="name" id="segundoname" placeholder="Grillo" name="segundoname" class="flip-card__input" disabled>
+									<input type="name" id="segundoname" placeholder="${localStorage.getItem('last_name')}" name="segundoname" class="flip-card__input" disabled>
 								</div>
 								<div class="flip-card__btn" id="intra-button" href="">
-									<a href="">Actualizar</a>
+									<a id="act">Actualizar</a>
 								</div>
 							</form>
 						</div>
@@ -354,12 +358,95 @@ class profileconfig extends HTMLElement {
 		</div>`;
 		shadow.appendChild(container);
     }
-    connectedCallback(){
-    }
+	connectedCallback() {
+		const shadow = this.shadowRoot;
+		const imgUploadButton = shadow.querySelector("#imgup");
+	
+		if (imgUploadButton) {
+			imgUploadButton.addEventListener("click", () => {
+				// Crea dinámicamente el input y lo activa
+				const inputFile = document.createElement("input");
+				inputFile.type = "file";
+				inputFile.id = "imageUpload";
+				inputFile.className = "flip-card__input";
+				inputFile.accept = "image/*";
+				inputFile.onchange = (event) => this.loadImage(event); // Llama al método loadImage
+				inputFile.click(); // Activa el input
+			});
+		}
+		const actButton = shadow.querySelector("#act");
+		if (actButton) {
+			actButton.addEventListener("click", async () => {
+				const alias = shadow.querySelector("#Alies").value;
+				const profileImage = shadow.querySelector("#profileImage").src;
+				let token = getCookie('access_token');
+		
+				const formData = new FormData();
+				formData.append("alias", alias);
+				formData.append("avatar", this.dataURLtoFile(profileImage, localStorage.getItem('user_img')));
+		
+				try {
+					const response = await fetch("http://localhost:8000/users/upload-avatar/", {
+						method: "POST",
+						headers: {
+							'Authorization': `Bearer ${token}`, // Token de autenticación
+						},
+						body: formData, // Enviar los datos como FormData
+					});
+		
+					if (!response.ok) {
+						throw new Error('Error en la petición');
+					}
+		
+					const result = await response.json();
+					console.log(result.detail); // Mensaje de éxito del backend
+					// Puedes actualizar la interfaz o hacer algo después de la respuesta exitosa
+		
+				} catch (error) {
+					console.error(error);
+				}
+			});
+		}
+		
+	}
+	
+	// Función para convertir la imagen en un archivo
+	dataURLtoFile(dataurl, filename) {
+		let arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
+			  bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+		while(n--){
+			u8arr[n] = bstr.charCodeAt(n);
+		}
+		return new File([u8arr], filename, {type:mime});
+	}
+
+	loadImage(event) {
+		const file = event.target.files[0];
+		if (file) {
+			if (file.size <= TWO_MEGABYTES) {
+				const reader = new FileReader();
+				reader.onload = (e) => {
+					// Cambiar la imagen de perfil con el nuevo archivo
+					const profileImage = this.shadowRoot.querySelector("#profileImage");
+					profileImage.src = e.target.result;
+	
+					// Guardar la imagen en localStorage si deseas persistirla
+					localStorage.setItem('user_img', e.target.result);
+				};
+				reader.readAsDataURL(file);
+			}
+			else {
+				// Limpiar el input de archivo si el tamaño es demasiado grande
+				const inputFile = this.shadowRoot.querySelector("#imageUpload");
+				inputFile.value = '';
+				createToast('warning', 'File size too big');
+			}
+		}
+	};
+	
     disconnectedCallback(){
     }
 }
-
 
 
 customElements.define('configprofile-configprofile', profileconfig);

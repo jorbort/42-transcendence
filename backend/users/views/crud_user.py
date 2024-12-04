@@ -69,10 +69,12 @@ def addUser(request):
 def upload_avatar(request):
 	user = request.user
 	serializer = AvatarUploadSerializer(instance=user, data=request.data,partial=True)
-	
+	console.log("EEEEEEEEEEEEEEEEEEE")
+
 	if serializer.is_valid():
 		serializer.save()
-		return Response({'detail': 'Avatar uploaded successfully.'}, status=status.HTTP_200_OK)
+		console.log("AAAAAAA")
+		return Response({'detail': 'Avatar and alias uploaded successfully.'}, status=status.HTTP_200_OK)
 	return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])

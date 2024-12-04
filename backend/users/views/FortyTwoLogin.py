@@ -57,13 +57,14 @@ def callback_42(request):
 		return Response({'detail': f'Failed to obtain access token: {str(e)}'}, status=status.HTTP_400_BAD_REQUEST)
 	
 	access_token = token_json['access_token']
-
 	user_info_url = "https://api.intra.42.fr/v2/me"
 	headers = {'Authorization': f'Bearer {access_token}'}
 	user_info_response = requests.get(user_info_url, headers=headers)
 	user_info = user_info_response.json()
-
-	
+	coalition_info_url = f'https://api.intra.42.fr/v2/users/{user_info['id']}/coalitions'
+	headers = {'Authorization': f'Bearer {access_token}'}
+	coalition_info_response = requests.get(coalition_info_url, headers=headers)
+	user_coalition_info = coalition_info_response.json()
 	user_data = {
 		'username': user_info['login'],
 		'email': user_info['email'],
@@ -89,7 +90,11 @@ def callback_42(request):
 	response = Response({'access_token': access_token,
 		'refresh_token': str(refresh_token),
 		'user_img' : user_info['image']['link'],
-		'username' : user_info['login'] },
+		'username' : user_info['login'],
+		'name' : user_info['first_name'],
+		'last_name' : user_info['last_name'],
+		'mail' : user_info['email'],
+		},
 		status=status.HTTP_200_OK)
 	response.set_cookie('access_token', access_token)
 	response.set_cookie('refresh_token', str(refresh_token))

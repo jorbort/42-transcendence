@@ -17,12 +17,17 @@ export function fortyTwoCallback(){
 		})
 		.then(response => response.json())
 		.then(data => {
-			console.log('Data:', data);
+			console.log('Data:', data.name);
 			if (data.access_token && data.refresh_token){
 				document.cookie = `access_token=${data.access_token}`;
 				document.cookie = `refresh_token=${data.refresh_token}`;
 				localStorage.setItem('username', data.username);
 				localStorage.setItem('user_img', data.user_img);
+				localStorage.setItem('email', data.email);
+				localStorage.setItem('img42', data.fortytwo_image_url);
+				localStorage.setItem('name', data.name);
+				localStorage.setItem('last_name', data.last_name);
+				localStorage.setItem('mail', data.mail);
 				window.location.href = '/Profile';
 				handleRouteChange();
 			}else{
