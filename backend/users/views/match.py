@@ -7,7 +7,7 @@ from users.serializer import MatcHistorySerializer
 
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+# @permission_classes([IsAuthenticated])
 def match_history(request):
 	if request.user.is_authenticated:
 		matches_as_player1= MatchHistory.objects.filter(player1=request.user)

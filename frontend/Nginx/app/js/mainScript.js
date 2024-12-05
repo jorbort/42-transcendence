@@ -16,6 +16,7 @@ import { updateNav } from './utils/updateNav.js';
 import renderPongGameName from './views/pongNamePlayers.js';
 import rendertorneo from './views/torneo.js';
 import configProfile from './views/configProfile.js';
+import NotFound404 from './views/404.js';
 
 
 
@@ -65,8 +66,11 @@ export function handleRouteChange() {
 			case '/configProfile':
 				view = configProfile();
 				break;
+			case '/highScores':
+				view = tableView();
+				break;			
 			default:
-				view = '<h1>404 Not Found</h1>';
+				view = NotFound404();
 		}
 	}else{
 		switch (path) {
@@ -102,7 +106,7 @@ export function handleRouteChange() {
 				view = configProfile();
 				break;
 			default:
-				view = '<h1>404 Not Found</h1>';
+				view = NotFound404();
 		}
 	}
 	console.log("print view: " + view)
