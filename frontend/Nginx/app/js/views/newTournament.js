@@ -1,9 +1,10 @@
-import renderPonTournament from "./ponTornament.js";
+import renderPonTournament from "./pongTournament.js";
 class TournamentView extends HTMLElement {
     constructor() {
         super();
         this.tournamentData = {
             name: '',
+			date: new Date().toISOString().split('.')[0],
             players: [],
             rounds: [],
             winner: null,
@@ -61,7 +62,6 @@ class TournamentView extends HTMLElement {
             </div>`;
         return modalContainer;
     }
-
 
     checkSavebtn() {
         if (this.firstSelect && this.SecondSelect && this.lastSelect) {
@@ -167,7 +167,7 @@ class TournamentView extends HTMLElement {
             if (this.firstSelect && this.SecondSelect && this.lastSelect) {
                 const name = document.getElementById('tournament-name').value;
                 const playerCount = parseInt(document.getElementById('player-count').value, 10);
-                if (name && playerCount % 2 == 0) {
+                if (name && playerCount > 1 && playerCount % 2 == 0) {
                     this.tournamentData.name = name;
                     this.tournamentData.players = Array.from(
                         { length: playerCount },
