@@ -45,9 +45,12 @@ class MatcHistorySerializer(serializers.ModelSerializer):
 		fields = '__all__'
 
 class FrienshipSerializer(serializers.ModelSerializer):
+	user1 = serializers.CharField(source='user1.username')
+	user2 = serializers.CharField(source='user2.username')
+
 	class Meta:
 		model = Friendship
-		field = ['user1','user2']
+		fields = ['user1','user2']
 
 class AvatarUploadSerializer(serializers.ModelSerializer):
 	class Meta:

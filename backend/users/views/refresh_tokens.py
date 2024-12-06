@@ -11,7 +11,7 @@ from rest_framework.permissions import AllowAny
 def refreshTokens(request):
 	refresh_token = request.data.get('refresh_token')
 
-	if refresh_token in None:
+	if refresh_token is None:
 		return Response({'detail': 'Refresh token is required.'}, status=status.HTTP_400_BAD_REQUEST)
 	
 	try:
