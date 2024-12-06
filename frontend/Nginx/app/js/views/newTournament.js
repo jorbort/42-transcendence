@@ -35,11 +35,14 @@ class TournamentView extends HTMLElement {
                             <h5 class="modal-title" id="exampleModalCenterTitle">Custom Game</h5>
                         </div>
                         <div class="modal-body">
-                            <div id="config-view">
-                                <h1>Crear Torneo</h1>
-                                <label>Nombre del Torneo: <input id="tournament-name" type="text" /></label>
+                            <div>
+								<h1>Crear Torneo</h1>
+							</div>
+							<div>	
+								<label for="tournament-name">Nombre del Torneo:</label>
+								<input id="tournament-name" type="text" maxlength="13" />
                             </div>
-                            <form>
+							<form>
                                 <div class="modal-footer">
                                     <p>¿Aumentar velocidad con el cono?</p>
                                     <button id="btnSpeedYes" type="button" class="btn btn-success btn-sm">Sí</button>
@@ -205,105 +208,134 @@ class TournamentView extends HTMLElement {
         const style = document.createElement('style');
         style.textContent = `
             body {
-                font-family: Arial, sans-serif;
-                background-color: #f4f4f9;
-                margin: 0;
-                padding: 0;
-                display: flex;
-                flex-direction: row;
-                height: 100vh;
-                overflow: hidden;
-            }
+    font-family: 'Poppins', Arial, sans-serif;
+    background-color: #f8fafc; /* Fondo claro */
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: row;
+    height: 100vh;
+    overflow: hidden;
+}
 
-            #config-view, #edit-players-view, #tournament-view {
-                flex: 1;
-                justify-content: center;
-                padding: 15px;
-                background: #ffffff;
-                border-radius: 10px;
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-                margin: 20px;
-                overflow-y: auto;
-            }
-
-            #tournament-view {
-                justify-content: center;
-                display: flex;
-                flex-direction: row;
-                justify-content: space-between;
-            }
-
-            #final-view {
-                text-align: center;
-                padding: 20px;
-            }
-
-            h2, h1 {
-                justify-content: center;
-                text-align: center;
-                color: #333;
-            }
-
-            label {
-                justify-content: center;
-                display: flex;
-                text-align: center;
-                margin-bottom: 10px;
-                font-size: 1rem;
-                color: #555;
-            }
-
-            input {
-                justify-content: left;
-                padding: 5px 10px;
-                border: 1px solid #ddd;
-                border-radius: 5px;
-                width: calc(100% - 20px);
-                margin-bottom: 15px;
-            }
-
-            button {
-                padding: 10px 20px;
-                background: #007bff;
-                color: white;
-                border: none;
-                border-radius: 5px;
-                cursor: pointer;
-                font-size: 1rem;
-                transition: background 0.3s;
-            }
-
-            button:hover {
-                background: #0056b3;
-            }
-
-            .match span {
-                font-weight: bold;
-            }
-
-            .match .line {
-                width: 2px;
-                height: 50px;
-                background: #333;
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-            }
-
-            canvas {
-                border: 1px solid #000;
-                background: #000;
-            }
-        
-        #bracket {
+#config-view, #edit-players-view, #tournament-view {
+    flex: 1;
     display: flex;
     justify-content: center;
-    align-items: flex-start;
-    padding: 2rem;
-    gap: 2rem;
-    position: relative;
+    padding: 15px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    margin: 20px;
+    overflow-y: auto;
 }
+
+#tournament-view {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#final-view {
+    text-align: center;
+    padding: 20px;
+}
+
+h2, h1 {
+    text-align: center;
+    color: #334155; /* Azul grisáceo oscuro */
+    margin-bottom: 1rem;
+}
+
+label {
+    display: block;
+    text-align: left; /* Opcional: Cambia el texto a alineación izquierda */
+    margin-bottom: 5px;
+    font-size: 1rem;
+    color: #475569; /* Gris moderado */
+}
+
+input {
+    padding: 10px;
+    border: 1px solid #cbd5e1; /* Gris claro */
+    border-radius: 8px;
+    width: 100%; /* Asegura que el input use todo el ancho disponible */
+    margin-bottom: 15px;
+    font-size: 1rem;
+    background-color: #f1f5f9; /* Fondo gris claro */
+    color: #334155;
+}
+
+
+button {
+    padding: 10px 20px;
+    background: #3b82f6; /* Azul brillante */
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+button:hover {
+    background: #2563eb; /* Azul más oscuro */
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.match {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 1rem;
+    background-color: #e0f2fe; /* Azul claro pastel */
+    border-radius: 12px;
+    position: relative;
+    min-width: 140px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.match:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.match span {
+    font-size: 1rem;
+    margin: 0.5rem 0;
+}
+
+.match .winner {
+    margin-top: 0.5rem;
+    font-weight: bold;
+    color: #16a34a; /* Verde para el ganador */
+}
+
+// /* Conexiones entre partidos */
+// .match::before,
+// .match::after {
+//     content: '';
+//     position: absolute;
+//     width: 2px;
+//     height: 50%;
+//     background-color: #94a3b8; /* Gris tenue */
+// }
+
+// .match::before {
+//     top: -50%;
+//     left: 50%;
+//     transform: translateX(-50%);
+// }
+
+// .match::after {
+//     bottom: -50%;
+//     left: 50%;
+//     transform: translateX(-50%);
+// }
 
 .round {
     display: flex;
@@ -313,62 +345,19 @@ class TournamentView extends HTMLElement {
     position: relative;
 }
 
-.match {
+.round h3 {
+    font-size: 1.5rem;
+    color: #1e3a8a; /* Azul fuerte */
+    margin-bottom: 1rem;
+}
+
+#bracket {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    padding: 1rem;
-    background-color: #e5e7eb; /* Color de fondo claro */
-    border-radius: 8px;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 2rem;
+    gap: 3rem;
     position: relative;
-    min-width: 120px;
-}
-
-.match span {
-    font-size: 1rem;
-    margin: 0.2rem 0;
-}
-
-.match .winner {
-    margin-top: 0.5rem;
-    font-weight: bold;
-    color: #10b981; /* Verde para el ganador */
-}
-
-/* Conexiones entre partidos */
-.match::before,
-.match::after {
-    content: '';
-    position: absolute;
-    width: 2px;
-    height: 50%;
-    background-color: #333;
-}
-
-.match::before {
-    top: -50%;
-    left: 50%;
-    transform: translateX(-50%);
-}
-
-.match::after {
-    bottom: -50%;
-    left: 50%;
-    transform: translateX(-50%);
-}
-
-.round .matches::before {
-    content: '';
-    position: absolute;
-    width: 2px;
-    height: 100%;
-    background-color: #333;
-    left: -10px;
-}
-
-.round .matches:last-child::after {
-    display: none;
 }
 
 @media (max-width: 768px) {
@@ -381,33 +370,108 @@ class TournamentView extends HTMLElement {
         display: none;
     }
 }
+#edit-players-view {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 0;
+	padding: 20px 10px;
+    max-height: calc(100vh - 40px); /* Deja algo de espacio para márgenes */
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    margin: 0 auto;
+    max-height: 80vh; /* Limitar altura máxima */
+    overflow-y: auto; /* Habilitar scroll vertical */
+    scroll-behavior: smooth; /* Suavizar el desplazamiento */
+}
+
+#edit-players-view::-webkit-scrollbar {
+    width: 8px; /* Ancho del scroll */
+}
+
+#edit-players-view::-webkit-scrollbar-thumb {
+    background-color: #3b82f6; /* Color del scroll */
+    border-radius: 8px;
+}
+
+#edit-players-view h2 {
+	margin: 0 0 1rem 0;
+    margin-top: 0; /* Elimina márgenes innecesarios */
+    margin-bottom: 1rem;
+    color: #334155;
+    font-size: 1.5rem;
+}
+
+.player-input {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+.player-input label {
+    font-size: 1rem;
+    color: #475569;
+    margin-bottom: 0.5rem;
+}
+
+.player-input input {
+    padding: 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 1rem;
+    width: 100%;
+    background-color: #f1f5f9;
+    color: #334155;
+}
+
+button#accept-players {
+    padding: 10px 20px;
+    background-color: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    margin-top: 1rem;
+}
+
+button#accept-players:hover {
+    background-color: #2563eb;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
         `;
         document.head.appendChild(style);
         this.createModalData(document.getElementById("app"));
     }
 
     renderEditPlayersView() {
-        this.innerHTML = `
-            <div id="edit-players-view">
-                <h2>Editar Jugadores</h2>
-                ${this.tournamentData.players.map((player, index) => `
-                    <div>
-                        <label>Jugador ${index + 1}: 
-                            <input data-index="${index}" value="${player}" />
-                        </label>
-                    </div>
-                `).join('')}
-                <button id="accept-players">Aceptar</button>
-            </div>
-        `;
-        this.querySelector('#accept-players').addEventListener('click', () => {
-            this.tournamentData.players = Array.from(
-                this.querySelectorAll('input[data-index]'),
-                input => input.value
-            );
-            this.initializeTournament();
-        });
-    }
+    this.innerHTML = `
+        <div id="edit-players-view">
+            <h2>Editar Jugadores</h2>
+            ${this.tournamentData.players.map((player, index) => `
+                <div class="player-input">
+                    <label for="player-${index}">Jugador ${index + 1}:</label>
+                    <input id="player-${index}" data-index="${index}" value="${player}" maxlength="13" />
+                </div>
+            `).join('')}
+            <button id="accept-players">Aceptar</button>
+        </div>
+    `;
+    this.querySelector('#accept-players').addEventListener('click', () => {
+        this.tournamentData.players = Array.from(
+            this.querySelectorAll('input[data-index]'),
+            input => input.value
+        );
+        this.initializeTournament();
+    });
+}
+
 
     initializeTournament() {
         const shuffledPlayers = this.tournamentData.players.sort(() => Math.random() - 0.5);
