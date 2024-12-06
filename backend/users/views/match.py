@@ -36,7 +36,7 @@ def record_match(request):
 			player1 = PongUser.objects.get(username=player1_username)
 			player2 = PongUser.objects.get(username=player2_username)
 			winner = PongUser.objects.get(username=winner_username)
-		except: PonUser.DoesNotexist:
+		except PonUser.DoesNotexist:
 			return response({'detail': 'One or both users not found'}, status=status.HTTP_400_BAD_REQUEST)
 
 		match_data = {
