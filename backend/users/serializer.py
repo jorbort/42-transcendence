@@ -39,7 +39,10 @@ class UpdateUserSerializer(serializers.ModelSerializer):
 			instance.set_password(validated_data['password'])
 			validated_data.pop('password')
 		return super().update(instance, validated_data)
-class MatcHistorySerializer(serializers.ModelSerializer):
+
+class MatchHistorySerializer(serializers.ModelSerializer):
+	user = serializers.CharField(source='user.username', read_only=True)
+
 	class Meta:
 		model = MatchHistory
 		fields = '__all__'

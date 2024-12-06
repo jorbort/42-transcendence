@@ -10,6 +10,13 @@ class GameStats extends HTMLElement {
 				height: 10px;
 				width: 10px;
 			}
+			.nogamehistory {
+				color: rgba(160, 215, 160, 0.9);
+				font-size: 1.5rem;
+				font-family: 'Press Start 2P', cursive;
+				text-align: center;
+				margin-top: 10%;
+			}
 			.GameStatsContainer {
 				font-family: 'Press Start 2P', cursive;
 				font-size: 0.8rem;
@@ -28,12 +35,6 @@ class GameStats extends HTMLElement {
 				border-radius: 30px;
 				box-shadow: 0 0 10px 2px rgba(0,0,0,0.5);
 			}
-			//.GameStatsContainer:hover {
-			//	height: 60vh;
-			//	width: 25vw;
-			//	box-shadow: 0 0 15px 3px rgba(0,15,5,0.8);
-			//	transition: all 0.5s ease-in-out;
-			//}
 			.GameStats-div {
 				color: rgba(160, 215, 160, 0.9);
 				margin: 4px;
@@ -45,12 +46,6 @@ class GameStats extends HTMLElement {
 				box-shadow: 0 0 5px 0 rgba(0,0,0,0.3);
 				border-radius: 10px;
 			}
-			// .GameStats-div:hover {
-			//	color: rgba(200, 225, 200, 0.7);
-			//	box-shadow: 0 0 8px 3px rgba(0, 20, 5, 0.8);
-			//	transform: translatey(-1px);
-			//	transition: all 0.1s ease-in-out;
-			// }
 			.statsContainer {
 				width: 100%;
 				display: flex;
@@ -61,98 +56,122 @@ class GameStats extends HTMLElement {
 				width: 80%;
 				height: 200px;
 			}
+			
 	`;
+	
 	shadow.appendChild(style);
 	this.container = document.createElement('div');
 	this.container.className = 'GameStatsContainer';
+	
+	let myDiv = document.createElement('div');
+	myDiv.id = 'myDiv';
+	myDiv.style.zIndex = '9';
+	this.container.appendChild(myDiv);
+	
+	let refreshButton = document.createElement('button');
+	refreshButton.id = 'refreshButton';
+	refreshButton.style.zIndex = '10';
+	refreshButton.textContent = 'Refresh';
+	this.container.appendChild(refreshButton);
+
 	shadow.appendChild(this.container);
 	}
 
-	async connectedCallback() {
+	
+	
+	async connectedCallback(){
 		let username = localStorage.getItem('username');
 		let token = getCookie('access_token');
 		console.log(token);
 		try {
-			let response = await fetch(`http://localhost:8000/matches/obtainHistory?username=${username}`, {
-		headers: {
-			'Authorization': `Bearer ${token}`
+			await this.createDummyMatches();
+			let response = await fetch(`http://localhost:8000/matches/obtainHistory?username=${username}`,{
+				method: 'GET',
+				headers: {
+					'Authorization': `Bearer ${token}`
+				}
+		});
+		if (!response.ok){
+			throw new Error('Error en la peticion');
 		}
-			});
-			if (!response.ok) {
-		throw new Error('Error en la peticion');
-			}
-			let stats = await response.json();
-			console.log(stats);
-			this.renderStats(stats);
-		} catch (error) {
-			console.error(error);
-		}
+		let gamehistory = await response.json();
+		console.log(gamehistory);
+		this.rendergamehistory(gamehistory);
+	}catch(error){
+		console.error('Error en la peticion', error);
+		this.rendergamehistory(0);
 	}
-
-	renderStats(stats) {
-        this.container.innerHTML = '';
-
-        // Create stats container
-        let statsContainer = document.createElement('div');
-        statsContainer.className = 'statsContainer';
-
-        // Check if there are wins and losses
-        if (stats.wins === 0 && stats.losses === 0) {
-            let noDataMessage = document.createElement('p');
-            noDataMessage.textContent = 'No statistics available';
-            statsContainer.appendChild(noDataMessage);
-        } else {
-            // Create chart container
-            let chartContainer = document.createElement('div');
-            chartContainer.className = 'chart-container';
-            let canvas = document.createElement('canvas');
-            canvas.id = 'statsChart';
-            chartContainer.appendChild(canvas);
-            statsContainer.appendChild(chartContainer);
-
-            // Render chart
-            this.renderChart(stats.wins, stats.losses);
-        }
-
-        // Check if there are matches
-        if (stats.matches && stats.matches.length > 0) {
-            // Create matches list
-            let matchesList = document.createElement('div');
-            matchesList.className = 'matches-list';
-            stats.matches.forEach(match => {
-                let matchDiv = document.createElement('div');
-                matchDiv.className = 'GameStats-div';
-                matchDiv.textContent = `${match.opponent}: ${match.result}`;
-                matchesList.appendChild(matchDiv);
-            });
-            statsContainer.appendChild(matchesList);
-        } else {
-            let noMatchesMessage = document.createElement('p');
-            noMatchesMessage.textContent = 'No matches available';
-            statsContainer.appendChild(noMatchesMessage);
-        }
-
-        this.container.appendChild(statsContainer);
-    }
-	renderChart(wins, losses) {
-		let ctx = this.shadowRoot.getElementById('statsChart').getContext('2d');
-		new Chart(ctx, {
-		type: 'doughnut',
-		data: {
-			labels: ['Wins', 'Losses'],
-			datasets: [{
-				data: [wins, losses],
-				backgroundColor: ['#4caf50', '#f44336']
-			}]
+}
+async createDummyMatches() {
+	const dummyMatches = [
+		{
+			player1: 'juan-anm',
+			player2: 'pepe1',
+			player1_score: 3,
+			player2_score: 1,
+			winner: 'juan-anm',
 		},
-		options: {
-			responsive: true,
-			maintainAspectRatio: false
+		{
+			player1: 'juan-anm',
+			player2: 'pepe2',
+			player1_score: 3,
+			player2_score: 1,
+			winner: 'juan-anm',
+		},
+		{
+			player1: 'juan-anm',
+			player2: 'pepe3',
+			player1_score: 3,
+			player2_score: 1,
+			winner: 'juan-anm',
 		}
-	});
-	}
+	];
+	let username = localStorage.getItem('username');
+	for (const match of dummyMatches) {
+		try {
+			let response = await fetch(`http://localhost:8000/matches/register`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					'Authorization': `Bearer ${getCookie('access_token')}`
+				},
+				body: JSON.stringify(match)
+			});
+			console.log(match);
 
-	disconnectedCallback() {}
+			if (!response.ok) {
+				throw new Error();
+			}
+
+			let result = await response.json();
+			console.log('Match created:', result);
+		} catch (error) {
+			console.error('Error creating match:', error.detail);
+		}
+	}
+}
+
+rendergamehistory(gamehistory){
+		this.container.innerHTML = '';
+		console.log(gamehistory.length);
+		if(gamehistory.length === 0){
+			let nogamehistory = document.createElement('div');
+			nogamehistory.className = 'nogamehistory';
+			nogamehistory.textContent = 'No hay partidas recientes';
+			this.container.appendChild(nogamehistory);
+		}else{
+			gamehistory.forEach(friend => {
+				let friendDiv = document.createElement('div');
+				friendDiv.className = 'friend-div';
+				let logstatus = document.createElement('div');
+				logstatus.id = 'logstatus';
+				friendDiv.textContent = friend.name; /*revisar con el back end si el campo se llama name*/ 
+				friendDiv.appendChild(logstatus);
+				this.container.appendChild(friendDiv);
+			});
+		}
+	}
+	disconectedCallback(){}
 }
 
 window.customElements.define("gamestats-component", GameStats);
