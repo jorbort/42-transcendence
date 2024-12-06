@@ -1,10 +1,11 @@
 import renderPonTournament from "./pongTournament.js";
+
 class TournamentView extends HTMLElement {
     constructor() {
         super();
         this.tournamentData = {
             name: '',
-			date: new Date().toISOString().split('.')[0],
+            date: new Date().toISOString().split('.')[0],
             players: [],
             rounds: [],
             winner: null,
@@ -18,6 +19,7 @@ class TournamentView extends HTMLElement {
         this.firstSelect = false;
         this.SecondSelect = false;
         this.configsaved = false;
+        this.qttplayers = 4;
     }
 
     connectedCallback() {
@@ -36,7 +38,6 @@ class TournamentView extends HTMLElement {
                             <div id="config-view">
                                 <h1>Crear Torneo</h1>
                                 <label>Nombre del Torneo: <input id="tournament-name" type="text" /></label>
-                                <label>Cantidad de Jugadores: <input id="player-count" type="number" min="2" step="2" /></label>
                             </div>
                             <form>
                                 <div class="modal-footer">
@@ -54,12 +55,32 @@ class TournamentView extends HTMLElement {
                                     <button id="btnDecreaseYes" type="button" class="btn btn-success btn-sm">Sí</button>
                                     <button id="btnDecreaseNo" type="button" class="btn btn-danger btn-sm">No</button>
                                 </div>
+                                <div class="modal-footer d-flex justify-content-between align-items-center">
+                                <p class="text-start mb-0">Selecciona la cantidad de jugadores para el torneo:</p>
+                                <div>
+                                    <input type="range" id="speedSlider" min="0" max="2" step="1" value="0">
+                                    <span id="sliderValue">4</span>
+                                </div>
+                            </div>
                                 <button id="btnSave" type="button" class="btn btn-primary" disabled>Guardar Configuración</button>
                             </form>
                         </div>
                     </div>
                 </div>
             </div>`;
+        // Lógica para el slider
+        const slider = modalContainer.querySelector('#speedSlider');
+        const sliderValue = modalContainer.querySelector('#sliderValue');
+
+        // Valores específicos para el slider
+        const values = [4, 8, 16];
+
+        // Actualizar el valor mostrado del slider cuando se cambia
+        slider.addEventListener('input', () => {
+            const selectedValue = values[slider.value];
+            sliderValue.textContent = selectedValue;
+            this.qttplayers = selectedValue;
+        });
         return modalContainer;
     }
 
@@ -75,9 +96,9 @@ class TournamentView extends HTMLElement {
     createModalData(container) {
         const newModal = this.ModalData();
         container.appendChild(newModal);
-        const myModal = new bootstrap.Modal(document.getElementById('customModal'), { 
-            keyboard: false, 
-            backdrop: 'static' 
+        const myModal = new bootstrap.Modal(document.getElementById('customModal'), {
+            keyboard: false,
+            backdrop: 'static'
         });
         myModal.show();
 
@@ -166,18 +187,16 @@ class TournamentView extends HTMLElement {
         document.getElementById("btnSave").addEventListener('click', async () => {
             if (this.firstSelect && this.SecondSelect && this.lastSelect) {
                 const name = document.getElementById('tournament-name').value;
-                const playerCount = parseInt(document.getElementById('player-count').value, 10);
-                if (name && playerCount > 1 && playerCount % 2 == 0) {
+                if (name) {
                     this.tournamentData.name = name;
                     this.tournamentData.players = Array.from(
-                        { length: playerCount },
-                        (_, i) => `Player${i + 1}`
+                        { length: this.qttplayers },(_, i) => `Player${i + 1}`
                     );
                     myModal.dispose()
                     document.getElementById('customModal').remove();
                     this.renderEditPlayersView();
-                } else 
-                    alert('Por favor, ingrese un nombre y una cantidad válida de jugadores.'); 
+                } else
+                    alert('Por favor, ingrese un nombre y una cantidad válida de jugadores.');
             }
         });
     }
@@ -427,8 +446,8 @@ class TournamentView extends HTMLElement {
                             <div class="match">
                                 <span>${match.player1 || '---'} vs ${match.player2 || '---'}</span>
                                 ${match.winner
-            ? `<span>Ganador: ${match.winner}</span>`
-            : `<button 
+                ? `<span>Ganador: ${match.winner}</span>`
+                : `<button 
                                     class="start-match" 
                                     data-round-index="${roundIndex}" 
                                     data-match-index="${matchIndex}"
@@ -436,7 +455,7 @@ class TournamentView extends HTMLElement {
                                     ${!match.player1 || !match.player2 ? 'disabled' : ''}>
                                     Jugar
                                    </button>`
-        }
+            }
                             </div>
                         `).join('')}
                     </div>
@@ -464,7 +483,6 @@ class TournamentView extends HTMLElement {
                     } else {
                         this.tournamentData.winner = winner;
                         buttons.forEach(btn => btn.disabled = false);
-                        //  this.renderFinalView();
                     }
                     this.currentMatch = null;
                     this.renderTournamentView();
@@ -473,7 +491,7 @@ class TournamentView extends HTMLElement {
         });
     }
 
-        renderFinalView() {
+    renderFinalView() {
         this.innerHTML = `
             <div id="tournament-final-view">
                 <div id="bracket">${this.generateBracketHTML()}</div>
@@ -484,12 +502,12 @@ class TournamentView extends HTMLElement {
                 </div>
             </div>
         `;
-    
+
         this.querySelector('#save-winner').addEventListener('click', () => {
             this.saveWinner(this.tournamentData.winner);
         });
     }
-    
+
     startGame1(player1, player2, onGameEnd) {
         const gameContainer = this.querySelector('#game-container');
         const pongGame = renderPonTournament(this.currentMatch, this.currentRoundIndex, this.lastSelect, this.addCustom,
@@ -515,8 +533,8 @@ class TournamentView extends HTMLElement {
             </div>
         `).join('');
     }
-    
-    
+
+
     saveWinner(winner) {
         // Aquí puedes implementar la lógica para guardar el ganador,
         // por ejemplo, enviar una solicitud a un servidor o guardar en localStorage
