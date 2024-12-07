@@ -207,27 +207,6 @@ class TournamentView extends HTMLElement {
     addStyles() {
         const style = document.createElement('style');
         style.textContent = `
-   
-#config-view, #tournament-view {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    padding: 15px;
-    background: grey;
-    border-radius: 12px;
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
-    margin: 20px;
-    overflow-y: auto;
-    scroll-behavior: smooth;
-    max-width: 90%; /* Opcional: restringe el tamaño máximo del contenedor */
-    max-height: 90%; /* Opcional: asegura que no se desborde */
-}
-
-#tournament-view::-webkit-scrollbar {
-    display: none;
-}
-        
-
 .match {
     display: flex;
     flex-direction: column;
@@ -262,7 +241,7 @@ class TournamentView extends HTMLElement {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 2rem;
+    gap: 1rem;
     position: relative;
 }
 
@@ -270,9 +249,18 @@ class TournamentView extends HTMLElement {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 2rem;
     gap: 3rem;
     position: relative;
+    max-height: 100vh; /* Mantener altura máxima */
+    overflow-y: auto; /* Habilitar scroll vertical */
+    scroll-behavior: smooth; /* Suavizar desplazamiento */
+    /*padding: 1rem; Agregar espacio interno para evitar cortes */
+    box-sizing: border-box; /* Incluir padding en las dimensiones */
+}
+
+
+#bracket::-webkit-scrollbar {
+    display: none;
 }
 
 @media (max-width: 768px) {
@@ -421,7 +409,7 @@ button#accept-players:hover {
         }
         this.innerHTML = `
         <div id="tournament-view">
-            <div id="bracket">
+            <div id="bracket" class="wrapper">
                 ${this.tournamentData.rounds.map((round, roundIndex) => `
                     <div class="round">
                         <h3>Ronda ${roundIndex + 1}</h3>
@@ -445,7 +433,8 @@ button#accept-players:hover {
             <div id="game-container"></div>
         </div>
     `;
-
+        //const tournamentview = this.querySelector('#bracket');
+        // z
         const buttons = this.querySelectorAll('.start-match');
         buttons.forEach(button => {
             button.addEventListener('click', (e) => {

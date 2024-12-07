@@ -15,10 +15,9 @@ import { fortyTwoCallback } from './views/fortyTwoCallback.js';
 import { updateNav } from './utils/updateNav.js';
 import renderPongGameName from './views/pongNamePlayers.js';
 import rendertorneo from './views/torneo.js';
-import renderTournamentApp from './views/newTournament.js'
 import configProfile from './views/configProfile.js';
 import NotFound404 from './views/404.js';
-
+import renderTournamentApp from './views/newTournament.js';
 
 
 let accessToken = 0;
