@@ -1,4 +1,3 @@
-
 from pathlib import Path
 import os
 from datetime import timedelta
@@ -29,7 +28,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 	'users',
-    'tournament',
 	'rest_framework',
 	'rest_framework_simplejwt',
 	'django_crontab',
@@ -64,6 +62,8 @@ CORS_ALLOW_HEADERS = [
     "origin",
     "user-agent",
 ]
+
+CORS_ALLOW_CREDENTIALS = True
 
 TEMPLATES = [
     {
@@ -102,12 +102,6 @@ DATABASES = {
 		'PASSWORD': os.environ["POSTGRES_PASSWORD"]
     }
 }
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -199,10 +193,9 @@ LOGGING = {
 }
 
 #42API
-CLIENT_ID='u-s4t2ud-6fe120c148cb11a4661739b955d4e5480fe0fa05624033fd800157a00ef34040'
-#expires 24/11/2024
-CLIENT_SECRET='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'
-REDIRECT_URI='http://localhost:80/callback_42'
+CLIENT_ID=os.environ['CLIENT_ID']
+CLIENT_SECRET=os.environ['CLIENT_SECRET']
+REDIRECT_URI='http://localhost:2080/callback_42'
 
 #django sesion configurations
 
@@ -213,3 +206,13 @@ SESSION_COOKIE_NAME = 'sessionid'
 SESSION_COOKIE_SECURE = False  
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SAMESITE = 'Lax'
+
+# REST framework settings
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+}

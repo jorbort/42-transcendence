@@ -1,13 +1,26 @@
 import {createUser, signup} from './views/createUser.js';
-import {loginView, signin} from './views/loginView.js';
+import {loginView} from './views/loginView.js';
 import {} from './views/loginView.js';
-import renderTournamentApp from './views/newTournament.js';
+import homePage from './views/homeProfile.js';
+
+import OTPComponent from './webComponents/OTPInputComponent.js';
+
+import {otpView} from './views/otpView.js';
+
 import tableView from './views/highScores.js';
 import renderPongGameIA from './views/pongIA.js';
 import renderPongGame from './views/pong.js';
+import renderPongGameMulti from './views/pongMulti.js';
 import { fortyTwoCallback } from './views/fortyTwoCallback.js';
+import { updateNav } from './utils/updateNav.js';
+import renderPongGameName from './views/pongNamePlayers.js';
+import rendertorneo from './views/torneo.js';
+import renderTournamentApp from './views/newTournament.js'
+import configProfile from './views/configProfile.js';
+import NotFound404 from './views/404.js';
 
-const userlogged = 0;
+
+
 let accessToken = 0;
 
 function getCookie(name) {
@@ -22,25 +35,43 @@ document.addEventListener('DOMContentLoaded', function() {
 
 export function handleRouteChange() {
 	let path = window.location.pathname;
-	console.log('Path:', path);
 	let view;
 	if (path === '/') {
 		path = '/login';
 	}
-	console.log('Path:', path);
+  
 	if (accessToken){
 		switch (path) {
-				case '/Profile':
-					view = tableView();
-					break;
-				case '/localgame1vsIA':
-					view = renderPongGameIA();
-					break;
-				case '/localgame1vs1':
+			case '/Profile':
+				view = homePage();
+				break;
+			case '/localgame1vsIA':
+				view = renderPongGameIA();
+				break;
+			case '/localgame1vs1':
+				// if (pathParts.length == 4)
+					// view = renderPongGameName(pathParts[2], pathParts[3]);
+				// else
 					view =  renderPongGame();
-					break;
-				default:
-				view = '<h1>404 Not Found</h1>';
+				//view = renderPongGameName("Marc", "Edgar");
+				break;
+			case '/localgameMulti':
+				view = renderPongGameMulti();
+				break;
+			case '/torneo':
+				view = renderTournamentApp();
+				break;
+			case '/login':
+				view = loginView();
+				break;
+			case '/configProfile':
+				view = configProfile();
+				break;
+			case '/highScores':
+				view = tableView();
+				break;			
+			default:
+				view = NotFound404();
 		}
 	}else{
 		switch (path) {
@@ -50,11 +81,18 @@ export function handleRouteChange() {
 			case '/localgame1vsIA':
 				view = renderPongGameIA();
 				break;
-			case '/localgame1vs1':
-				view = renderPongGame();
+			case '/otpView':
+				view = otpView();
 				break;
-			case '/newTournament':
-				view = renderTournamentApp();
+			case '/localgame1vs1':
+				// if (pathParts.length == 4)
+				// 	view = renderPongGameName(pathParts[2], pathParts[3]);
+				// else
+				 	view =  renderPongGame();
+				//view = renderPongGameName("Marc", "Edgar");
+					break;
+			case '/localgameMulti':
+				view = renderPongGameMulti();
 				break;
 			case '/callback_42':
 				view = fortyTwoCallback();
@@ -62,11 +100,19 @@ export function handleRouteChange() {
 			case '/Signup':
 				view = createUser();
 				break;
+			case '/torneo':
+				view = renderTournamentApp();
+				break;
+			case '/configProfile':
+				view = configProfile();
+				break;
 			default:
-				view = '<h1>404 Not Found</h1>';
-				
+				view = NotFound404();
 		}
 	}
+	console.log("print view: " + view)
+	const appElement = document.getElementById('app');
+	console.log("app: " + appElement); 
 	document.getElementById('app').innerHTML = view;
 	handleEventListeners(path);
 }
@@ -77,7 +123,6 @@ function handleEventListeners(path) {
 			signup();
 			break;
 		case '/login':
-			signin();
 			break;
 	}
 }

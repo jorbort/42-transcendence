@@ -1,6 +1,6 @@
 import { handleRouteChange } from "../mainScript.js";
 
-class PongGame1 extends HTMLElement {
+class PongGame extends HTMLElement {
     constructor() {
         super();
         this.ballSpeedX = 0.15;
@@ -55,7 +55,7 @@ class PongGame1 extends HTMLElement {
     {   
   
         const sphereGeometry = new THREE.SphereGeometry(0.5, 27, 27);
-        const sphereMaterial = new THREE.MeshStandardMaterial({ color: 0x87CEEB, metalness: 0.5, roughness: 0.5 });
+        const sphereMaterial = new THREE.MeshStandardMaterial({ color: 0xA0D7A0, metalness: 0.5, roughness: 0.5 });
         this.ball = new THREE.Mesh(sphereGeometry, sphereMaterial);
         this.ball.position.set(0, 2, 0);
         this.camera.position.set(0, 1, 20);
@@ -86,7 +86,7 @@ class PongGame1 extends HTMLElement {
             this.scene.add(this.Custom2);
 
         const paddleGeometry = new THREE.BoxGeometry(0.4, 2, 0.1);
-        const paddleMaterial = new THREE.MeshStandardMaterial({ color: 0xff0000 });
+        const paddleMaterial = new THREE.MeshStandardMaterial({ color: 0xe67e80 });
         this.paddleLeft = new THREE.Mesh(paddleGeometry, paddleMaterial);
         this.paddleLeft.position.x = -14;
         this.paddleLeft.position.y = 2;
@@ -112,10 +112,10 @@ class PongGame1 extends HTMLElement {
         this.scene.add(border);
     }
 
-    newModal( goHome, tryAgain, btncruz) {
+    newModal(goHome, tryAgain, btncruz, winnerMessage) {
         const modalContainer = document.createElement('div');
         modalContainer.innerHTML = /* html */`
-            <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalCenterTitle" data-bs-backdrop="static" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -124,6 +124,7 @@ class PongGame1 extends HTMLElement {
                         </div>
                         <div class="modal-body d-flex flex-column justify-content-center align-items-center">
                             <p>!Game Over!</p>
+                            <p>${winnerMessage}</p>
                         </div>
                         <div class="modal-footer">
                             ${goHome}
@@ -134,23 +135,35 @@ class PongGame1 extends HTMLElement {
             </div>`;
         return modalContainer;
     }
+    
+    createModal() {
+        const goHome = `<button id="Go-Home" type="button" class="btn btn-secondary">Go Home</button>`;
+        const tryAgain = `<button id="try-again" type="button" class="btn btn-primary">Try Again</button>`;
+        const btncruzend = `<button id="btn-cruz" type="button" class="btn-close" aria-label="Close"></button>`;
+    
+        // Determinar el ganador
+        const winners = [];
+        if (this.pointsPlayer >= 3) winners.push("Local Player"); // Nombre del jugador
+        if (this.pointsIA >= 3) winners.push("IA");         // Nombre de la IA
+    
+        let winnerMessage;
+        if (winners.length === 0) {
+            winnerMessage = "No winners yet!";
+        } else if (winners.length === 1) {
+            winnerMessage = `${winners[0]} wins!`;
 
-    createModal(){
-        const   goHome = `<button id="Go-Home" type="button" class="btn btn-secondary">Go Home</button>`
-        const   tryAgain = `<button id="try-again" type="button" class="btn btn-primary">Try Againg</button>`
-        const   btncruzend = `<button id="btn-cruz" type="button" class="btn-close" aria-label="Close"></button>`
-        const   newModal = this.newModal( goHome, tryAgain, btncruzend);
-        
+        const newModal = this.newModal(goHome, tryAgain, btncruzend, winnerMessage);
+    
         this.appendChild(newModal);
         const myModal = new bootstrap.Modal(document.getElementById('myModal'), {
             keyboard: false
         });
         myModal.show();
-
+    
         const btnTryAgain = document.getElementById("try-again");
         if (btnTryAgain) {
             btnTryAgain.addEventListener('click', () => {
-                myModal.dispose()
+                myModal.dispose();
                 history.pushState('', '', '/localgame1vsIA');
                 handleRouteChange();
             });
@@ -158,7 +171,7 @@ class PongGame1 extends HTMLElement {
         const btnGoHome = document.getElementById("Go-Home");
         if (btnGoHome) {
             btnGoHome.addEventListener('click', () => {
-                myModal.dispose()
+                myModal.dispose();
                 history.pushState('', '', '/Profile');
                 handleRouteChange();
             });
@@ -166,15 +179,16 @@ class PongGame1 extends HTMLElement {
         const btncruz = document.getElementById("btn-cruz");
         if (btncruz) {
             btncruz.addEventListener('click', () => {
-                myModal.hide()
+                myModal.hide();
             });
         }
-    }
+    }  
+}
 
     ModalData() {
         const modalContainer = document.createElement('div');
         modalContainer.innerHTML = /* html */`
-        <div class="modal fade" id="customModal" tabindex="-1" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal fade" id="customModal" tabindex="-1" aria-labelledby="exampleModalCenterTitle" data-bs-backdrop="static" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
@@ -400,6 +414,7 @@ class PongGame1 extends HTMLElement {
         this.camera.position.z = 10;
         this.renderer = new THREE.WebGLRenderer();
         this.renderer.setSize(window.innerWidth, window.innerHeight);
+        this.renderer.setClearColor(0x323b41, 1);
         this.appendChild(this.renderer.domElement);
         const ambientLight = new THREE.AmbientLight(0x404040);
         this.scene.add(ambientLight);
@@ -423,7 +438,7 @@ class PongGame1 extends HTMLElement {
 
             this.customGame();
             
-            this.checkPaddleCollision(this.ball, this.paddleLeft, this.paddleRight);
+            this.checkPaddleCollision();
             
             this.movaPaddles();
             
@@ -431,7 +446,7 @@ class PongGame1 extends HTMLElement {
             this.paddleRight.position.y  = THREE.MathUtils.clamp(this.targetPaddleRightY, -3, 7);
             this.renderer.render(this.scene, this.camera);
             
-            if (!this.checkIfLost(this.ball))
+            if (!this.checkIfLost())
                 requestAnimationFrame(animate);
         };
 
@@ -513,18 +528,18 @@ class PongGame1 extends HTMLElement {
     }
 
     handleKeyUpL(event) {
-        if (event.key === 'w' || event.key === 's') {
+        if (event.key === 'w' || event.key === 's' || event.key === 'S' || event.key === 'W') {
             this.movePaddleLeft = 0;
         }
     }
 
     checkPaddleCollision() {
-        if (this.ball.position.x <= this.paddleLeft.position.x + 0.2 && this.ball.position.y < this.paddleLeft.position.y + 1 && this.ball.position.y > this.paddleLeft.position.y - 1) {
+        if (this.ball.position.x <= this.paddleLeft.position.x + 0.7 && this.ball.position.y < this.paddleLeft.position.y + 1 && this.ball.position.y > this.paddleLeft.position.y - 1) {
             this.ballDireccionX *= -1;
             this.ballSpeedX += 0.009;
             this.ballSpeedY += 0.0009;
         }
-        if (this.ball.position.x >= this.paddleRight.position.x - 0.2 && this.ball.position.y < this.paddleRight.position.y + 1 && this.ball.position.y > this.paddleRight.position.y - 1) {
+        if (this.ball.position.x >= this.paddleRight.position.x - 0.7 && this.ball.position.y < this.paddleRight.position.y + 1 && this.ball.position.y > this.paddleRight.position.y - 1) {
             this.ballDireccionX *= -1;
             this.ballSpeedX += 0.009;
             this.ballSpeedY += 0.0009;
@@ -637,17 +652,17 @@ class PongGame1 extends HTMLElement {
             await this.pauseGameAndShowCountdown()
             this.resetBall();
         }
-        if (this.ball.position.y > 8 || this.ball.position.y < -3.8) {
+        if (this.ball.position.y > 7.5 || this.ball.position.y < -3.5) {
             this.ballDireccionY *= -1;
         }
     }
 
-    movaPaddles() {
-        if (this.movePaddleLeft === 1) {
-            this.targetPaddleLeftY += this.paddleSpeed;
-        } else if (this.movePaddleLeft === -1) {
-            this.targetPaddleLeftY -= this.paddleSpeed;
-        }
+    movaPaddles()
+    {
+        if (this.movePaddleLeft === 1 && this.targetPaddleLeftY < 8) {
+            this.targetPaddleLeftY += this.aiSpeed;
+        } else if (this.movePaddleLeft === -1 && this.targetPaddleLeftY > -4)
+            this.targetPaddleLeftY -= this.aiSpeed;
     
         if (Math.abs(this.targetPaddleRightY - this.futureLeftY) > 0.2)
         {
@@ -726,8 +741,8 @@ class PongGame1 extends HTMLElement {
 
 }
 
-customElements.define('pong-gameia', PongGame1);
+customElements.define('pong-gameia', PongGame);
 
 export default function renderPongGameIA() {
-    return '<pong-gameia></pong-gameia>';
+    return '<header-nav-bar></header-nav-bar><side-nav-bar></side-nav-bar><pong-gameia></pong-gameia>';
 }

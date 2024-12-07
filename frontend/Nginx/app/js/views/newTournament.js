@@ -101,7 +101,7 @@ class TournamentView extends HTMLElement {
         container.appendChild(newModal);
         const myModal = new bootstrap.Modal(document.getElementById('customModal'), {
             keyboard: false,
-            backdrop: 'static'
+            // backdrop: 'static'
         });
         myModal.show();
 
@@ -193,13 +193,13 @@ class TournamentView extends HTMLElement {
                 if (name) {
                     this.tournamentData.name = name;
                     this.tournamentData.players = Array.from(
-                        { length: this.qttplayers },(_, i) => `Player${i + 1}`
+                        { length: this.qttplayers }, (_, i) => `Player${i + 1}`
                     );
-                    myModal.dispose()
+                    myModal.dispose();
                     document.getElementById('customModal').remove();
                     this.renderEditPlayersView();
                 } else
-                    alert('Por favor, ingrese un nombre y una cantidad válida de jugadores.');
+                    alert('Por favor, ingrese un nombre.');
             }
         });
     }
@@ -207,83 +207,26 @@ class TournamentView extends HTMLElement {
     addStyles() {
         const style = document.createElement('style');
         style.textContent = `
-            body {
-    font-family: 'Poppins', Arial, sans-serif;
-    background-color: #f8fafc; /* Fondo claro */
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: row;
-    height: 100vh;
-    overflow: hidden;
-}
-
-#config-view, #edit-players-view, #tournament-view {
+   
+#config-view, #tournament-view {
     flex: 1;
     display: flex;
     justify-content: center;
     padding: 15px;
-    background: #ffffff;
+    background: grey;
     border-radius: 12px;
     box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
     margin: 20px;
     overflow-y: auto;
+    scroll-behavior: smooth;
+    max-width: 90%; /* Opcional: restringe el tamaño máximo del contenedor */
+    max-height: 90%; /* Opcional: asegura que no se desborde */
 }
 
-#tournament-view {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+#tournament-view::-webkit-scrollbar {
+    display: none;
 }
-
-#final-view {
-    text-align: center;
-    padding: 20px;
-}
-
-h2, h1 {
-    text-align: center;
-    color: #334155; /* Azul grisáceo oscuro */
-    margin-bottom: 1rem;
-}
-
-label {
-    display: block;
-    text-align: left; /* Opcional: Cambia el texto a alineación izquierda */
-    margin-bottom: 5px;
-    font-size: 1rem;
-    color: #475569; /* Gris moderado */
-}
-
-input {
-    padding: 10px;
-    border: 1px solid #cbd5e1; /* Gris claro */
-    border-radius: 8px;
-    width: 100%; /* Asegura que el input use todo el ancho disponible */
-    margin-bottom: 15px;
-    font-size: 1rem;
-    background-color: #f1f5f9; /* Fondo gris claro */
-    color: #334155;
-}
-
-
-button {
-    padding: 10px 20px;
-    background: #3b82f6; /* Azul brillante */
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 1rem;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-button:hover {
-    background: #2563eb; /* Azul más oscuro */
-    transform: translateY(-2px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-}
+        
 
 .match {
     display: flex;
@@ -315,28 +258,6 @@ button:hover {
     color: #16a34a; /* Verde para el ganador */
 }
 
-// /* Conexiones entre partidos */
-// .match::before,
-// .match::after {
-//     content: '';
-//     position: absolute;
-//     width: 2px;
-//     height: 50%;
-//     background-color: #94a3b8; /* Gris tenue */
-// }
-
-// .match::before {
-//     top: -50%;
-//     left: 50%;
-//     transform: translateX(-50%);
-// }
-
-// .match::after {
-//     bottom: -50%;
-//     left: 50%;
-//     transform: translateX(-50%);
-// }
-
 .round {
     display: flex;
     flex-direction: column;
@@ -345,16 +266,10 @@ button:hover {
     position: relative;
 }
 
-.round h3 {
-    font-size: 1.5rem;
-    color: #1e3a8a; /* Azul fuerte */
-    margin-bottom: 1rem;
-}
-
 #bracket {
     display: flex;
     justify-content: center;
-    align-items: flex-start;
+    align-items: center;
     padding: 2rem;
     gap: 3rem;
     position: relative;
@@ -427,6 +342,10 @@ button:hover {
     color: #334155;
 }
 
+.hidden {
+    display: none;
+  }
+
 button#accept-players {
     padding: 10px 20px;
     background-color: #3b82f6;
@@ -451,7 +370,7 @@ button#accept-players:hover {
     }
 
     renderEditPlayersView() {
-    this.innerHTML = `
+        this.innerHTML = `
         <div id="edit-players-view">
             <h2>Editar Jugadores</h2>
             ${this.tournamentData.players.map((player, index) => `
@@ -463,14 +382,14 @@ button#accept-players:hover {
             <button id="accept-players">Aceptar</button>
         </div>
     `;
-    this.querySelector('#accept-players').addEventListener('click', () => {
-        this.tournamentData.players = Array.from(
-            this.querySelectorAll('input[data-index]'),
-            input => input.value
-        );
-        this.initializeTournament();
-    });
-}
+        this.querySelector('#accept-players').addEventListener('click', () => {
+            this.tournamentData.players = Array.from(
+                this.querySelectorAll('input[data-index]'),
+                input => input.value
+            );
+            this.initializeTournament();
+        });
+    }
 
 
     initializeTournament() {
@@ -509,14 +428,12 @@ button#accept-players:hover {
                         ${round.map((match, matchIndex) => `
                             <div class="match">
                                 <span>${match.player1 || '---'} vs ${match.player2 || '---'}</span>
-                                ${match.winner
-                ? `<span>Ganador: ${match.winner}</span>`
-                : `<button 
+                                ${match.winner ? `<span>Ganador: ${match.winner}</span>` : `<button 
                                     class="start-match" 
                                     data-round-index="${roundIndex}" 
                                     data-match-index="${matchIndex}"
-                                    ${this.currentMatch ? 'disabled' : ''}
-                                    ${!match.player1 || !match.player2 ? 'disabled' : ''}>
+                                    ${this.currentMatch || !match.player1 || !match.player2 ? 'disabled' : ''}>
+                                    
                                     Jugar
                                    </button>`
             }
@@ -573,10 +490,14 @@ button#accept-players:hover {
     }
 
     startGame1(player1, player2, onGameEnd) {
+        const brackets = this.querySelector('#bracket');
+        //brackets.classList.add('hidden');
+        brackets.innerHTML = '';
         const gameContainer = this.querySelector('#game-container');
         const pongGame = renderPonTournament(this.currentMatch, this.currentRoundIndex, this.lastSelect, this.addCustom,
             this.addCustom1, this.addCustom2, player1, player2, onGameEnd);
         gameContainer.innerHTML = '';
+
         gameContainer.appendChild(pongGame);
     }
 

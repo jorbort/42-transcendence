@@ -1,6 +1,8 @@
 import { handleRouteChange } from "../mainScript.js";
+import headerNavBar from '../webComponents/headerNavBar.js';
+import SideNavBar from  '../webComponents/sideNavBarComponent.js';
 
-class PongGame1 extends HTMLElement {
+class PongGame extends HTMLElement {
     constructor() {
         super();
         this.ballSpeedX = 0.15;
@@ -33,7 +35,6 @@ class PongGame1 extends HTMLElement {
         this.handleKeyDown = this.handleKeyDown.bind(this);
         this.handleKeyUp = this.handleKeyUp.bind(this);
         this.handleKeyDownL = this.handleKeyDownL.bind(this);
-        this.handleKeyUpL = this.handleKeyUpL.bind(this);
     }
 
     async connectedCallback() {
@@ -50,71 +51,12 @@ class PongGame1 extends HTMLElement {
         this.gameStarted = false;
     }
 
-    initObjects()
-    {   
-  
-        const sphereGeometry = new THREE.SphereGeometry(0.5, 27, 27);
-        const sphereMaterial = new THREE.MeshStandardMaterial({ color: 0x87CEEB, metalness: 0.5, roughness: 0.5 });
-        this.ball = new THREE.Mesh(sphereGeometry, sphereMaterial);
-        this.ball.position.set(0, 2, 0);
-        this.camera.position.set(0, 1, 20);
-        this.scene.add(this.ball);
-
-        const CustomGeometry = new THREE.ConeGeometry(0.5, 1, 16);
-        const CustomMaterial = new THREE.MeshStandardMaterial({ color: 0xFFC0CB, metalness: 0.5, roughness: 0.5 });
-        this.Custom = new THREE.Mesh(CustomGeometry, CustomMaterial);
-        this.Custom.position.set(4, -2, 0);
-        this.camera.position.set(0, 1, 20);
-        if (this.addCustom)
-            this.scene.add(this.Custom);
-
-        const Custom1Geometry = new THREE.IcosahedronGeometry(0.5);
-        const Custom1Material = new THREE.MeshStandardMaterial({ color: 0x00FF00, metalness: 0.5, roughness: 0.5 });
-        this.Custom1 = new THREE.Mesh(Custom1Geometry, Custom1Material);
-        this.Custom1.position.set(-1, 4, 0);
-        this.camera.position.set(0, 1, 20);
-        if (this.addCustom1)
-            this.scene.add(this.Custom1);
-
-        const Custom2Geometry =  new THREE.TorusKnotGeometry(0.4, 0.12, 47, 7);
-        const Custom2Material = new THREE.MeshStandardMaterial({ color: 0x00FFFF, metalness: 0.5, roughness: 0.5 });
-        this.Custom2 = new THREE.Mesh(Custom2Geometry, Custom2Material);
-        this.Custom2.position.set(-4, -2, 0);
-        this.camera.position.set(0, 1, 20);
-        if (this.addCustom2)
-            this.scene.add(this.Custom2);
-
-        const paddleGeometry = new THREE.BoxGeometry(0.4, 2, 0.1);
-        const paddleMaterial = new THREE.MeshStandardMaterial({ color: 0xff0000 });
-        this.paddleLeft = new THREE.Mesh(paddleGeometry, paddleMaterial);
-        this.paddleLeft.position.x = -14;
-        this.paddleLeft.position.y = 2;
-        this.targetPaddleLeftY = 2;
-        this.scene.add(this.paddleLeft);
-
-        this.paddleRight = new THREE.Mesh(paddleGeometry, paddleMaterial);
-        this.paddleRight.position.x = 12.5;
-        this.targetPaddleRightY = 2;
-        this.paddleRight.position.y = 2;
-        this.scene.add(this.paddleRight);
-
-        const borderMaterial = new THREE.LineBasicMaterial({ color: 0xffffff });
-        const points = [
-            new THREE.Vector3(-15, 8, 0),
-            new THREE.Vector3(13.5, 8, 0),
-            new THREE.Vector3(13.5, -4, 0),
-            new THREE.Vector3(-15, -4, 0)
-        ];
-        
-        const geometry = new THREE.BufferGeometry().setFromPoints(points);
-        const border = new THREE.LineSegments(geometry, borderMaterial);
-        this.scene.add(border);
-    }
+z
 
     newModal( goHome, tryAgain, btncruz) {
         const modalContainer = document.createElement('div');
         modalContainer.innerHTML = /* html */`
-            <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalCenterTitle" data-bs-backdrop="static" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -173,45 +115,44 @@ class PongGame1 extends HTMLElement {
     ModalData() {
         const modalContainer = document.createElement('div');
         modalContainer.innerHTML = /* html */`
-        <div class="modal fade" id="customModal" tabindex="-1" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalCenterTitle">Custom Game</h5>
-                    <button id="btncruz" type="button" class="btn-close" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                <form>
-                    <div class="modal-footer d-flex justify-content-between align-items-center">
-                        <p class="text-start mb-0">¿Quieres aumentar la velocidad de la pelota con el cono?</p>
-                        <div>
-                            <button id="btnSpeedYes" type="button" class="btn btn-success btn-sm">Sí</button>
-                            <button id="btnSpeedNo" type="button" class="btn btn-danger btn-sm">No</button>
-                        </div>
+        <div class="modal fade" id="customModal" tabindex="-1" aria-labelledby="exampleModalCenterTitle" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalCenterTitle">Custom Game</h5>
+                        <button id="btncruz" type="button" class="btn-close" aria-label="Close"></button>
                     </div>
-                    <div class="modal-footer d-flex justify-content-between align-items-center">
-                        <p class="text-start mb-0">¿Quieres disminuir la velocidad de la pelota con el Icosahedron?</p>
-                        <div>
-                            <button id="btnSizeYes" type="button" class="btn btn-success btn-sm">Sí</button>
-                            <button id="btnSizeNo" type="button" class="btn btn-danger btn-sm">No</button>
+                    <div class="modal-body">
+                    <form>
+                        <div class="modal-footer d-flex justify-content-between align-items-center">
+                            <p class="text-start mb-0">¿Quieres aumentar la velocidad de la pelota con el cono?</p>
+                            <div>
+                                <button id="btnSpeedYes" type="button" class="btn btn-success btn-sm">Sí</button>
+                                <button id="btnSpeedNo" type="button" class="btn btn-danger btn-sm">No</button>
+                            </div>
                         </div>
-                    </div>
-                    <div class="modal-footer d-flex justify-content-between align-items-center">
-                        <p class="text-start mb-0">¿Quieres disminuir la velocidad de las palas con el TorusKnot?</p>
-                        <div>
-                            <button id="btnDecreaseYes" type="button" class="btn btn-success btn-sm">Sí</button>
-                            <button id="btnDecreaseNo" type="button" class="btn btn-danger btn-sm">No</button>
+                        <div class="modal-footer d-flex justify-content-between align-items-center">
+                            <p class="text-start mb-0">¿Quieres disminuir la velocidad de la pelota con el Icosahedron?</p>
+                            <div>
+                                <button id="btnSizeYes" type="button" class="btn btn-success btn-sm">Sí</button>
+                                <button id="btnSizeNo" type="button" class="btn btn-danger btn-sm">No</button>
+                            </div>
                         </div>
+                        <div class="modal-footer d-flex justify-content-between align-items-center">
+                            <p class="text-start mb-0">¿Quieres disminuir la velocidad de las palas con el TorusKnot?</p>
+                            <div>
+                                <button id="btnDecreaseYes" type="button" class="btn btn-success btn-sm">Sí</button>
+                                <button id="btnDecreaseNo" type="button" class="btn btn-danger btn-sm">No</button>
+                            </div>
+                        </div>
+                        <button id="btnSave" type="button" class="btn btn-primary" disabled>Guardar Configuración</button>
+                        <button id="btnCancel" type="button" class="btn btn-secondary">Cancelar</button>
+                        </form>
                     </div>
-                    <button id="btnSave" type="button" class="btn btn-primary" disabled>Guardar Configuración</button>
-                    <button id="btnCancel" type="button" class="btn btn-secondary">Cancelar</button>
-                    </form>
                 </div>
             </div>
-        </div>
-    </div>`;
+        </div>`;
         return modalContainer;
-        // <button id="btnSave" type="button" class="btn btn-primary">Guardar Configuración</button>
     }
     
     checkSavebtn()
@@ -392,6 +333,67 @@ class PongGame1 extends HTMLElement {
         this.scene.remove(countdownMesh);
     }
 
+    initObjects()
+    {   
+  
+        const sphereGeometry = new THREE.SphereGeometry(0.5, 27, 27);
+        const sphereMaterial = new THREE.MeshStandardMaterial({ color: 0xA0D7A0 , metalness: 0.5, roughness: 0.5 });
+        this.ball = new THREE.Mesh(sphereGeometry, sphereMaterial);
+        this.ball.position.set(0, 2, 0);
+        this.camera.position.set(0, 1, 20);
+        this.scene.add(this.ball);
+
+        const CustomGeometry = new THREE.ConeGeometry(0.5, 1, 16);
+        const CustomMaterial = new THREE.MeshStandardMaterial({ color: 0xFFC0CB, metalness: 0.5, roughness: 0.5 });
+        this.Custom = new THREE.Mesh(CustomGeometry, CustomMaterial);
+        this.Custom.position.set(4, -2, 0);
+        this.camera.position.set(0, 1, 20);
+        if (this.addCustom)
+            this.scene.add(this.Custom);
+
+        const Custom1Geometry = new THREE.IcosahedronGeometry(0.5);
+        const Custom1Material = new THREE.MeshStandardMaterial({ color: 0x00FF00, metalness: 0.5, roughness: 0.5 });
+        this.Custom1 = new THREE.Mesh(Custom1Geometry, Custom1Material);
+        this.Custom1.position.set(-1, 4, 0);
+        this.camera.position.set(0, 1, 20);
+        if (this.addCustom1)
+            this.scene.add(this.Custom1);
+
+        const Custom2Geometry =  new THREE.TorusKnotGeometry(0.4, 0.12, 47, 7);
+        const Custom2Material = new THREE.MeshStandardMaterial({ color: 0x00FFFF, metalness: 0.5, roughness: 0.5 });
+        this.Custom2 = new THREE.Mesh(Custom2Geometry, Custom2Material);
+        this.Custom2.position.set(-4, -2, 0);
+        this.camera.position.set(0, 1, 20);
+        if (this.addCustom2)
+            this.scene.add(this.Custom2);
+
+        const paddleGeometry = new THREE.BoxGeometry(0.4, 2, 0.1);
+        const paddleMaterial = new THREE.MeshStandardMaterial({ color: 0xe67e80 });
+        this.paddleLeft = new THREE.Mesh(paddleGeometry, paddleMaterial);
+        this.paddleLeft.position.x = -14;
+        this.paddleLeft.position.y = 2;
+        this.targetPaddleLeftY = 2;
+        this.scene.add(this.paddleLeft);
+
+        this.paddleRight = new THREE.Mesh(paddleGeometry, paddleMaterial);
+        this.paddleRight.position.x = 12.5;
+        this.targetPaddleRightY = 2;
+        this.paddleRight.position.y = 2;
+        this.scene.add(this.paddleRight);
+
+        const borderMaterial = new THREE.LineBasicMaterial({ color: 0xffffff });
+        const points = [
+            new THREE.Vector3(-15, 8, 0),
+            new THREE.Vector3(13.5, 8, 0),
+            new THREE.Vector3(13.5, -4, 0),
+            new THREE.Vector3(-15, -4, 0)
+        ];
+        
+        const geometry = new THREE.BufferGeometry().setFromPoints(points);
+        const border = new THREE.LineSegments(geometry, borderMaterial);
+        this.scene.add(border);
+    }
+    
     async startGame()
     {
         this.scene = new THREE.Scene();
@@ -399,6 +401,7 @@ class PongGame1 extends HTMLElement {
         this.camera.position.z = 10;
         this.renderer = new THREE.WebGLRenderer();
         this.renderer.setSize(window.innerWidth, window.innerHeight);
+        this.renderer.setClearColor(0x323b41, 1);
         this.appendChild(this.renderer.domElement);
         const ambientLight = new THREE.AmbientLight(0x404040);
         this.scene.add(ambientLight);
@@ -422,7 +425,7 @@ class PongGame1 extends HTMLElement {
 
             this.customGame();
             
-            this.checkPaddleCollision(this.ball, this.paddleLeft, this.paddleRight);
+            this.checkPaddleCollision();
             
             this.movaPaddles();
             
@@ -430,7 +433,7 @@ class PongGame1 extends HTMLElement {
             this.paddleRight.position.y  = THREE.MathUtils.clamp(this.targetPaddleRightY, -3, 7);
             this.renderer.render(this.scene, this.camera);
             
-            if (!this.checkIfLost(this.ball))
+            if (!this.checkIfLost())
                 requestAnimationFrame(animate);
         };
 
@@ -510,18 +513,18 @@ class PongGame1 extends HTMLElement {
     }
 
     handleKeyUpL(event) {
-        if (event.key === 'w' || event.key === 's') {
+        if (event.key === 'w' || event.key === 's' || event.key === 'S' || event.key === 'W') {
             this.movePaddleLeft = 0;
         }
     }
 
     checkPaddleCollision() {
-        if (this.ball.position.x <= this.paddleLeft.position.x + 0.2 && this.ball.position.y < this.paddleLeft.position.y + 1 && this.ball.position.y > this.paddleLeft.position.y - 1) {
+        if (this.ball.position.x <= this.paddleLeft.position.x + 0.7 && this.ball.position.y < this.paddleLeft.position.y + 1 && this.ball.position.y > this.paddleLeft.position.y - 1) {
             this.ballDireccionX *= -1;
             this.ballSpeedX += 0.009;
             this.ballSpeedY += 0.0009;
         }
-        if (this.ball.position.x >= this.paddleRight.position.x - 0.2 && this.ball.position.y < this.paddleRight.position.y + 1 && this.ball.position.y > this.paddleRight.position.y - 1) {
+        if (this.ball.position.x >= this.paddleRight.position.x - 0.7 && this.ball.position.y < this.paddleRight.position.y + 1 && this.ball.position.y > this.paddleRight.position.y - 1) {
             this.ballDireccionX *= -1;
             this.ballSpeedX += 0.009;
             this.ballSpeedY += 0.0009;
@@ -623,35 +626,34 @@ class PongGame1 extends HTMLElement {
     {
         this.ball.position.x += this.ballSpeedX * this.ballDireccionX;
         this.ball.position.y += this.ballSpeedY * this.ballDireccionY;
-        if (this.ball.position.x > 15) {
+        if (this.ball.position.x > 17) {
             this.pointsPlayer++;
             this.reprint("Player1", this.pointsPlayer);
             await this.pauseGameAndShowCountdown()
             this.resetBall();
         }
-        if (this.ball.position.x < -15) {
+        if (this.ball.position.x < -17) {
             this.pointsIA++;
             this.reprint("Player2", this.pointsIA);
             await this.pauseGameAndShowCountdown()
             this.resetBall();
         }
-        if (this.ball.position.y > 8 || this.ball.position.y < -3.8) {
+        if (this.ball.position.y > 7.5 || this.ball.position.y < -3.5) {
             this.ballDireccionY *= -1;
         }
     }
 
-    movaPaddles() {
-        if (this.movePaddleLeft === 1) {
+    movaPaddles()
+    {
+        if (this.movePaddleLeft === 1 && this.targetPaddleLeftY < 8) {
             this.targetPaddleLeftY += this.aiSpeed;
-        } else if (this.movePaddleLeft === -1) {
+        } else if (this.movePaddleLeft === -1 && this.targetPaddleLeftY > -4)
             this.targetPaddleLeftY -= this.aiSpeed;
-        }
-        if (this.movePaddleRight === 1) {
+        if (this.movePaddleRight === 1 && this.targetPaddleRightY < 8) {
             this.targetPaddleRightY += this.paddleSpeed;
-        } else if (this.movePaddleRight === -1) {
+        } else if (this.movePaddleRight === -1 && this.targetPaddleRightY > -4) {
             this.targetPaddleRightY -= this.paddleSpeed;
         }
-    
     }
 
     checkIfLost()
@@ -697,8 +699,9 @@ class PongGame1 extends HTMLElement {
 
 }
 
-customElements.define('pong-game1', PongGame1);
+customElements.define('pong-game', PongGame);
 
-export default function renderPongGame1() {
-    return '<pong-game1></pong-game1>';
+export default function renderPongGame() {
+
+    return '<header-nav-bar></header-nav-bar><side-nav-bar></side-nav-bar><pong-game></pong-game>';
 }
