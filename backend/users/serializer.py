@@ -51,6 +51,13 @@ class FrienshipSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Friendship
 		fields = ['user1','user2']
+	def create(self, validated_data):
+		user1_username = validated_data.pop('user1')['username']
+		user2_username = validated_data.pop('user2')['username']
+		user1 = PongUser.objects.get(username=user1_username)
+		user2 = PongUser.objects.get(username=user2_username)
+		friendship = Friendship.objects.create(user1=user1, user2=user2)
+		return friendship
 
 class AvatarUploadSerializer(serializers.ModelSerializer):
 	class Meta:

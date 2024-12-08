@@ -71,11 +71,11 @@ def addUser(request):
 def upload_avatar(request):
 	user = request.user
 	serializer = AvatarUploadSerializer(instance=user, data=request.data,partial=True)
-	console.log("EEEEEEEEEEEEEEEEEEE")
+	#console.log("EEEEEEEEEEEEEEEEEEE")
 
 	if serializer.is_valid():
 		serializer.save()
-		console.log("AAAAAAA")
+	#	console.log("AAAAAAA")
 		return Response({'detail': 'Avatar and alias uploaded successfully.'}, status=status.HTTP_200_OK)
 	return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -95,8 +95,8 @@ def add_friend(request):
 		return Response({'error': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
 
 	data = {
-		'user1': current_user.id,
-		'user2': friend_user.id
+		'user1': current_user.username,
+		'user2': friend_user.username
 	}
 	serializer = FrienshipSerializer(data=data)
 	if serializer.is_valid():

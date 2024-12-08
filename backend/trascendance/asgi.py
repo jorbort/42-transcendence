@@ -15,7 +15,7 @@ import django
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'trascendance.settings')
 django.setup()
-from trascendance import routing
+from backend.users import routing
 
 application = ProtocolTypeRouter({
 	"http" : get_asgi_application(),

@@ -166,7 +166,6 @@ class friendsList extends HTMLElement{
 			event.preventDefault();
 			const friend_username = event.target.friendName.value;
 			const token = getCookie('access_token');
-			console.log('Adding friend:', friend_username);
 			try {
 				const response = await fetch('http://localhost:8000/friends', {
 					method: 'POST',
@@ -184,12 +183,32 @@ class friendsList extends HTMLElement{
 		
 				const result = await response.json();
 				console.log('Friend added:', result);
+				this.fetchFriends();
+				this.modal.style.display = 'none';
 			} catch (error) {
 				console.error('Error:', error);
 			}
 		});
 	}
 	async connectedCallback(){
+		this.fetchFriends();
+
+		this.addButton.addEventListener('click', () => {
+			this.modal.style.display = 'block';
+		});
+		
+		this.modal.querySelector('.close').addEventListener('click', () => {
+			this.modal.style.display = 'none';
+		});
+		
+		window.addEventListener('click', (event) => {
+			if (event.target === this.modal) {
+				this.modal.style.display = 'none';
+			}
+		});
+
+	}
+	async fetchFriends(){
 		let username = localStorage.getItem('username');
 		let token = getCookie('access_token');
 		console.log(token);
@@ -211,22 +230,13 @@ class friendsList extends HTMLElement{
 			let fallbackFriends = [{name: 'amigo 1'}, {name:"amigo 2"}, {name:"amigo 3"}];
 			this.renderFriends(fallbackFriends);
 		}
-		this.addButton.addEventListener('click', () => {
-			this.modal.style.display = 'block';
-		});
-		
-		this.modal.querySelector('.close').addEventListener('click', () => {
-			this.modal.style.display = 'none';
-		});
-		
-		window.addEventListener('click', (event) => {
-			if (event.target === this.modal) {
-				this.modal.style.display = 'none';
-			}
-		});
-
 	}
 	renderFriends(friends){
+		const friendDivs = this.container.querySelectorAll('.friend-div');
+    
+		if (friendDivs.length > 0) {
+			friendDivs.forEach(friendDiv => this.container.removeChild(friendDiv));
+		}
 		console.log(friends.length);
 		if(friends.length === 0){
 			let noFriends = document.createElement('div');
