@@ -191,6 +191,7 @@ class friendsList extends HTMLElement{
 		});
 	}
 	async connectedCallback(){
+		this.connectWebSocket();
 		this.fetchFriends();
 
 		this.addButton.addEventListener('click', () => {
@@ -208,6 +209,31 @@ class friendsList extends HTMLElement{
 		});
 
 	}
+
+	connectWebSocket() {
+        const username = localStorage.getItem('username');
+        this.socket = new WebSocket(`ws://localhost:8000/ws/friends/${username}/`);
+
+        this.socket.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            console.log(data.message);
+            this.updateFriendStatus(data.message);
+        };
+
+        this.socket.onclose = (event) => {
+            console.log('WebSocket closed unexpectedly');
+        };
+    }
+
+    updateFriendStatus(message) {
+        const [username, status] = message.split(' is ');
+        const friendDiv = this.container.querySelector(`.friend-div[data-username="${username}"]`);
+        if (friendDiv) {
+            const logstatus = friendDiv.querySelector('#logstatus');
+            logstatus.textContent = status;
+        }
+    }
+
 	async fetchFriends(){
 		let username = localStorage.getItem('username');
 		let token = getCookie('access_token');
@@ -249,14 +275,18 @@ class friendsList extends HTMLElement{
 				friendDiv.className = 'friend-div';
 				let logstatus = document.createElement('div');
 				logstatus.id = 'logstatus';
-				friendDiv.textContent = friend.user1 === localStorage.getItem('username') ? friend.user2 : friend.user1; /*revisar con el back end si el campo se llama name*/ 
+				friendDiv.textContent = friend.user1 === localStorage.getItem('username') ? friend.user2 : friend.user1; 
 				friendDiv.appendChild(logstatus);
 				this.container.appendChild(friendDiv);
 			});
 		}
 
 		}
-	disconectedCallback(){}
+	disconectedCallback(){
+		if (this.socket){
+			this.socket.close();
+		}
+	}
 }
 
 window.customElements.define("friends-list", friendsList);
