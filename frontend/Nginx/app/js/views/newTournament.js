@@ -212,6 +212,7 @@ class TournamentView extends HTMLElement {
     flex-direction: column;
     align-items: center;
     text-align: center;
+	margin-bottom: 2rem;
     padding: 1rem;
     background-color: #e0f2fe; /* Azul claro pastel */
     border-radius: 12px;
@@ -245,21 +246,30 @@ class TournamentView extends HTMLElement {
     position: relative;
 }
 
+#app{
+	display: flex;
+}
+
+#tournament-view {
+    max-height: 100vh;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+    padding: 1rem;
+}
+
 #bracket {
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 3rem;
-    position: relative;
-    max-height: 100vh; /* Mantener altura máxima */
-    overflow-y: auto; /* Habilitar scroll vertical */
-    scroll-behavior: smooth; /* Suavizar desplazamiento */
-    /*padding: 1rem; Agregar espacio interno para evitar cortes */
-    box-sizing: border-box; /* Incluir padding en las dimensiones */
+    overflow-y: auto;
+    scroll-behavior: smooth;
+    padding: 1rem; Agregar espacio interno para evitar cortes 
+    /*box-sizing: border-box;  Incluir padding en las dimensiones */
 }
 
 
-#bracket::-webkit-scrollbar {
+#tournament-view::-webkit-scrollbar {
     display: none;
 }
 
@@ -267,10 +277,6 @@ class TournamentView extends HTMLElement {
     #bracket {
         flex-direction: column;
         gap: 1rem;
-    }
-    .match::before,
-    .match::after {
-        display: none;
     }
 }
 #edit-players-view {
@@ -301,7 +307,6 @@ class TournamentView extends HTMLElement {
 
 #edit-players-view h2 {
 	margin: 0 0 1rem 0;
-    margin-top: 0; /* Elimina márgenes innecesarios */
     margin-bottom: 1rem;
     color: #334155;
     font-size: 1.5rem;
@@ -408,8 +413,8 @@ button#accept-players:hover {
             return;
         }
         this.innerHTML = `
-        <div id="tournament-view">
-            <div id="bracket" class="wrapper">
+		<div id="tournament-view">
+            <div id="bracket">
                 ${this.tournamentData.rounds.map((round, roundIndex) => `
                     <div class="round">
                         <h3>Ronda ${roundIndex + 1}</h3>
@@ -433,8 +438,6 @@ button#accept-players:hover {
             <div id="game-container"></div>
         </div>
     `;
-        //const tournamentview = this.querySelector('#bracket');
-        // z
         const buttons = this.querySelectorAll('.start-match');
         buttons.forEach(button => {
             button.addEventListener('click', (e) => {
