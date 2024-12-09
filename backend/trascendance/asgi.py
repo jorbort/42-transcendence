@@ -15,13 +15,13 @@ import django
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'trascendance.settings')
 django.setup()
-from trascendance import routing
+import users.routing
 
 application = ProtocolTypeRouter({
 	"http" : get_asgi_application(),
 	"websocket": AuthMiddlewareStack(
 		URLRouter(
-			routing.websocket_urlpatterns
+			users.routing.websocket_urlpatterns
 		)
 	),
 })

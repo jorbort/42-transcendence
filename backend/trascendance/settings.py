@@ -32,6 +32,7 @@ INSTALLED_APPS = [
 	'rest_framework_simplejwt',
 	'django_crontab',
 	'corsheaders',
+	'channels',
 ]
 
 MIDDLEWARE = [
@@ -83,7 +84,7 @@ TEMPLATES = [
 
 ASGI_APPLICATION = 'trascendance.asgi.application'
 
-CHANNEl_LAYERS = {
+CHANNEL_LAYERS = {
 	'default' : {
 		'BACKEND': 'channels.layers.InMemoryChannelLayer',
 	},
@@ -163,7 +164,7 @@ CRONJOBS = [
 
 # jwt expiration info
 SIMPLE_JWT = {
-	'ACCESS_TOKEN_LIFETIME' : timedelta(minutes=60),
+	'ACCESS_TOKEN_LIFETIME' : timedelta(hours=24),
 	'REFRESH_TOKEN_LIFETIME' : timedelta(days=30),
 }
 
