@@ -4,8 +4,11 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from users.models import MatchHistory , PongUser
 from users.serializer import MatcHistorySerializer
+from django.db.models import Q
+import logging
 
 
+logger = logging.getLogger(__name__)
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def match_history(request):
@@ -16,10 +19,7 @@ def match_history(request):
 		user = PongUser.objects.get(username=username)
 	except PongUser.DoesNotExist:
 		return Response({'detail': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
-	
-	matches_as_player1= MatchHistory.objects.filter(player1=user)
-	matches_as_player2=MatchHistory.objects.filter(player2=user) 
-	matches= matches_as_player1 | matches_as_player2
+	matches = MatchHistory.objects.filter(Q(player1=user) | Q(player2=user))
 	serializer = MatcHistorySerializer(matches, many=True)
 	return Response(serializer.data, status=status.HTTP_200_OK)
 	
@@ -36,8 +36,8 @@ def record_match(request):
 			player1 = PongUser.objects.get(username=player1_username)
 			player2 = PongUser.objects.get(username=player2_username)
 			winner = PongUser.objects.get(username=winner_username)
-		except PonUser.DoesNotexist:
-			return response({'detail': 'One or both users not found'}, status=status.HTTP_400_BAD_REQUEST)
+		except PongUser.DoesNotExist:
+			return Response({'detail': 'One or both users not found'}, status=status.HTTP_400_BAD_REQUEST)
 
 		match_data = {
             'player1': player1.id,
@@ -47,7 +47,7 @@ def record_match(request):
 			'winner': winner.id,
         	'tournament_id': tournament_id
         }
-		serializer= MatcHistorySerializer(data=request_data)
+		serializer= MatcHistorySerializer(data=match_data)
 		if serializer.is_valid():
 			serializer.save()
 			return Response(serializer.data, status=status.HTTP_201_CREATED)

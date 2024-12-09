@@ -5,8 +5,16 @@ class friendsList extends HTMLElement{
 		let style = document.createElement('style');
 		
 		style.textContent = /*css*/`
-				#logstatus{
+				.active{
 					background-color: green;
+					box-shadow: 0px 0px 5px 2px green;
+					border-radius: 50%;
+					height: 10px;
+					width: 10px;
+				}
+				.inactive{
+					background-color: red;
+					box-shadow:0px 0px 5px 2px red;
 					border-radius: 50%;
 					height: 10px;
 					width: 10px;
@@ -182,7 +190,6 @@ class friendsList extends HTMLElement{
 				}
 		
 				const result = await response.json();
-				console.log('Friend added:', result);
 				this.fetchFriends();
 				this.modal.style.display = 'none';
 			} catch (error) {
@@ -230,14 +237,13 @@ class friendsList extends HTMLElement{
         const friendDiv = this.container.querySelector(`.friend-div[data-username="${username}"]`);
         if (friendDiv) {
             const logstatus = friendDiv.querySelector('#logstatus');
-            logstatus.textContent = status;
+            logstatus.className = status === 'online' ? 'active' : 'inactive';
         }
     }
 
 	async fetchFriends(){
 		let username = localStorage.getItem('username');
 		let token = getCookie('access_token');
-		console.log(token);
 		try {
 			let response = await fetch(`http://localhost:8000/users/listFriends?username=${username}`,{
 				headers: {
@@ -249,7 +255,6 @@ class friendsList extends HTMLElement{
 				throw new Error('Error en la peticion');
 			}
 			let friends = await response.json();
-			console.log(friends);
 			this.renderFriends(friends);
 		}catch(error){
 			console.log(error);
@@ -263,7 +268,6 @@ class friendsList extends HTMLElement{
 		if (friendDivs.length > 0) {
 			friendDivs.forEach(friendDiv => this.container.removeChild(friendDiv));
 		}
-		console.log(friends.length);
 		if(friends.length === 0){
 			let noFriends = document.createElement('div');
 			noFriends.className = 'friend-div';
@@ -274,7 +278,7 @@ class friendsList extends HTMLElement{
 				let friendDiv = document.createElement('div');
 				friendDiv.className = 'friend-div';
 				let logstatus = document.createElement('div');
-				logstatus.id = 'logstatus';
+				logstatus.className = 'inactive';
 				friendDiv.textContent = friend.user1 === localStorage.getItem('username') ? friend.user2 : friend.user1; 
 				friendDiv.appendChild(logstatus);
 				this.container.appendChild(friendDiv);
@@ -305,7 +309,6 @@ export function getCookie(name) {
 
 async function refreshToken() {
     try {
-		console.log(getCookie('refresh_token'))
         let response = await fetch('http://localhost:8000/users/TokenRefresh', {
             method: 'POST',
             headers: {

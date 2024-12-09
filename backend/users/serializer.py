@@ -40,9 +40,22 @@ class UpdateUserSerializer(serializers.ModelSerializer):
 			validated_data.pop('password')
 		return super().update(instance, validated_data)
 class MatcHistorySerializer(serializers.ModelSerializer):
+	player1_username = serializers.SerializerMethodField()
+	player2_username = serializers.SerializerMethodField()
+	winner_username = serializers.SerializerMethodField()
+
 	class Meta:
 		model = MatchHistory
-		fields = '__all__'
+		fields = ['id', 'date', 'player1_score', 'player2_score', 'player1', 'player2', 'winner', 'tournament_id', 'player1_username', 'player2_username', 'winner_username']
+
+	def get_player1_username(self, obj):
+		return obj.player1.username
+
+	def get_player2_username(self, obj):
+		return obj.player2.username
+
+	def get_winner_username(self, obj):
+		return obj.winner.username
 
 class FrienshipSerializer(serializers.ModelSerializer):
 	user1 = serializers.CharField(source='user1.username')

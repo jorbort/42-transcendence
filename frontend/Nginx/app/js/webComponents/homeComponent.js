@@ -1,4 +1,5 @@
 import {MarioComponent} from './marioComponent.js';
+import { getCookie } from '../utils/parseCookies.js';
 
 export default class HomeComponent extends HTMLElement{
 	constructor(){
@@ -127,7 +128,30 @@ export default class HomeComponent extends HTMLElement{
 		`;
 		shadow.appendChild(container);
 	}
-	connectedCallback(){}
+	connectedCallback(){
+		this.fetchMatches();
+
+	}
 	disconnectedCallback(){}
+	async fetchMatches(){
+		let url = `http://localhost:8000/matches/obtainHistory?username=${localStorage.getItem('username')}`;
+		let token = getCookie('access_token');
+		try{
+			let response = await fetch(url, {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json',
+					'Authorization': `Bearer ${token}`
+				}
+			});
+			if (!response.ok) {
+				throw new Error('Error fetching matches');
+			}
+			let data = await response.json();
+			let matches = data.matches;
+		}catch (error){
+			console.error(error);
+		}
+	}
 }
 window.customElements.define('home-component', HomeComponent);
