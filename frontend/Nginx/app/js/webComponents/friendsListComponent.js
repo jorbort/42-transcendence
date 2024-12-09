@@ -223,7 +223,6 @@ class friendsList extends HTMLElement{
 
         this.socket.onmessage = (event) => {
             const data = JSON.parse(event.data);
-            console.log(data.message);
             this.updateFriendStatus(data.message);
         };
 
@@ -235,6 +234,7 @@ class friendsList extends HTMLElement{
     updateFriendStatus(message) {
         const [username, status] = message.split(' is ');
         const friendDiv = this.container.querySelector(`.friend-div[data-username="${username}"]`);
+		console.log(friendDiv);
         if (friendDiv) {
             const logstatus = friendDiv.querySelector('#logstatus');
             logstatus.className = status === 'online' ? 'active' : 'inactive';
@@ -278,6 +278,8 @@ class friendsList extends HTMLElement{
 				let friendDiv = document.createElement('div');
 				friendDiv.className = 'friend-div';
 				let logstatus = document.createElement('div');
+				friendDiv.setAttribute('data-username', friend.user1 === localStorage.getItem('username') ? friend.user2 : friend.user1);
+				logstatus.id = 'logstatus';
 				logstatus.className = 'inactive';
 				friendDiv.textContent = friend.user1 === localStorage.getItem('username') ? friend.user2 : friend.user1; 
 				friendDiv.appendChild(logstatus);
@@ -285,7 +287,7 @@ class friendsList extends HTMLElement{
 			});
 		}
 
-		}
+	}
 	disconectedCallback(){
 		if (this.socket){
 			this.socket.close();

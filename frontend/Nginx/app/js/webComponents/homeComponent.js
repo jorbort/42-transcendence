@@ -91,6 +91,7 @@ export default class HomeComponent extends HTMLElement{
 				display: flex;
 				justify-content: center;
 				align-items: center;
+				flex-direction: column;
 			}
 			.win-rate{
 				text-align: center;
@@ -101,8 +102,14 @@ export default class HomeComponent extends HTMLElement{
 				align-self: center;
 				justify-self: center;
 				display: flex;
+				flex-direction: column;
 				justify-content: center;
 				align-items: center;
+			}
+			.win-Rate-Info{
+				text-align: center;
+				display: flex;
+				flex-direction: column;
 			}
 		`;
 		shadow.appendChild(style);
@@ -123,7 +130,7 @@ export default class HomeComponent extends HTMLElement{
 					<p>Last game</p>
 				</div>
 				<div class="win-rate">
-					<p>Win rate %</p>
+					<p>Win rate </p>
 				</div>
 		`;
 		shadow.appendChild(container);
@@ -148,7 +155,26 @@ export default class HomeComponent extends HTMLElement{
 				throw new Error('Error fetching matches');
 			}
 			let data = await response.json();
-			let matches = data.matches;
+			let lastGame = data[data.length-1];
+			let matchesPlayed = data.length;
+			let matchesWon = data.filter(match => match.winner_username === localStorage.getItem('username')).length;
+			let winPercentage = (matchesWon/matchesPlayed)*100;
+			let winRate = this.shadowRoot.querySelector('.win-rate');
+			let lastGameContainer = this.shadowRoot.querySelector('.last-game');
+			let lastGameInfo = document.createElement('div');
+			let winRateInfo = document.createElement('div');
+			winRateInfo.className = 'win-Rate-Info';
+			winRateInfo.textContent = `${winPercentage.toFixed(2)}%`;
+			winRate.appendChild(winRateInfo);
+			
+			let gameinfoUl = document.createElement('ul');
+			gameinfoUl.innerHTML = `
+				<li>Player 1: ${lastGame.player1_username}</li>
+				<li>Player 2: ${lastGame.player2_username}</li>
+				<li>Winner: ${lastGame.winner_username}</li>
+			`;
+			lastGameInfo.appendChild(gameinfoUl);
+			lastGameContainer.appendChild(lastGameInfo);
 		}catch (error){
 			console.error(error);
 		}
