@@ -232,4 +232,4 @@ function getCookie(name) {
 	return null;
 }
 
-https://plotly.com/javascript/bar-charts/
+// https://plotly.com/javascript/bar-charts/
