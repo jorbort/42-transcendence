@@ -12,10 +12,12 @@ class GameStats extends HTMLElement {
 			}
 			.nogamehistory {
 				color: rgba(160, 215, 160, 0.9);
-				font-size: 1.5rem;
+				font-size: 2.5rem;
 				font-family: 'Press Start 2P', cursive;
 				text-align: center;
-				margin-top: 10%;
+				text-transform: uppercase;
+				justify-content: center;
+				height: 100%;
 			}
 			.table-container {
                 width: 100%;
@@ -89,38 +91,39 @@ class GameStats extends HTMLElement {
 			tr:nth-child(odd) {
 				background-color: #2b3339;
 			}
-				`;
+			.pie-chart-container {
+				position: absolute;
+				top: 20px;
+				left: 20px;
+				width: 30%; 
+				height: 60%; 
+				background-color: #2b3339;
+				border-radius: 10px; 
+				box-shadow: 0 0 10px 2px rgba(0,0,0,0.5); 
+				display: flex;
+				flex-direction: column;
+				justify-content: space-evenly;
+				align-items: center;
+				overflow: hidden;
+			}
+			.pie-chart-container h1 {
+				color: rgba(160, 215, 160, 0.9);
+				font-family: 'Press Start 2P', cursive;
+				font-size: 1.5rem;
+				text-align: center;
+				margin-top: 20px;
+			}
+			#pieChartDiv {
+				width: 90%;
+				height: 90%;
+				margin-bottom: 50px;
+				}
+	`;
 	
 	shadow.appendChild(style);
 	this.container = document.createElement('div');
 	this.container.className = 'GameStatsContainer';
 	
-		// Crear el contenedor de la tabla
-        const tableContainer = document.createElement('div');
-        tableContainer.className = 'table-container';
-
-    	// Crear la estructura de la tabla
-	const table = document.createElement('table');
-	table.className = 'stats-table';
-
-	const thead = document.createElement('thead');
-	const headerRow = document.createElement('tr');
-	const headers = ['Date', 'Player 1', 'Score', 'Player 2', 'Score', 'Winner'];
-	headers.forEach(headerText => {
-		const th = document.createElement('th');
-		th.textContent = headerText;
-		headerRow.appendChild(th);
-	});
-	thead.appendChild(headerRow);
-	table.appendChild(thead);
-
-	const tbody = document.createElement('tbody');
-	tbody.className = 'stats-tbody';
-    table.appendChild(tbody);
-
-	tableContainer.appendChild(table);
-	this.container.appendChild(tableContainer);
-
 	const myDiv = document.createElement('div');
 	myDiv.id = 'myDiv';
 	myDiv.style.width = '100%';
@@ -152,15 +155,45 @@ class GameStats extends HTMLElement {
 		this.renderPieChart(gamehistory);
 	}catch(error){
 		console.error('Error en la peticion', error);
-		let nogamehistory = document.createElement('div');
-		nogamehistory.className = 'nogamehistory';
-		nogamehistory.textContent = 'No hay partidas recientes';
 	}
 }
 
 rendergamehistory(gamehistory){
-	const tbody = this.shadowRoot.querySelector('.stats-tbody');
+	const tbody = document.createElement('tbody');
 	tbody.innerHTML = ''; // Clear previous data
+
+	if (gamehistory.length === 0) {
+		let nogamehistory = document.createElement('div');
+		nogamehistory.className = 'nogamehistory';
+		nogamehistory.textContent = 'No hay partidas recientes';
+		this.container.appendChild(nogamehistory);
+		return;
+	}
+
+	// Create table container
+	const tableContainer = document.createElement('div');
+	tableContainer.className = 'table-container';
+
+	// Create table structure
+	const table = document.createElement('table');
+	table.className = 'stats-table';
+
+	const thead = document.createElement('thead');
+	const headerRow = document.createElement('tr');
+	const headers = ['Date', 'Player 1', 'Score', 'Player 2', 'Score', 'Winner'];
+	headers.forEach(headerText => {
+		const th = document.createElement('th');
+		th.textContent = headerText;
+		headerRow.appendChild(th);
+	});
+	thead.appendChild(headerRow);
+	table.appendChild(thead);
+
+	tbody.className = 'stats-tbody';
+	table.appendChild(tbody);
+
+	tableContainer.appendChild(table);
+	this.container.appendChild(tableContainer);
 
 	gamehistory.forEach(match => {
 		const row = document.createElement('tr');
@@ -195,25 +228,59 @@ rendergamehistory(gamehistory){
 	}
 
 	renderPieChart(gamehistory) {
+
+		if (gamehistory.length === 0) {
+			return;
+		}
+
         const wins = gamehistory.filter(match => match.winner_username === localStorage.getItem("username")).length;
         const losses = gamehistory.length - wins;
+        // Create a div for the pie chart
+        const pieChartContainer = document.createElement('div');
+        pieChartContainer.className = 'pie-chart-container';
+        const pieChartitle= document.createElement('h1');
+		pieChartitle.textContent = 'Wins vs Losses %';
+		pieChartitle.style.textAlign = 'center';
+		pieChartitle.style.color = 'rgba(160, 215, 160, 0.9)';
+		pieChartitle.style.fontFamily = 'Press Start 2P';
+		pieChartContainer.appendChild(pieChartitle);
+        const pieChartDiv = document.createElement('div');
+        pieChartDiv.id = 'pieChartDiv';
+        pieChartContainer.appendChild(pieChartDiv);
+        this.container.appendChild(pieChartContainer);
 
         const data = [{
             values: [wins, losses],
             labels: ['Wins', 'Losses'],
-            type: 'pie'
+			textinfo: 'label+percent',
+            type: 'pie',
+			textposition: "outside",
+			automargin: true,
+			marker: {
+                colors: ['#4caf50', '#f44336'] // Green for wins, Red for losses
+            }
         }];
 
+ 
         const layout = {
-			title: 'Wins vs Losses',
-            paper_bgcolor: '#2b3339', // Establece el color de fondo del gráfico
+            paper_bgcolor: '#2b3339',
             font: {
-                color: 'rgba(160, 215, 160, 0.9)' // Establece el color del texto
+                color: 'rgba(160, 215, 160, 0.9)'
+            },
+			width: '50%',
+            height: '50%',
+            showlegend: false,
+            margin: {
+                l: 0,
+                r: 200,
+                b: 0,
+                t: 30,
+                pad: 0
             }
         };
 
-        Plotly.newPlot(this.shadowRoot.getElementById('myDiv'), data, layout);
-    }
+        Plotly.newPlot(pieChartDiv, data, layout, {responsive: true});
+   }
 	disconectedCallback(){}
 }
 
