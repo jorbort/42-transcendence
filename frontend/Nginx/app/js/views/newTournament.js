@@ -1,4 +1,5 @@
 import renderPonTournament from "./pongTournament.js";
+import { connectToMetaMask, saveToBlockchain } from './blockchain.js';
 
 class TournamentView extends HTMLElement {
     constructor() {
@@ -470,14 +471,17 @@ button#accept-players:hover {
                 <div id="bracket">${this.generateBracketHTML()}</div>
                 <div id="winner">
                     <h2>¡Ganador del Torneo!</h2>
-                    <p>${this.tournamentData.winner}</p>
-                    <button id="save-winner">Guardar Ganador</button>
+                    <h3>${this.tournamentData.winner}</3>
+                    <button id="save-winner">Guardar y salir</button>
+					<button id="exit">Salir</button>
                 </div>
             </div>
         `;
 
-        this.querySelector('#save-winner').addEventListener('click', () => {
-            this.saveWinner(this.tournamentData.winner);
+        document.querySelector('#save-winner').addEventListener('click', async () => {
+            const connected = await connectToMetaMask();
+            if (!connected) return;
+            await saveToBlockchain(this.tournamentData.name, this.tournamentData.date, this.tournamentData.winner);
         });
     }
 
@@ -509,14 +513,6 @@ button#accept-players:hover {
                 </div>
             </div>
         `).join('');
-    }
-
-
-    saveWinner(winner) {
-        // Aquí puedes implementar la lógica para guardar el ganador,
-        // por ejemplo, enviar una solicitud a un servidor o guardar en localStorage
-        console.log(`Ganador ${winner} guardado.`);
-        alert(`El ganador ${winner} ha sido guardado.`);
     }
 }
 customElements.define('tournament-view', TournamentView);
