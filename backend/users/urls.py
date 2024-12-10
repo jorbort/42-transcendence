@@ -20,7 +20,7 @@ urlpatterns = [
 	path('matches/register',record_match),#http://localhost:8000/matches/register
 	path('matches/obtainHistory',match_history),#http://localhost:8000/matches/obtainHistory
 	path('friends', add_friend), #http://localhost:8000/users/friends
-	path('upload_avatar', upload_avatar), #http://localhost:8000/users/upload_avatar
+	path('upload_avatar', upload_avatar), #http://localhost:8000/upload_avatar
 	path('TokenRefresh', refreshTokens), #http://localhost:8000/users/TokenRefresh
 	path('login_42', login_42, name='login_42'), #http://localhost:8000/users/login_42
     path('callback_42', callback_42, name='callback_42'),#http://localhost:8000/users/callback_42

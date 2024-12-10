@@ -69,15 +69,21 @@ def addUser(request):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def upload_avatar(request):
+	logging.info("AQUI NO LLEGA 0")
+	logging.info(request)
+	logging.info(request.POST.get('alias'))
+	logging.info("AQUI NO LLEGA 1")
+	logging.info(request.POST.get('img'))
 	user = request.user
-	serializer = AvatarUploadSerializer(instance=user, data=request.data,partial=True)
-	#console.log("EEEEEEEEEEEEEEEEEEE")
-
-	if serializer.is_valid():
-		serializer.save()
-	#	console.log("AAAAAAA")
-		return Response({'detail': 'Avatar and alias uploaded successfully.'}, status=status.HTTP_200_OK)
-	return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+	try:
+		user.username = request.POST.get('alias')
+		user.fortytwo_image_url = request.POST.get('img')
+		user.save()
+		return Response({'status': 'Ok'}, status=200)
+	except Exception as e:
+		logging.info(str(e))
+		return Response({'error': 'Bad request'}, status=400)
+	return Response({'error': 'Bad request'}, status=400)
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])

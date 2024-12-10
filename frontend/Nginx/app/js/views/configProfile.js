@@ -364,29 +364,31 @@ class profileconfig extends HTMLElement {
 	
 		if (imgUploadButton) {
 			imgUploadButton.addEventListener("click", () => {
-				// Crea dinámicamente el input y lo activa
 				const inputFile = document.createElement("input");
 				inputFile.type = "file";
 				inputFile.id = "imageUpload";
 				inputFile.className = "flip-card__input";
 				inputFile.accept = "image/*";
-				inputFile.onchange = (event) => this.loadImage(event); // Llama al método loadImage
+				inputFile.onchange = (event) => this.loadImage(event);
 				inputFile.click(); // Activa el input
 			});
 		}
 		const actButton = shadow.querySelector("#act");
 		if (actButton) {
 			actButton.addEventListener("click", async () => {
-				const alias = shadow.querySelector("#Alies").value;
+				const alias = localStorage.getItem('username');
 				const profileImage = shadow.querySelector("#profileImage").src;
 				let token = getCookie('access_token');
 		
 				const formData = new FormData();
-				formData.append("alias", alias);
-				formData.append("avatar", this.dataURLtoFile(profileImage, localStorage.getItem('user_img')));
-		
+				formData.append('alias', alias);
+				formData.append('img', profileImage)
+				console.log(profileImage);
+				// formData.append("avatar", this.dataURLtoFile(profileImage, localStorage.getItem('user_img')));
+
+
 				try {
-					const response = await fetch("http://localhost:8000/users/upload-avatar/", {
+					const response = await fetch("http://localhost:8000/upload_avatar", {
 						method: "POST",
 						headers: {
 							'Authorization': `Bearer ${token}`, // Token de autenticación
@@ -399,7 +401,9 @@ class profileconfig extends HTMLElement {
 					}
 		
 					const result = await response.json();
-					console.log(result.detail); // Mensaje de éxito del backend
+					console.log(result);
+					localStorage.setItem('username', alias);
+					localStorage.setItem('user_img', profileImage); // Mensaje de éxito del backend
 					// Puedes actualizar la interfaz o hacer algo después de la respuesta exitosa
 		
 				} catch (error) {
@@ -430,7 +434,7 @@ class profileconfig extends HTMLElement {
 					const profileImage = this.shadowRoot.querySelector("#profileImage");
 					profileImage.src = e.target.result;
 	
-					// Guardar la imagen en localStorage si deseas persistirla
+					// Guardar la imagen en localStorage
 					localStorage.setItem('user_img', e.target.result);
 				};
 				reader.readAsDataURL(file);

@@ -75,4 +75,4 @@ class FrienshipSerializer(serializers.ModelSerializer):
 class AvatarUploadSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = PongUser
-		fields = ['alias', 'avatar']
+		fields = ['alias']
