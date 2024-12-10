@@ -471,7 +471,7 @@ button#accept-players:hover {
                 <div id="bracket">${this.generateBracketHTML()}</div>
                 <div id="winner">
                     <h2>¡Ganador del Torneo!</h2>
-                    <h3>${this.tournamentData.winner}</3>
+                    <p>${this.tournamentData.winner}</p>
                     <button id="save-winner">Guardar y salir</button>
 					<button id="exit">Salir</button>
                 </div>
