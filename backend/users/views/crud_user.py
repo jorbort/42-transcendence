@@ -71,12 +71,15 @@ def addUser(request):
 def upload_avatar(request):
 	logging.info("AQUI NO LLEGA 0")
 	logging.info(request)
-	logging.info(request.POST.get('alias'))
+	logging.info(request.POST.get('name'))
 	logging.info("AQUI NO LLEGA 1")
+	logging.info(request.POST.get('last_name'))
+	logging.info("AQUI NO LLEGA 2")
 	logging.info(request.POST.get('img'))
 	user = request.user
 	try:
-		user.username = request.POST.get('alias')
+		user.first_name = request.POST.get('name')
+		user.last_name = request.POST.get('name')
 		user.fortytwo_image_url = request.POST.get('img')
 		user.save()
 		return Response({'status': 'Ok'}, status=200)
