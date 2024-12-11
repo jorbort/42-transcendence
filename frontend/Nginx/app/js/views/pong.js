@@ -1,6 +1,8 @@
 import { handleRouteChange } from "../mainScript.js";
 import headerNavBar from '../webComponents/headerNavBar.js';
 import SideNavBar from  '../webComponents/sideNavBarComponent.js';
+import { getCookie } from '../webComponents/friendsListComponent.js';
+
 
 class PongGame extends HTMLElement {
     constructor() {
@@ -20,6 +22,7 @@ class PongGame extends HTMLElement {
         this.ball = null; // ocultar pelota
         this.countdownText = null;
         this.loadfont = null;
+        this.user_name = localStorage.getItem('username');
         this.playerText = null;
         this.IAText = null;
         this.gameStarted = false;
@@ -34,6 +37,7 @@ class PongGame extends HTMLElement {
         this.lastSelect = false;
         this.handleKeyDown = this.handleKeyDown.bind(this);
         this.handleKeyUp = this.handleKeyUp.bind(this);
+        this.handleKeyUpL = this.handleKeyUpL.bind(this);
         this.handleKeyDownL = this.handleKeyDownL.bind(this);
     }
 
@@ -53,7 +57,7 @@ class PongGame extends HTMLElement {
 
 z
 
-    newModal( goHome, tryAgain, btncruz) {
+    newModal( goHome, tryAgain, btncruz, winnerMessage) {
         const modalContainer = document.createElement('div');
         modalContainer.innerHTML = /* html */`
             <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalCenterTitle" data-bs-backdrop="static" aria-hidden="true">
@@ -65,6 +69,7 @@ z
                         </div>
                         <div class="modal-body d-flex flex-column justify-content-center align-items-center">
                             <p>!Game Over!</p>
+                            <p>${winnerMessage}</p>
                         </div>
                         <div class="modal-footer">
                             ${goHome}
@@ -80,14 +85,27 @@ z
         const   goHome = `<button id="Go-Home" type="button" class="btn btn-secondary">Go Home</button>`
         const   tryAgain = `<button id="try-again" type="button" class="btn btn-primary">Try Againg</button>`
         const   btncruzend = `<button id="btn-cruz" type="button" class="btn-close" aria-label="Close"></button>`
-        const   newModal = this.newModal( goHome, tryAgain, btncruzend);
-        
+    
+        // Determinar el ganador
+        const winners = [];
+        if (this.pointsPlayer >= 3) winners.push(this.user_name);
+        if (this.pointsIA >= 3) winners.push("localplayer");
+    
+        let winnerMessage;
+        if (winners.length === 0) {
+            winnerMessage = "No winners yet!";
+        } else if (winners.length === 1)
+            winnerMessage = `${winners[0]} wins!`;
+
+        const newModal = this.newModal(goHome, tryAgain, btncruzend, winnerMessage);
+            
         this.appendChild(newModal);
         const myModal = new bootstrap.Modal(document.getElementById('myModal'), {
             keyboard: false
         });
         myModal.show();
 
+        
         const btnTryAgain = document.getElementById("try-again");
         if (btnTryAgain) {
             btnTryAgain.addEventListener('click', () => {
@@ -304,8 +322,8 @@ z
                 console.log("Font loaded successfully.");
                 this.loadfont = font;
                 const textMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff });
-                this.playerText = this.createText("Player1: " + this.pointsPlayer, new THREE.Vector3(-15, 9.5, 0), font, textMaterial);
-                this.IAText = this.createText("Player2: " + this.pointsIA, new THREE.Vector3(8, 9.5, 0), font, textMaterial);
+                this.playerText = this.createText(localStorage.getItem('username') + ":" + this.pointsPlayer, new THREE.Vector3(-15, 9.5, 0), font, textMaterial);
+                this.IAText = this.createText("localplayer: " + this.pointsIA, new THREE.Vector3(8, 9.5, 0), font, textMaterial);
                 this.scene.add(this.playerText);
                 this.scene.add(this.IAText);
                 resolve(font); // Resolvemos la promesa con la fuente
@@ -543,7 +561,7 @@ z
 
     reprint(name,points)
     {
-        if (name == 'Player2')
+        if (name == 'localplayer')
         {
             this.IAText.geometry.dispose(); // Eliminamos anterior
             this.IAText.geometry = new THREE.TextGeometry(name + ": " + points, {
@@ -628,13 +646,13 @@ z
         this.ball.position.y += this.ballSpeedY * this.ballDireccionY;
         if (this.ball.position.x > 17) {
             this.pointsPlayer++;
-            this.reprint("Player1", this.pointsPlayer);
+            this.reprint(localStorage.getItem('username'), this.pointsPlayer);
             await this.pauseGameAndShowCountdown()
             this.resetBall();
         }
         if (this.ball.position.x < -17) {
             this.pointsIA++;
-            this.reprint("Player2", this.pointsIA);
+            this.reprint("localplayer", this.pointsIA);
             await this.pauseGameAndShowCountdown()
             this.resetBall();
         }
@@ -656,15 +674,52 @@ z
         }
     }
 
+    async insertresultinbd(username, localplayer, bool)
+    {
+        let token = getCookie('access_token');
+
+        const formData = new FormData();
+        formData.append('player1', username);
+        formData.append('player2', localplayer);
+        formData.append('player1_score', this.pointsPlayer);
+        formData.append('player2_score', this.pointsIA);
+        if (bool == 0){
+            formData.append('winner', username);
+        } else {
+            formData.append('winner', localplayer);
+        }
+
+        try {
+            const response = await fetch("http://localhost:8000/matches/register", {
+                method: "POST",
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: formData,
+            });
+
+            if (!response.ok) {
+                throw new Error('Error en la petición');
+            }
+
+            const result = await response.json();
+            console.log(result);
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
     checkIfLost()
     {
         if (this.pointsPlayer >= 3) {
-            this.createModal()
+            this.insertresultinbd(localStorage.getItem('username'), "localplayer", 0);
+            this.createModal();
             this.resetGame(this.ball);
             this.gameStarted = true;
             return true;
         }
         else if (this.pointsIA >= 3) {
+            this.insertresultinbd(localStorage.getItem('username'), "localplayer", 1);
             this.createModal()
             this.resetGame(this.ball);
             this.gameStarted = true;
@@ -691,8 +746,8 @@ z
     {
         this.pointsIA = 0;
         this.pointsPlayer = 0;
-        this.reprint("Player X", this.pointsPlayer);
-        this.reprint("IA", this.pointsIA);
+        this.reprint(localStorage.getItem('username'), this.pointsPlayer);
+        this.reprint("localplayer", this.pointsIA);
         this.ball = null;
         this.gameStarted = false;
     }
