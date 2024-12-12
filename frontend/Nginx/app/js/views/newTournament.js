@@ -251,6 +251,7 @@ class TournamentView extends HTMLElement {
 	display: flex;
 }
 
+
 #tournament-view {
     max-height: 100vh;
     overflow-y: auto;
