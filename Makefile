@@ -1,8 +1,6 @@
 
 up:	
-	@if [ ! -d "./postgres/res" ]; then \
-		mkdir "./postgres/res"; \
-	fi
+	
 	docker compose -f docker-compose.yaml up  --build
 down:
 	docker-compose down
@@ -23,6 +21,7 @@ clean:
 	@if [ ! -z "$$(docker network ls -q --filter type=custom)" ]; then \
 		docker network rm $$(docker network ls -q --filter type=custom); \
 	fi
+	rm -rf "./postgres/res"
 	@echo "Deleted all docker containers, volumes, networks, and images succesfully"
 
 re: clean up

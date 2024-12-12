@@ -1,5 +1,6 @@
 import renderPonTournament from "./pongTournament.js";
 import { connectToMetaMask, saveToBlockchain } from './blockchain.js';
+import { handleRouteChange } from "../mainScript.js";
 
 class TournamentView extends HTMLElement {
     constructor() {
@@ -20,7 +21,7 @@ class TournamentView extends HTMLElement {
         this.firstSelect = false;
         this.SecondSelect = false;
         this.configsaved = false;
-        this.qttplayers = 4;
+        this.qttplayers = 2;
     }
 
     connectedCallback() {
@@ -102,10 +103,30 @@ class TournamentView extends HTMLElement {
         container.appendChild(newModal);
         const myModal = new bootstrap.Modal(document.getElementById('customModal'), {
             keyboard: false,
-            // backdrop: 'static'
-        });
-        myModal.show();
+            // backdrop: 'static',
 
+        });
+        window.addEventListener('popstate', (event) => {
+            if (event.state && event.state.modalOpen) {
+                // Si el modal estaba abierto, cerrarlo
+                myModal.hide();
+            } else {
+                // Si no hay estado modal, redirigir a la página de inicio y forzar recarga
+                window.location.href = '/'; // Cambia "/" por la URL de tu página de inicio
+                window.location.reload(); // Fuerza la recarga completa
+            }
+        });
+
+        myModal.show();
+        const modalElement = document.getElementById('customModal');
+        modalElement.addEventListener('hide.bs.modal', (event) => {
+            if (event.target === modalElement) {
+                history.pushState('', '', '/Profile');
+                handleRouteChange();
+                const appElement = document.getElementById('app');
+                appElement.style.display = 'block';
+            }
+        });
         function resetButtonStyles(buttonYesId, buttonNoId) {
             const btnYes = document.getElementById(buttonYesId);
             const btnNo = document.getElementById(buttonNoId);
@@ -357,9 +378,7 @@ button#accept-players:hover {
     background-color: #2563eb;
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-        `;
+}`;
         document.head.appendChild(style);
         this.createModalData(document.getElementById("app"));
     }
@@ -427,8 +446,7 @@ button#accept-players:hover {
                                     class="start-match" 
                                     data-round-index="${roundIndex}" 
                                     data-match-index="${matchIndex}"
-                                    ${this.currentMatch || !match.player1 || !match.player2 ? 'disabled' : ''}>
-                                    
+                                    ${this.currentMatch || !match.player1 || !match.player2 ? 'disabled' : ''}> 
                                     Jugar
                                    </button>`
             }
@@ -466,6 +484,23 @@ button#accept-players:hover {
         });
     }
 
+    async save_tournament() {
+        try {
+            const response = await fetch('http://127.0.0.1:8001/api/tournaments/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(this.tournamentData),
+            });
+            if (!response.ok) {
+                console.error('Error al guardar el ganador:', response.statusText);
+                alert('No se pudo guardar el ganador.');
+            }
+        } catch (error) {
+            console.error('Error en la solicitud:', error);
+            alert('Hubo un problema al conectarse con el servidor.');
+        }
+    }
+
     renderFinalView() {
         this.innerHTML = `
             <div id="tournament-final-view">
@@ -478,17 +513,22 @@ button#accept-players:hover {
                 </div>
             </div>
         `;
-
+        this.save_tournament();
         document.querySelector('#save-winner').addEventListener('click', async () => {
             const connected = await connectToMetaMask();
             if (!connected) return;
             await saveToBlockchain(this.tournamentData.name, this.tournamentData.date, this.tournamentData.winner);
         });
+        document.querySelector('#exit').addEventListener('click', async () => {
+            history.pushState('', '', '/Profile');
+            handleRouteChange();
+            const appElement = document.getElementById('app');
+            appElement.style.display = 'block';
+        });
     }
 
     startGame1(player1, player2, onGameEnd) {
         const brackets = this.querySelector('#bracket');
-        //brackets.classList.add('hidden');
         brackets.innerHTML = '';
         const gameContainer = this.querySelector('#game-container');
         const pongGame = renderPonTournament(this.currentMatch, this.currentRoundIndex, this.lastSelect, this.addCustom,
@@ -497,6 +537,7 @@ button#accept-players:hover {
 
         gameContainer.appendChild(pongGame);
     }
+
 
     generateBracketHTML() {
         return this.tournamentData.rounds.map((round, roundIndex) => `
@@ -516,6 +557,7 @@ button#accept-players:hover {
         `).join('');
     }
 }
+
 customElements.define('tournament-view', TournamentView);
 export default function renderTournamentApp() {
     return '<tournament-view></tournament-view>';

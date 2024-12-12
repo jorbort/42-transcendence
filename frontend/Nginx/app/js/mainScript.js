@@ -35,6 +35,7 @@ document.addEventListener('DOMContentLoaded', function() {
 export function handleRouteChange() {
 	let path = window.location.pathname;
 	let view;
+
 	if (path === '/') {
 		path = '/login';
 	}
