@@ -4,133 +4,181 @@ class GameStats extends HTMLElement {
 		let shadow = this.attachShadow({ mode: 'open' });
 		let style = document.createElement('style');
 		style.textContent = /*css*/`
-			#logstatus {
-				background-color: green;
-				border-radius: 50%;
-				height: 10px;
-				width: 10px;
-			}
-			.nogamehistory {
-				color: rgba(160, 215, 160, 0.9);
-				font-size: 2.5rem;
-				font-family: 'Press Start 2P', cursive;
-				text-align: center;
-				text-transform: uppercase;
-				justify-content: center;
-				height: 100%;
-			}
-			.table-container {
-                width: 100%;
-                max-height: 35%; /* Ajusta la altura máxima según sea necesario */
-                overflow-y: auto; /* Habilita el scroll vertical */
-            }
-			.GameStatsContainer {
-				font-family: 'Press Start 2P', cursive;
-				font-size: 0.8rem;
-				padding: 1rem;
-				background-color: #2b3339;
-				display: flex;
-				flex-direction: column;
-				justify-content: flex-end;
-				align-items: center;
-				width: 79vw;
-				height: 70vh;
-				position: fixed;
-				top: 60%;
-				transform: translateY(-50%);
-				right: 3rem;
-				border-radius: 30px;
-				box-shadow: 0 0 10px 2px rgba(0,0,0,0.5);
-			}
-			.GameStats-div {
-				color: rgba(160, 215, 160, 0.9);
-				margin: 4px;
-				justify-content: space-between;
-				display: flex;
-				padding: 10px;
-				width: 100%;
-				border-bottom: 1px solid #323c41;
-				box-shadow: 0 0 5px 0 rgba(0,0,0,0.3);
-				border-radius: 10px;
-			}
-			.statsContainer {
-				width: 100%;
-				display: flex;
-				flex-direction: column;
-				align-items: center;
-			}
-			.chart-container {
-				width: 80%;
-				height: 200px;
-			}
-			.stats-table{
-				width: 100%;
-				color : #e67e80;
-				text-align: center;
-			}
-			.stats-table th {
-                background-color: #1d252a;
-                color: rgba(160, 215, 160, 0.9);
-                padding: 10px;
-                border-bottom: 1px solid #323c41;
-                position: sticky; /* Hace que el encabezado sea pegajoso */
-                top: 0; /* Posición del encabezado pegajoso */
-                z-index: 1; /* Asegura que el encabezado esté por encima del contenido */
-            }	
-			th{
-				background-color: #1d252a;
-				color: rgba(160, 215, 160, 0.9);
-				padding: 10px;
-				border-bottom: 1px solid #323c41;
-				position: sticky;
-			}
-			tr:nth-child(even) {
-				background-color: #323c41;
-				
-			}
-			tr:nth-child(odd) {
-				background-color: #2b3339;
-			}
-			.pie-chart-container {
-				position: absolute;
-				top: 20px;
-				left: 20px;
-				width: 30%; 
-				height: 60%; 
-				background-color: #2b3339;
-				border-radius: 10px; 
-				box-shadow: 0 0 10px 2px rgba(0,0,0,0.5); 
-				display: flex;
-				flex-direction: column;
-				justify-content: space-evenly;
-				align-items: center;
-				overflow: hidden;
-			}
-			.pie-chart-container h1 {
-				color: rgba(160, 215, 160, 0.9);
-				font-family: 'Press Start 2P', cursive;
-				font-size: 1.5rem;
-				text-align: center;
-				margin-top: 20px;
-			}
-			#pieChartDiv {
-				width: 90%;
-				height: 90%;
-				margin-bottom: 50px;
+				#logstatus {
+					background-color: green;
+					border-radius: 50%;
+					height: 10px;
+					width: 10px;
 				}
-	`;
+				.nogamehistory {
+					color: rgba(160, 215, 160, 0.9);
+					font-size: 2.5rem;
+					font-family: 'Press Start 2P', cursive;
+					text-align: center;
+					text-transform: uppercase;
+					justify-content: center;
+					height: 100%;
+				}
+				.table-container {
+					width: 100%;
+					max-height: 35%; /* Ajusta la altura máxima según sea necesario */
+					overflow-y: auto; /* Habilita el scroll vertical */
+				}
+				.GameStatsContainer {
+					font-family: 'Press Start 2P', cursive;
+					font-size: 0.8rem;
+					padding: 1rem;
+					background-color: #2b3339;
+					display: flex;
+					flex-direction: column;
+					justify-content: flex-end;
+					align-items: center;
+					width: 79vw;
+					height: 70vh;
+					position: fixed;
+					top: 60%;
+					transform: translateY(-50%);
+					right: 3rem;
+					border-radius: 30px;
+					box-shadow: 0 0 10px 2px rgba(0,0,0,0.5);
+				}
+				.GameStats-div {
+					color: rgba(160, 215, 160, 0.9);
+					margin: 4px;
+					justify-content: space-between;
+					display: flex;
+					padding: 10px;
+					width: 100%;
+					border-bottom: 1px solid #323c41;
+					box-shadow: 0 0 5px 0 rgba(0,0,0,0.3);
+					border-radius: 10px;
+				}
+				.statsContainer {
+					width: 100%;
+					display: flex;
+					flex-direction: column;
+					align-items: center;
+				}
+				.chart-container {
+					width: 80%;
+					height: 200px;
+				}
+				.stats-table{
+					width: 100%;
+					color : #e67e80;
+					text-align: center;
+				}
+				.stats-table th {
+					background-color: #1d252a;
+					color: rgba(160, 215, 160, 0.9);
+					padding: 10px;
+					border-bottom: 1px solid #323c41;
+					position: sticky; /* Hace que el encabezado sea pegajoso */
+					top: 0; /* Posición del encabezado pegajoso */
+					z-index: 1; /* Asegura que el encabezado esté por encima del contenido */
+				}	
+				th{
+					background-color: #1d252a;
+					color: rgba(160, 215, 160, 0.9);
+					padding: 10px;
+					border-bottom: 1px solid #323c41;
+					position: sticky;
+				}
+				tr:nth-child(even) {
+					background-color: #323c41;
+					
+				}
+				tr:nth-child(odd) {
+					background-color: #2b3339;
+				}
+				.pie-chart-container {
+					position: absolute;
+					top: 20px;
+					left: 20px;
+					width: 25%; 
+					height: 60%; 
+					background-color: #2b3339;
+					border-radius: 10px; 
+					box-shadow: 0 0 10px 2px rgba(0,0,0,0.5); 
+					display: flex;
+					flex-direction: column;
+					justify-content: space-evenly;
+					align-items: center;
+					overflow: hidden;
+				}
+				.bar-chart-container {
+					position: absolute;
+					top: 20px;
+					left: 450px;
+					width:40%; 
+					height: 60%; 
+					background-color: #2b3339;
+					border-radius: 10px; 
+					box-shadow: 0 0 10px 2px rgba(0,0,0,0.5); 
+					display: flex;
+					flex-direction: column;
+					justify-content: space-evenly;
+					align-items: center;
+					overflow: hidden;
+				}
+				.pie-chart-container h1 {
+					color: rgba(160, 215, 160, 0.9);
+					font-family: 'Press Start 2P', cursive;
+					font-size: 1.5rem;
+					text-align: center;
+					margin-top: 20px;
+				}
+				#pieChartDiv {
+					width: 90%;
+					height: 90%;
+					margin-bottom: 50px;
+					}
+				#myDiv {
+					align-items: center;
+					justify-content: center;
+					display: flex;
+				}
+				#pieChartDiv, #barChartDiv {
+					display: flex;
+					justify-content: center;
+					align-items: center;
+				}
+		`;
 	
-	shadow.appendChild(style);
-	this.container = document.createElement('div');
-	this.container.className = 'GameStatsContainer';
-	
-	const myDiv = document.createElement('div');
-	myDiv.id = 'myDiv';
-	myDiv.style.width = '100%';
-	myDiv.style.height = '400px';
-	this.container.appendChild(myDiv);
+		shadow.appendChild(style);
+		this.container = document.createElement('div');
+		this.container.className = 'GameStatsContainer';
+		shadow.appendChild(this.container);
 
-	shadow.appendChild(this.container);
+		const parentContainer = document.createElement('div');
+		parentContainer.className = 'parent-container';
+
+		const pieChartContainer = document.createElement('div');
+		pieChartContainer.className = 'pie-chart-container';
+		const pieChartTitle = document.createElement('h1');
+		pieChartTitle.textContent = 'Wins vs Losses %';
+		pieChartContainer.appendChild(pieChartTitle);
+		const pieChartDiv = document.createElement('div');
+		pieChartDiv.id = 'pieChartDiv';
+		pieChartContainer.appendChild(pieChartDiv);
+
+		const barChartContainer = document.createElement('div');
+		barChartContainer.className = 'bar-chart-container';
+		const barChartTitle = document.createElement('h1');
+		barChartTitle.textContent = 'Goals History';
+		barChartTitle.style.textAlign = 'center';
+		barChartTitle.style.color = 'rgba(160, 215, 160, 0.9)';
+		barChartTitle.style.fontFamily = 'Press Start 2P';
+		barChartContainer.appendChild(barChartTitle);
+		barChartContainer
+		const barChartDiv = document.createElement('div');
+		barChartDiv.id = 'barChartDiv';
+		barChartContainer.appendChild(barChartDiv);
+
+		parentContainer.appendChild(pieChartContainer);
+		parentContainer.appendChild(barChartContainer);
+
+		this.container.appendChild(parentContainer);
 	}
 
 	
@@ -153,6 +201,7 @@ class GameStats extends HTMLElement {
 			
 		this.rendergamehistory(gamehistory);
 		this.renderPieChart(gamehistory);
+		this.renderBarChart(gamehistory);
 	}catch(error){
 		console.error('Error en la peticion', error);
 	}
@@ -160,7 +209,7 @@ class GameStats extends HTMLElement {
 
 rendergamehistory(gamehistory){
 	const tbody = document.createElement('tbody');
-	tbody.innerHTML = ''; // Clear previous data
+	tbody.innerHTML = '';
 
 	if (gamehistory.length === 0) {
 		let nogamehistory = document.createElement('div');
@@ -170,11 +219,9 @@ rendergamehistory(gamehistory){
 		return;
 	}
 
-	// Create table container
 	const tableContainer = document.createElement('div');
 	tableContainer.className = 'table-container';
 
-	// Create table structure
 	const table = document.createElement('table');
 	table.className = 'stats-table';
 
@@ -227,60 +274,133 @@ rendergamehistory(gamehistory){
 	});
 	}
 
-	renderPieChart(gamehistory) {
+		renderPieChart(gamehistory) {
 
-		if (gamehistory.length === 0) {
-			return;
+			if (gamehistory.length === 0) {
+				return;
+			}
+
+			const wins = gamehistory.filter(match => match.winner_username === localStorage.getItem("username")).length;
+			const losses = gamehistory.length - wins;
+
+			const pieChartContainer = document.createElement('div');
+			pieChartContainer.className = 'pie-chart-container';
+			const pieChartitle= document.createElement('h1');
+			pieChartitle.textContent = 'Wins vs Losses %';
+			pieChartitle.style.textAlign = 'center';
+			pieChartitle.style.color = 'rgba(160, 215, 160, 0.9)';
+			pieChartitle.style.fontFamily = 'Press Start 2P';
+			pieChartContainer.appendChild(pieChartitle);
+			const pieChartDiv = document.createElement('div');
+			pieChartDiv.id = 'pieChartDiv';
+			pieChartContainer.appendChild(pieChartDiv);
+			this.container.appendChild(pieChartContainer);
+
+			const data = [{
+				values: [wins, losses],
+				labels: ['Wins', 'Losses'],
+				textinfo: 'label+percent',
+				type: 'pie',
+				textposition: "outside",
+				automargin: true,
+				marker: {
+					colors: ['#4caf50', '#f44336']
+				},
+				domain: {
+					x: [0, 1], // Adjust the x domain to control the width
+					y: [0, 1]  // Adjust the y domain to control the height
+				}
+			}];
+
+	
+			const layout = {
+				paper_bgcolor: '#2b3339',
+				font: {
+					color: 'rgba(160, 215, 160, 0.9)'
+				},
+				width: 300,
+				height: 300,
+				showlegend: false,
+				margin: {
+					l: 10,
+					r: 10,
+					b: 10,
+					t: 30,
+					pad: 0
+				}
+			};
+
+			Plotly.newPlot(pieChartDiv, data, layout, {responsive: true});
+	}
+
+   renderBarChart(gamehistory) {
+	if (gamehistory.length === 0) {
+		return;
+	}
+
+	const goalsFor = [];
+	const goalsAgainst = [];
+	const matchDates = [];
+
+	gamehistory.forEach(match => {
+		matchDates.push(new Date(match.date).toLocaleDateString());
+		if (match.player1_username === localStorage.getItem("username")) {
+			goalsFor.push(match.player1_score);
+			goalsAgainst.push(match.player2_score);
+		} else {
+			goalsFor.push(match.player2_score);
+			goalsAgainst.push(match.player1_score);
 		}
+	});
 
-        const wins = gamehistory.filter(match => match.winner_username === localStorage.getItem("username")).length;
-        const losses = gamehistory.length - wins;
-        // Create a div for the pie chart
-        const pieChartContainer = document.createElement('div');
-        pieChartContainer.className = 'pie-chart-container';
-        const pieChartitle= document.createElement('h1');
-		pieChartitle.textContent = 'Wins vs Losses %';
-		pieChartitle.style.textAlign = 'center';
-		pieChartitle.style.color = 'rgba(160, 215, 160, 0.9)';
-		pieChartitle.style.fontFamily = 'Press Start 2P';
-		pieChartContainer.appendChild(pieChartitle);
-        const pieChartDiv = document.createElement('div');
-        pieChartDiv.id = 'pieChartDiv';
-        pieChartContainer.appendChild(pieChartDiv);
-        this.container.appendChild(pieChartContainer);
+	const trace1 = {
+		x: matchDates,
+		y: goalsFor,
+		name: 'Goles a favor',
+		type: 'bar',
+		text: goalsFor.map(String), // Add text labels
+		textposition: 'auto' // Position the text labels automatically
+	};
 
-        const data = [{
-            values: [wins, losses],
-            labels: ['Wins', 'Losses'],
-			textinfo: 'label+percent',
-            type: 'pie',
-			textposition: "outside",
-			automargin: true,
-			marker: {
-                colors: ['#4caf50', '#f44336'] // Green for wins, Red for losses
-            }
-        }];
+	const trace2 = {
+		x: matchDates,
+		y: goalsAgainst,
+		name: 'Goles en contra',
+		type: 'bar',
+		text: goalsAgainst.map(String), // Add text labels
+		textposition: 'auto' // Position the text labels automatically
+	};
 
- 
-        const layout = {
-            paper_bgcolor: '#2b3339',
-            font: {
-                color: 'rgba(160, 215, 160, 0.9)'
-            },
-			width: '50%',
-            height: '50%',
-            showlegend: false,
-            margin: {
-                l: 0,
-                r: 200,
-                b: 0,
-                t: 30,
-                pad: 0
-            }
-        };
+	const data = [trace1, trace2];
 
-        Plotly.newPlot(pieChartDiv, data, layout, {responsive: true});
-   }
+	const layout = {
+		barmode: 'group',
+		paper_bgcolor: '#2b3339',
+		plot_bgcolor: '#2b3339',
+		legend: {
+			x: 0.5,
+			y: -0.2,
+			xanchor: 'center',
+			yanchor: 'top',
+			orientation: 'h'
+		},
+		width: 500,
+		height: 420,
+		margin: {
+			l: 100,
+			r: 10,
+			b: 40,
+			t: 0,
+			pad: 0
+		},
+		font: {
+			color: 'rgba(160, 215, 160, 0.9)'
+		}
+	};
+
+	Plotly.newPlot(this.shadowRoot.getElementById('barChartDiv'), data, layout, {responsive: true});
+	}
+
 	disconectedCallback(){}
 }
 
