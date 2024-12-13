@@ -156,9 +156,21 @@ export default class HomeComponent extends HTMLElement{
 			}
 			let data = await response.json();
 			let lastGame = data[data.length-1];
+			if (lastGame === undefined){
+				lastGame = {
+					player1_username: 'No games played yet',
+					player2_username: 'No games played yet',
+					winner_username: 'No games played yet'
+				};
+			}
 			let matchesPlayed = data.length;
 			let matchesWon = data.filter(match => match.winner_username === localStorage.getItem('username')).length;
-			let winPercentage = (matchesWon/matchesPlayed)*100;
+			let winPercentage;
+			if (matchesPlayed === 0){
+				winPercentage = 0;
+			}else{
+				winPercentage = (matchesWon/matchesPlayed)*100;
+			}
 			let winRate = this.shadowRoot.querySelector('.win-rate');
 			let lastGameContainer = this.shadowRoot.querySelector('.last-game');
 			let lastGameInfo = document.createElement('div');
@@ -176,7 +188,7 @@ export default class HomeComponent extends HTMLElement{
 			lastGameInfo.appendChild(gameinfoUl);
 			lastGameContainer.appendChild(lastGameInfo);
 		}catch (error){
-			console.error(error);
+			
 		}
 	}
 }

@@ -109,9 +109,7 @@ export function handleRouteChange() {
 				view = NotFound404();
 		}
 	}
-	console.log("print view: " + view)
 	const appElement = document.getElementById('app');
-	console.log("app: " + appElement); 
 	document.getElementById('app').innerHTML = view;
 	handleEventListeners(path);
 }

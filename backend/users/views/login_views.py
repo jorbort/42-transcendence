@@ -67,9 +67,10 @@ def OtpVerify(request):
 			user.otp = ''
 			user.otp_expiry_time = None
 			user.save()
-			response = Response({'access_token': access_token, 'refresh_token': str(refresh_token)}, status=status.HTTP_200_OK)
-			# response.set_cookie('access_token', access_token)
-			# response.set_cookie('refresh_token', str(refresh_token))
+			response = Response({'access_token': access_token,
+						'refresh_token': str(refresh_token),
+						'user_img' : user.avatar
+						}, status=status.HTTP_200_OK)
 			return response
 	return Response({'detail': 'Invalid verification code or credentials.'}, status=status.HTTP_401_UNAUTHORIZED)
 
@@ -79,10 +80,6 @@ def OtpVerify(request):
 def logout_view(request):
 
 	django_logout(request)
-	
 	response = Response({'detail': 'Successfully logged out.'}, status=status.HTTP_200_OK)
-	# response.delete_cookie('access_token')
-	# response.delete_cookie('refresh_token')
-	# response.delete_cookie('csrftoken')
 	
 	return response

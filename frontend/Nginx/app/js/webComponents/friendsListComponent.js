@@ -159,6 +159,7 @@ class friendsList extends HTMLElement{
 				<span class='close'>&times;</span>
 				<h2>Add a new Friend</h2>
 				<form id='addFriendForm'>
+					<div id="error-addFriend" style="color: red;"></div>
 					<label for='friendName'>Friend's name:</label>
 					<input type='text' id='friendName' name='friendName' required>
 					<button type='submit' id="add-btn">Add Friend!</button>
@@ -174,6 +175,8 @@ class friendsList extends HTMLElement{
 			event.preventDefault();
 			const friend_username = event.target.friendName.value;
 			const token = getCookie('access_token');
+			const errorAddFriend = this.modal.querySelector('#error-addFriend');
+			errorAddFriend.textContent = '';
 			try {
 				const response = await fetch('http://localhost:8000/friends', {
 					method: 'POST',
@@ -183,12 +186,10 @@ class friendsList extends HTMLElement{
 					},
 					body: JSON.stringify({ friend_username })
 				});
-		
 				if (!response.ok) {
 					const errorData = await response.json();
-					throw new Error(errorData.error || 'Failed to add friend');
+					errorAddFriend.textContent = "Friend doesn't exist";
 				}
-		
 				const result = await response.json();
 				this.fetchFriends();
 				this.modal.style.display = 'none';
@@ -227,14 +228,12 @@ class friendsList extends HTMLElement{
         };
 
         this.socket.onclose = (event) => {
-            console.log('WebSocket closed unexpectedly');
         };
     }
 
     updateFriendStatus(message) {
         const [username, status] = message.split(' is ');
         const friendDiv = this.container.querySelector(`.friend-div[data-username="${username}"]`);
-		console.log(friendDiv);
         if (friendDiv) {
             const logstatus = friendDiv.querySelector('#logstatus');
             logstatus.className = status === 'online' ? 'active' : 'inactive';
@@ -257,7 +256,6 @@ class friendsList extends HTMLElement{
 			let friends = await response.json();
 			this.renderFriends(friends);
 		}catch(error){
-			console.log(error);
 			let fallbackFriends = [{name: 'amigo 1'}, {name:"amigo 2"}, {name:"amigo 3"}];
 			this.renderFriends(fallbackFriends);
 		}
