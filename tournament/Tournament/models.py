@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+# Create your models here.
 
 class PongUser(AbstractUser):
 	email= models.EmailField(max_length=50)
@@ -10,6 +11,14 @@ class PongUser(AbstractUser):
 	online_status=models.BooleanField(default=False)
 	avatar= models.ImageField(upload_to='images/',blank=True,null=True)
 	fortytwo_image_url = models.URLField(max_length=200, blank=True, null=True) 
+
+
+class Friendship(models.Model):
+	user1=models.ForeignKey(PongUser, related_name='friendship_user1', on_delete=models.CASCADE)
+	user2=models.ForeignKey(PongUser, related_name='friendship_user2', on_delete=models.CASCADE)
+
+	class Meta:
+		unique_together=['user1','user2']
 
 class Tournament(models.Model):
 	name = models.CharField(max_length=100)
@@ -22,4 +31,19 @@ class Tournament(models.Model):
 	class Meta:
 		managed=True
 		db_table="Tournament"
+
+class MatchHistory(models.Model):
+	player1=models.ForeignKey(PongUser, related_name='match_as_player1', on_delete=models.CASCADE)
+	player2=models.ForeignKey(PongUser,related_name='match_as_player2',on_delete=models.CASCADE)
+	date= models.DateTimeField(auto_now_add=True)
+	player1_score = models.IntegerField()
+	player2_score=models.IntegerField()
+	winner=models.ForeignKey(PongUser, related_name='matches_won', on_delete=models.CASCADE)
+	tournament_id = models.ForeignKey(Tournament, related_name='tournament_id', on_delete=models.CASCADE, null=True)
+
+	def __str__(self):
+		return f"Match on {self.date} between {self.player1.username} and {self.player2.username}"
+
+
+
 

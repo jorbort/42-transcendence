@@ -344,11 +344,11 @@ class PongGameTournament extends HTMLElement {
     // Verificar si alguien perdió
     checkIfLost() {
         if (this.pointsPlayer >= 3) {
-            this.onGameEnd(this.player1);// Llamar al callback con el ganador
+            this.onGameEnd(this.player1, this.pointsPlayer, this.pointsIA);// Llamar al callback con el ganador
             return true;
         }
         else if (this.pointsIA >= 3) {
-            this.onGameEnd(this.player2);// Llamar al callback con el ganador
+            this.onGameEnd(this.player2, this.pointsPlayer, this.pointsIA);// Llamar al callback con el ganador
             return true;
         }
         return false;

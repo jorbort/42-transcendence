@@ -427,29 +427,31 @@ button#accept-players:hover {
         }
         this.renderTournamentView();
     }
-
     renderTournamentView() {
         if (this.tournamentData.winner) {
             this.renderFinalView();
             return;
         }
         this.innerHTML = `
-		<div id="tournament-view">
+        <div id="tournament-view">
             <div id="bracket">
                 ${this.tournamentData.rounds.map((round, roundIndex) => `
                     <div class="round">
                         <h3>Ronda ${roundIndex + 1}</h3>
                         ${round.map((match, matchIndex) => `
                             <div class="match">
-                                <span>${match.player1 || '---'} vs ${match.player2 || '---'}</span>
-                                ${match.winner ? `<span>Ganador: ${match.winner}</span>` : `<button 
-                                    class="start-match" 
-                                    data-round-index="${roundIndex}" 
-                                    data-match-index="${matchIndex}"
-                                    ${this.currentMatch || !match.player1 || !match.player2 ? 'disabled' : ''}> 
-                                    Jugar
-                                   </button>`
-            }
+                                <span>${match.player1 || '---'}: ${match.player1_score || '_'} vs ${match.player2 || '---'}: ${match.player2_score || '_'}</span>
+                                ${match.winner ? `
+                                    <span>Ganador: ${match.winner}</span>
+                                ` : `
+                                    <button 
+                                        class="start-match" 
+                                        data-round-index="${roundIndex}" 
+                                        data-match-index="${matchIndex}"
+                                        ${this.currentMatch || !match.player1 || !match.player2 ? 'disabled' : ''}> 
+                                        Jugar
+                                    </button>
+                                `}
                             </div>
                         `).join('')}
                     </div>
@@ -457,7 +459,7 @@ button#accept-players:hover {
             </div>
             <div id="game-container"></div>
         </div>
-    `;
+        `;
         const buttons = this.querySelectorAll('.start-match');
         buttons.forEach(button => {
             button.addEventListener('click', (e) => {
@@ -466,8 +468,11 @@ button#accept-players:hover {
                 const matchIndex = parseInt(button.dataset.matchIndex, 10);
                 const match = this.tournamentData.rounds[roundIndex][matchIndex];
                 this.currentMatch = match;
-                this.startGame1(match.player1, match.player2, (winner) => {
+                // Iniciar el juego y recibir puntajes
+                this.startGame1(match.player1, match.player2, (winner, player1Score, player2Score) => {
                     match.winner = winner;
+                    match.player1_score = player1Score;
+                    match.player2_score = player2Score;
                     if (roundIndex + 1 < this.tournamentData.rounds.length) {
                         const nextMatchIndex = Math.floor(matchIndex / 2);
                         this.tournamentData.rounds[roundIndex + 1][nextMatchIndex][
@@ -486,20 +491,40 @@ button#accept-players:hover {
 
     async save_tournament() {
         try {
+            const payload = {
+                name: this.tournamentData.name,
+                date: this.tournamentData.date,
+                players: this.tournamentData.players,
+                rounds: this.tournamentData.rounds.map(round =>
+                    round.map(match => ({
+                        player1: match.player1,
+                        player2: match.player2,
+                        player1Score: match.player1Score || 0,
+                        player2Score: match.player2Score || 0,
+                        winner: match.winner
+                    }))
+                ),
+                winner: this.tournamentData.winner,
+            };
+            console.log(payload);
             const response = await fetch('http://127.0.0.1:8001/api/tournaments/', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(this.tournamentData),
+                body: JSON.stringify(payload),
             });
+    
             if (!response.ok) {
-                console.error('Error al guardar el ganador:', response.statusText);
-                alert('No se pudo guardar el ganador.');
+                console.error('Error al guardar el torneo:', response.statusText);
+                alert('No se pudo guardar el torneo.');
+            } else {
+                console.log('Torneo guardado exitosamente');
             }
         } catch (error) {
             console.error('Error en la solicitud:', error);
             alert('Hubo un problema al conectarse con el servidor.');
         }
     }
+    
 
     renderFinalView() {
         this.innerHTML = `
@@ -509,16 +534,19 @@ button#accept-players:hover {
                     <h2>¡Ganador del Torneo!</h2>
                     <p>${this.tournamentData.winner}</p>
                     <button id="save-winner">Guardar y salir</button>
-					<button id="exit">Salir</button>
+                    <button id="exit">Salir</button>
                 </div>
             </div>
         `;
+
         this.save_tournament();
+
         document.querySelector('#save-winner').addEventListener('click', async () => {
             const connected = await connectToMetaMask();
             if (!connected) return;
             await saveToBlockchain(this.tournamentData.name, this.tournamentData.date, this.tournamentData.winner);
         });
+
         document.querySelector('#exit').addEventListener('click', async () => {
             history.pushState('', '', '/Profile');
             handleRouteChange();
@@ -532,7 +560,10 @@ button#accept-players:hover {
         brackets.innerHTML = '';
         const gameContainer = this.querySelector('#game-container');
         const pongGame = renderPonTournament(this.currentMatch, this.currentRoundIndex, this.lastSelect, this.addCustom,
-            this.addCustom1, this.addCustom2, player1, player2, onGameEnd);
+            this.addCustom1, this.addCustom2, player1, player2, (winner, player1Score, player2Score) => { // Callback al terminar el juego
+                // Llama a la función pasada (onGameEnd) con los resultados del juego
+                onGameEnd(winner, player1Score, player2Score);
+            });
         gameContainer.innerHTML = '';
 
         gameContainer.appendChild(pongGame);
@@ -546,9 +577,7 @@ button#accept-players:hover {
                 <div class="matches">
                     ${round.map(match => `
                         <div class="match">
-                            <span>${match.player1 || '---'}</span>
-                            <span>vs</span>
-                            <span>${match.player2 || '---'}</span>
+                             <span>${match.player1}: ${match.player1_score} vs ${match.player2 }: ${match.player2_score}</span>
                             ${match.winner ? `<div class="winner">Ganador: ${match.winner}</div>` : ''}
                         </div>
                     `).join('')}
@@ -556,6 +585,7 @@ button#accept-players:hover {
             </div>
         `).join('');
     }
+
 }
 
 customElements.define('tournament-view', TournamentView);
