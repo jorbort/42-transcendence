@@ -121,6 +121,21 @@ class GameStats extends HTMLElement {
 					align-items: center;
 					overflow: hidden;
 				}
+				.tournaments-container {
+					position: absolute;
+					top: 20px;
+					left: 1100px;
+					width:28%; 
+					height: 60%; 
+					background-color: #2b3339;
+					border-radius: 10px; 
+					box-shadow: 0 0 10px 2px rgba(0,0,0,0.5); 
+					display: flex;
+					flex-direction: column;
+					justify-content: flex-start;
+					align-items: center;
+					overflow: hidden;
+				}
 				.pie-chart-container h1 {
 					color: rgba(160, 215, 160, 0.9);
 					font-family: 'Press Start 2P', cursive;
@@ -175,8 +190,22 @@ class GameStats extends HTMLElement {
 		barChartDiv.id = 'barChartDiv';
 		barChartContainer.appendChild(barChartDiv);
 
+		// Nuevo contenedor para el número de torneos jugados
+		const tournamentsContainer = document.createElement('div');
+		tournamentsContainer.className = 'tournaments-container';
+		const tournamentsTitle = document.createElement('h1');
+		tournamentsTitle.textContent = 'Tournaments Played';
+		tournamentsTitle.style.textAlign = 'center';
+		tournamentsTitle.style.color = 'rgba(160, 215, 160, 0.9)';
+		tournamentsTitle.style.fontFamily = 'Press Start 2P';
+		tournamentsContainer.appendChild(tournamentsTitle);
+		const tournamentsDiv = document.createElement('div');
+		tournamentsDiv.id = 'tournamentsDiv';
+		tournamentsContainer.appendChild(tournamentsDiv);
+
 		parentContainer.appendChild(pieChartContainer);
 		parentContainer.appendChild(barChartContainer);
+		parentContainer.appendChild(tournamentsContainer);
 
 		this.container.appendChild(parentContainer);
 	}
@@ -198,10 +227,13 @@ class GameStats extends HTMLElement {
 			throw new Error('Error en la peticion');
 		}
 		let gamehistory = await response.json();
+		let tournamentIds = new Set(gamehistory.filter(match => match.tournament_id !== null).map(match => match.tournament_id));
+		let tournamentsPlayed = tournamentIds.size;
 			
 		this.rendergamehistory(gamehistory);
 		this.renderPieChart(gamehistory);
 		this.renderBarChart(gamehistory);
+		this.renderTournamentsPlayed(tournamentsPlayed);
 	}catch(error){
 		console.error('Error en la peticion', error);
 	}
@@ -341,34 +373,39 @@ rendergamehistory(gamehistory){
 	const goalsFor = [];
 	const goalsAgainst = [];
 	const matchDates = [];
+	const totalGoals = [];
 
 	gamehistory.forEach(match => {
 		matchDates.push(new Date(match.date).toLocaleDateString());
 		if (match.player1_username === localStorage.getItem("username")) {
 			goalsFor.push(match.player1_score);
 			goalsAgainst.push(match.player2_score);
+			totalGoals.push(match.player1_score + match.player2_score);
 		} else {
 			goalsFor.push(match.player2_score);
 			goalsAgainst.push(match.player1_score);
+			totalGoals.push(match.player2_score + match.player1_score);
 		}
 	});
 
 	const trace1 = {
-		x: matchDates,
+		x: 'Goles a favor',
 		y: goalsFor,
 		name: 'Goles a favor',
 		type: 'bar',
-		text: goalsFor.map(String), // Add text labels
-		textposition: 'auto' // Position the text labels automatically
+		marker: {
+			color: '#4caf50'
+		}
 	};
 
 	const trace2 = {
-		x: matchDates,
+		x: 'Goles en contra',
 		y: goalsAgainst,
 		name: 'Goles en contra',
 		type: 'bar',
-		text: goalsAgainst.map(String), // Add text labels
-		textposition: 'auto' // Position the text labels automatically
+		marker: {
+			color: '#f44336'
+		}
 	};
 
 	const data = [trace1, trace2];
@@ -378,14 +415,16 @@ rendergamehistory(gamehistory){
 		paper_bgcolor: '#2b3339',
 		plot_bgcolor: '#2b3339',
 		legend: {
-			x: 0.5,
-			y: -0.2,
+			x: 0,
+			y: -0.3,
 			xanchor: 'center',
 			yanchor: 'top',
-			orientation: 'h'
+			orientation: 'v'
 		},
+		showlegend: true,
 		width: 500,
 		height: 420,
+		bargap: 0.1,
 		margin: {
 			l: 100,
 			r: 10,
@@ -399,6 +438,15 @@ rendergamehistory(gamehistory){
 	};
 
 	Plotly.newPlot(this.shadowRoot.getElementById('barChartDiv'), data, layout, {responsive: true});
+	}
+
+	renderTournamentsPlayed(tournamentsPlayed) {
+		const tournamentsDiv = this.shadowRoot.getElementById('tournamentsDiv');
+		tournamentsDiv.textContent = tournamentsPlayed;
+		tournamentsDiv.style.color = 'rgba(160, 215, 160, 0.9)';
+		tournamentsDiv.style.fontFamily = 'Press Start 2P';
+		tournamentsDiv.style.fontSize = '2.5rem';
+
 	}
 
 	disconectedCallback(){}
