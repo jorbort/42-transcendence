@@ -73,10 +73,10 @@ export function signup(){
 					const emailError = errorData.serializer_errors?.email?.[0];
 					const usernameError = errorData.serializer_errors?.username?.[0];
 					const errorMessage = emailError || usernameError || 'An error occurred';
-					alert(`Error: ${errorMessage}`);
+					
 				}
 			} catch (error) {
-				console.error('Error:', error);
+		
 			} finally {
 				hideSpinner();
 			}

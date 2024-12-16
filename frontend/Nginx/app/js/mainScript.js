@@ -2,6 +2,7 @@ import {createUser, signup} from './views/createUser.js';
 import {loginView} from './views/loginView.js';
 import {} from './views/loginView.js';
 import homePage from './views/homeProfile.js';
+import {LoaderComponent} from './webComponents/loaderComponent.js';
 
 import OTPComponent from './webComponents/OTPInputComponent.js';
 
@@ -94,7 +95,8 @@ export function handleRouteChange() {
 				view = renderPongGameMulti();
 				break;
 			case '/callback_42':
-				view = fortyTwoCallback();
+				view = /*html*/`<loader-component></loader-component>`;
+				fortyTwoCallback();
 				break;
 			case '/Signup':
 				view = createUser();

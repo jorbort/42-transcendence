@@ -68,8 +68,7 @@ def OtpVerify(request):
 			user.otp_expiry_time = None
 			user.save()
 			response = Response({'access_token': access_token,
-						'refresh_token': str(refresh_token),
-						'user_img' : user.avatar
+						'refresh_token': str(refresh_token)
 						}, status=status.HTTP_200_OK)
 			return response
 	return Response({'detail': 'Invalid verification code or credentials.'}, status=status.HTTP_401_UNAUTHORIZED)

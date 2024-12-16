@@ -309,7 +309,6 @@ export default class loginFormComponent extends HTMLElement{
                 }
             });
         } else {
-            console.error('Signin form not found');
         }
     }
 	signup() {
@@ -355,11 +354,10 @@ export default class loginFormComponent extends HTMLElement{
 						errorMessageElement.textContent = 'Username or email already exists';
                     }
                 } catch (error) {
-                    console.error('Error:', error);
+                    
                 }
             });
         } else {
-            console.error('Signup form not found');
         }
     }
 	disconnectedCallback() {

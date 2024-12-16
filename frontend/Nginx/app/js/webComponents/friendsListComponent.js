@@ -194,7 +194,6 @@ class friendsList extends HTMLElement{
 				this.fetchFriends();
 				this.modal.style.display = 'none';
 			} catch (error) {
-				console.error('Error:', error);
 			}
 		});
 	}
@@ -325,7 +324,6 @@ async function refreshToken() {
         document.cookie = `access_token=${data.access_token}; path=/`;
         return data.access_token;
     } catch (error) {
-        console.error('Refresh token error:', error);
         return null;
     }
 }

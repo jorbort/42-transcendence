@@ -43,7 +43,6 @@ function refreshAccessToken() {
     }
   })
   .catch(error => {
-    console.error('Error refreshing access token:', error);
     window.location.href = '/login';
   });
 }
