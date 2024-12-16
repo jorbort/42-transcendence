@@ -90,6 +90,8 @@ def callback_42(request):
 	refresh_token = RefreshToken.for_user(user)
 	access_token = str(refresh_token.access_token)
 
+	# Esto devuelve simpre lo que hay en la intra por lo tanto no se muestran los 
+	# cambios guardados en la base de datos en caso de hacer log in con intra
 	response = Response({'access_token': access_token,
 		'refresh_token': str(refresh_token),
 		'user_img' : user_info['image']['link'],

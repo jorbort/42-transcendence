@@ -1,12 +1,13 @@
 import { handleRouteChange } from "../mainScript.js";
+import { getCookie } from '../webComponents/friendsListComponent.js';
 
 class PongGame extends HTMLElement {
     constructor() {
         super();
-        this.ballSpeedX = 0.15;
+        this.ballSpeedX = 0.13;
         this.ballSpeedY = 0.05;
-        this.aiSpeed = 0.16;
-        this.paddleSpeed = 0.16;
+        this.aiSpeed = 0.18;
+        this.paddleSpeed = 0.18;
         this.ballDireccionX = (Math.random() < 0.5 ? -1 : 1);
         this.ballDireccionY = (Math.random() < 0.5 ? -1 : 1);
         this.pointsPlayer = 0;
@@ -19,6 +20,7 @@ class PongGame extends HTMLElement {
         this.countdownText = null;
         this.loadfont = null;
         this.playerText = null;
+        this.user_name = localStorage.getItem('username');
         this.IAText = null;
         this.gameStarted = false;
         this.gameHeight = 12;
@@ -143,7 +145,7 @@ class PongGame extends HTMLElement {
     
         // Determinar el ganador
         const winners = [];
-        if (this.pointsPlayer >= 3) winners.push("Local Player"); // Nombre del jugador
+        if (this.pointsPlayer >= 3) winners.push(this.user_name); // Nombre del jugador
         if (this.pointsIA >= 3) winners.push("IA");         // Nombre de la IA
     
         let winnerMessage;
@@ -378,7 +380,7 @@ class PongGame extends HTMLElement {
                 console.log("Font loaded successfully.");
                 this.loadfont = font;
                 const textMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff });
-                this.playerText = this.createText("Player1: " + this.pointsPlayer, new THREE.Vector3(-15, 9.5, 0), font, textMaterial);
+                this.playerText = this.createText(this.user_name + ": " + this.pointsPlayer, new THREE.Vector3(-15, 9.5, 0), font, textMaterial);
                 this.IAText = this.createText("IA: " + this.pointsIA, new THREE.Vector3(8, 9.5, 0), font, textMaterial);
                 this.scene.add(this.playerText);
                 this.scene.add(this.IAText);
@@ -642,7 +644,7 @@ class PongGame extends HTMLElement {
         this.ball.position.y += this.ballSpeedY * this.ballDireccionY;
         if (this.ball.position.x > 15) {
             this.pointsPlayer++;
-            this.reprint("Player1", this.pointsPlayer);
+            this.reprint(this.user_name, this.pointsPlayer);
             await this.pauseGameAndShowCountdown()
             this.resetBall();
         }
@@ -677,10 +679,46 @@ class PongGame extends HTMLElement {
         this.paddleRight.position.y = THREE.MathUtils.clamp(this.paddleRight.position.y, -4, 8);
     }
 
+    async insertresultinbd(username, localplayer, bool)
+    {
+        let token = getCookie('access_token');
+
+        const formData = new FormData();
+        formData.append('player1', username);
+        formData.append('player2', localplayer);
+        formData.append('player1_score', this.pointsPlayer);
+        formData.append('player2_score', this.pointsIA);
+        if (bool == 0){
+            formData.append('winner', username);
+        } else {
+            formData.append('winner', localplayer);
+        }
+
+        try {
+            const response = await fetch("http://localhost:8000/matches/register", {
+                method: "POST",
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: formData,
+            });
+
+            if (!response.ok) {
+                throw new Error('Error en la petición');
+            }
+
+            const result = await response.json();
+            console.log(result);
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
     checkIfLost()
     {
         if (this.pointsPlayer >= 3) {
             clearInterval(this.IntervalIA);
+            this.insertresultinbd(localStorage.getItem('username'), "IA", 0);
             this.createModal()
             this.resetGame(this.ball);
             this.gameStarted = true;
@@ -688,6 +726,7 @@ class PongGame extends HTMLElement {
         }
         else if (this.pointsIA >= 3) {
             clearInterval(this.IntervalIA);
+            this.insertresultinbd(localStorage.getItem('username'), "IA", 1);
             this.createModal()
             this.resetGame(this.ball);
             this.gameStarted = true;
@@ -714,7 +753,7 @@ class PongGame extends HTMLElement {
     {
         this.pointsIA = 0;
         this.pointsPlayer = 0;
-        this.reprint("Player X", this.pointsPlayer);
+        this.reprint(this.user_name, this.pointsPlayer);
         this.reprint("IA", this.pointsIA);
         this.ball = null;
         this.gameStarted = false;

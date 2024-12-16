@@ -9,7 +9,7 @@ class PongUser(AbstractUser):
 	otp_expiry_time = models.DateTimeField(blank=True, null=True)
 	online_status=models.BooleanField(default=False)
 	avatar= models.ImageField(upload_to='images/',blank=True,null=True)
-	fortytwo_image_url = models.URLField(max_length=200, blank=True, null=True) 
+	fortytwo_image_url = models.URLField(max_length=5000, blank=True, null=True) 
 
 
 class Friendship(models.Model):
