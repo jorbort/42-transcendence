@@ -2,8 +2,7 @@
 export default class headerNavBar extends HTMLElement{
 	constructor(){
 		super();
-		let shadow = this.attachShadow({mode: 'closed'});
-		const container = document.createElement('div');
+		this.shadow = this.attachShadow({mode: 'closed'});
 		const style = document.createElement('style');
 		style.textContent = /*css*/`
 			:host{
@@ -311,8 +310,12 @@ export default class headerNavBar extends HTMLElement{
 				}
 			}
 		`;
-		container.classList.add('headerNavBar');
-		container.innerHTML = /*html*/`
+		this.shadow.appendChild(style);
+	}
+	render(){
+		let content = document.createElement('div');
+		content.className = 'headerNavBar';
+		content.innerHTML = /*html*/`
 		<div class="gradient-text">
 			TRANS<span id="spantitle">CENDENCE</span>		
 		</div>
@@ -327,7 +330,7 @@ export default class headerNavBar extends HTMLElement{
 			<div class="pic-container">
 				<img src="${localStorage.getItem('user_img')}" alt="intra profile pic">
 			</div>
-			<div class="icon">
+			<div class="icon" id="logOut">
 				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentcolor" style="height: 3rem; width: rem;" >
 					<path d="M5 3h16v4h-2V5H5v14h14v-2h2v4H3V3h2zm16 8h-2V9h-2V7h-2v2h2v2H7v2h10v2h-2v2h2v-2h2v-2h2v-2z"/>
 				</svg>
@@ -336,10 +339,18 @@ export default class headerNavBar extends HTMLElement{
 				</div>
 			</div>
 		</div>`;
-		shadow.appendChild(style);
-		shadow.appendChild(container);
+		this.shadow.appendChild(content);
 	}
-	connectedCallback() {}
+	connectedCallback() {
+		this.render();
+		const logOut = this.shadow.getElementById('logOut');
+		logOut.addEventListener('click', () => {
+			localStorage.clear();
+			document.cookie = 'access_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+			document.cookie = 'refresh_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+			window.location.href = '/';
+		});
+	}
 	disconnectedCallback(){}
 }
 customElements.define('header-nav-bar', headerNavBar);

@@ -159,6 +159,7 @@ class friendsList extends HTMLElement{
 				<span class='close'>&times;</span>
 				<h2>Add a new Friend</h2>
 				<form id='addFriendForm'>
+					<div id="error-addFriend" style="color: red;"></div>
 					<label for='friendName'>Friend's name:</label>
 					<input type='text' id='friendName' name='friendName' required>
 					<button type='submit' id="add-btn">Add Friend!</button>
@@ -174,6 +175,8 @@ class friendsList extends HTMLElement{
 			event.preventDefault();
 			const friend_username = event.target.friendName.value;
 			const token = getCookie('access_token');
+			const errorAddFriend = this.modal.querySelector('#error-addFriend');
+			errorAddFriend.textContent = '';
 			try {
 				const response = await fetch('http://localhost:8000/friends', {
 					method: 'POST',
@@ -183,17 +186,14 @@ class friendsList extends HTMLElement{
 					},
 					body: JSON.stringify({ friend_username })
 				});
-		
 				if (!response.ok) {
 					const errorData = await response.json();
-					throw new Error(errorData.error || 'Failed to add friend');
+					errorAddFriend.textContent = "Friend doesn't exist";
 				}
-		
 				const result = await response.json();
 				this.fetchFriends();
 				this.modal.style.display = 'none';
 			} catch (error) {
-				console.error('Error:', error);
 			}
 		});
 	}
@@ -223,12 +223,10 @@ class friendsList extends HTMLElement{
 
         this.socket.onmessage = (event) => {
             const data = JSON.parse(event.data);
-            console.log(data.message);
             this.updateFriendStatus(data.message);
         };
 
         this.socket.onclose = (event) => {
-            console.log('WebSocket closed unexpectedly');
         };
     }
 
@@ -257,7 +255,6 @@ class friendsList extends HTMLElement{
 			let friends = await response.json();
 			this.renderFriends(friends);
 		}catch(error){
-			console.log(error);
 			let fallbackFriends = [{name: 'amigo 1'}, {name:"amigo 2"}, {name:"amigo 3"}];
 			this.renderFriends(fallbackFriends);
 		}
@@ -278,6 +275,8 @@ class friendsList extends HTMLElement{
 				let friendDiv = document.createElement('div');
 				friendDiv.className = 'friend-div';
 				let logstatus = document.createElement('div');
+				friendDiv.setAttribute('data-username', friend.user1 === localStorage.getItem('username') ? friend.user2 : friend.user1);
+				logstatus.id = 'logstatus';
 				logstatus.className = 'inactive';
 				friendDiv.textContent = friend.user1 === localStorage.getItem('username') ? friend.user2 : friend.user1; 
 				friendDiv.appendChild(logstatus);
@@ -285,7 +284,7 @@ class friendsList extends HTMLElement{
 			});
 		}
 
-		}
+	}
 	disconectedCallback(){
 		if (this.socket){
 			this.socket.close();
@@ -325,7 +324,6 @@ async function refreshToken() {
         document.cookie = `access_token=${data.access_token}; path=/`;
         return data.access_token;
     } catch (error) {
-        console.error('Refresh token error:', error);
         return null;
     }
 }

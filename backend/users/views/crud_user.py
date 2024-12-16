@@ -77,6 +77,7 @@ def upload_avatar(request):
 	logging.info("AQUI NO LLEGA 2")
 	logging.info(request.POST.get('img'))
 	user = request.user
+
 	try:
 		user.first_name = request.POST.get('name')
 		user.last_name = request.POST.get('name')
@@ -100,8 +101,14 @@ def add_friend(request):
 	try:
 		current_user = PongUser.objects.get(username=current_username)
 		friend_user = PongUser.objects.get(username=friend_username)
+		if current_user == friend_user:
+			return Response({'error': 'User and friend must be different users'}, status=status.HTTP_400_BAD_REQUEST)
 	except PongUser.DoesNotExist:
 		return Response({'error': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+	if Friendship.objects.filter(user1=current_user, user2=friend_user).exists() or \
+		Friendship.objects.filter(user1=friend_user, user2=current_user).exists():
+		return Response({'error': 'Friendship already exists.'}, status=status.HTTP_400_BAD_REQUEST)
 
 	data = {
 		'user1': current_user.username,

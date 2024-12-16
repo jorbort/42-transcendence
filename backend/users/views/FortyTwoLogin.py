@@ -3,6 +3,8 @@ import string
 import requests
 import logging
 from django.conf import settings
+from django.utils.crypto import get_random_string
+from django.contrib.auth.hashers import make_password
 from django.shortcuts import redirect
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
@@ -65,11 +67,12 @@ def callback_42(request):
 	headers = {'Authorization': f'Bearer {access_token}'}
 	coalition_info_response = requests.get(coalition_info_url, headers=headers)
 	user_coalition_info = coalition_info_response.json()
+	salt_string = get_random_string(length=16)
 	user_data = {
 		'username': user_info['login'],
 		'email': user_info['email'],
-		'password' : 'vivapacman',
-		'password2' : 'vivapacman',
+		'password' : make_password('vivapacman',salt=salt_string),
+		'password2' : make_password('vivapacman',salt=salt_string),
 		'fortytwo_image_url' : user_info['image']['link']
     }
 	try:
@@ -101,6 +104,3 @@ def callback_42(request):
 	response.set_cookie('access_token', access_token)
 	response.set_cookie('refresh_token', str(refresh_token))
 	return response
-
-	# frontend_url = f"http://localhost:80/profile?access_token={access_token}&refresh_token={str(refresh_token)}"
-	# return redirect(frontend_url)
