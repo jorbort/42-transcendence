@@ -590,5 +590,5 @@ button#accept-players:hover {
 
 customElements.define('tournament-view', TournamentView);
 export default function renderTournamentApp() {
-    return '<tournament-view></tournament-view>';
+    return '<side-nav-bar></side-nav-bar><tournament-view></tournament-view>';
 }
