@@ -254,7 +254,7 @@ export default class OTPComponent extends HTMLElement{
 		};
 		const jsonString = JSON.stringify(formData);
 		try{
-			const response = await fetch('https://localhost:8000/users/verify', {
+			const response = await fetch('https://localhost:3042/users/verify/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

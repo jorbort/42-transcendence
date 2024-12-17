@@ -286,7 +286,7 @@ export default class loginFormComponent extends HTMLElement{
 				const errorMessageElement = this.shadowRoot.getElementById('error-signIn');
 				errorMessageElement.textContent = '';
                 try {
-                    const response = await fetch('http://localhost:8000/users/login', {
+                    const response = await fetch('https://localhost:3042/users/login/', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -335,7 +335,7 @@ export default class loginFormComponent extends HTMLElement{
 				errorMessageElement.textContent = '';
 
                 try {
-                    const response = await fetch('http://localhost:8000/users/create', {
+                    const response = await fetch('https://localhost:3042/users/create/', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'

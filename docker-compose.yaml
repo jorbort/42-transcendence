@@ -5,8 +5,8 @@ services:
       context: .
       dockerfile: frontend/Nginx/Dockerfile
     ports:
-      - "80:80"
-      - "443:443"
+      - "8080:8080"
+      - "3042:3042"
     networks:
       - trascendence
     restart: always

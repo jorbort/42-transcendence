@@ -9,7 +9,7 @@ export function fortyTwoCallback(){
 		
 	if (code && state){
 		//poner una animacion de cargando
-		fetch('https://localhost:8000/users/callback_42', {
+		fetch('https://localhost:3042/users/callback_42', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'

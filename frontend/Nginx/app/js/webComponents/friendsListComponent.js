@@ -178,7 +178,7 @@ class friendsList extends HTMLElement{
 			const errorAddFriend = this.modal.querySelector('#error-addFriend');
 			errorAddFriend.textContent = '';
 			try {
-				const response = await fetch('https://localhost:8000/friends', {
+				const response = await fetch('https://localhost:3042/users/friends', {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json',
@@ -243,7 +243,7 @@ class friendsList extends HTMLElement{
 		let username = localStorage.getItem('username');
 		let token = getCookie('access_token');
 		try {
-			let response = await fetch(`https://localhost:8000/users/listFriends?username=${username}`,{
+			let response = await fetch(`https://localhost:3042/users/listFriends?username=${username}`,{
 				headers: {
 					'Authorization': `Bearer ${token}`
 				}
