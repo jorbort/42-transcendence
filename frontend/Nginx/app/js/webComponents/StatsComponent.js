@@ -215,7 +215,6 @@ class GameStats extends HTMLElement {
 	async connectedCallback(){
 		let username = localStorage.getItem('username');
 		let token = getCookie('access_token');
-		console.log(token);
 		try {
 			let response = await fetch(`https://localhost:8000/matches/obtainHistory?username=${username}`,{
 			method: 'GET',
@@ -460,7 +459,6 @@ function getCookie(name) {
 	for (let i = 0; i < cookieArr.length; i++) {
 		let cookiePair = cookieArr[i].split("=");
 		if (name == cookiePair[0].trim()) {
-			console.log(cookiePair[1]);
 		return decodeURIComponent(cookiePair[1]);
 		}
 	}

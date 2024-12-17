@@ -394,7 +394,6 @@ class profileconfig extends HTMLElement {
 				formData.append('name', name);
 				formData.append('last_name', last_name);
 				formData.append('img', profileImage)
-				console.log(profileImage);
 
 				try {
 					const response = await fetch("https://localhost:8000/upload_avatar", {
@@ -410,7 +409,6 @@ class profileconfig extends HTMLElement {
 					}
 		
 					const result = await response.json();
-					console.log(result);
 					localStorage.setItem('name', name);
 					localStorage.setItem('last_name', last_name);
 					localStorage.setItem('user_img', profileImage);

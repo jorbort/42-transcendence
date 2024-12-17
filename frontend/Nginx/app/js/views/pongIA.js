@@ -253,7 +253,6 @@ class PongGame extends HTMLElement {
         myModal.show();
     
         const handleResponse = (responseType, action) => {
-            console.log(`${responseType} respondido: ${action}`);
             this.checkSavebtn();
         };
     
@@ -352,7 +351,6 @@ class PongGame extends HTMLElement {
             }
         });
         document.getElementById("btnCancel").addEventListener('click', async () => {
-            console.log("Cancel Seleccionado.");
             this.addCustom = false;
             this.addCustom1 = false;
             this.addCustom2 = false;
@@ -362,7 +360,6 @@ class PongGame extends HTMLElement {
             await this.startGame();
         });
         document.getElementById("btncruz").addEventListener('click', async () => {
-            console.log("Cruz Seleccionado.");
             this.addCustom = false;
             this.addCustom1 = false;
             this.addCustom2 = false;
@@ -377,17 +374,16 @@ class PongGame extends HTMLElement {
         return new Promise((resolve, reject) => {
             const loader = new THREE.FontLoader();
             loader.load('https://threejs.org/examples/fonts/helvetiker_bold.typeface.json', (font) => {
-                console.log("Font loaded successfully.");
                 this.loadfont = font;
                 const textMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff });
                 this.playerText = this.createText(this.user_name + ": " + this.pointsPlayer, new THREE.Vector3(-15, 9.5, 0), font, textMaterial);
                 this.IAText = this.createText("IA: " + this.pointsIA, new THREE.Vector3(8, 9.5, 0), font, textMaterial);
                 this.scene.add(this.playerText);
                 this.scene.add(this.IAText);
-                resolve(font); // Resolvemos la promesa con la fuente
+                resolve(font);
             }, undefined, (error) => {
                 console.error("Error loading font:", error);
-                reject(error); // Rechazamos la promesa en caso de error
+                reject(error);
             });
         });
     }
@@ -581,8 +577,8 @@ class PongGame extends HTMLElement {
                     font: this.loadfont,
                     size: 0.8,
                     height: 0.1,
-                    curveSegments: 12, // Suavidad
-                    bevelEnabled: true, // biselado para el borde
+                    curveSegments: 12,
+                    bevelEnabled: true, 
                     bevelThickness: 0.03,
                     bevelSize: 0.02,
                     bevelSegments: 5
@@ -592,18 +588,13 @@ class PongGame extends HTMLElement {
 
     customGame() {
         const proximityRange = 1.5;
-        // console.log(this.addCustom, this.addCustom1, this.addCustom2);
-        // console.log("X =", this.Custom2.position.x, "Y =",this.Custom2.position.y, "Xpelota =", this.ball.position.x, "Y =",this.ball.position.y);
-        if (this.addCustom)
         {
             if (Math.abs(this.Custom.position.x - this.ball.position.x) <= proximityRange &&
                 Math.abs(this.Custom.position.y - this.ball.position.y) <= proximityRange)
             {
-                // Aumentar velocidad pelota
                 this.ballSpeedX += 0.0015;
                 this.ballSpeedY += 0.0005;
                 this.Custom.position.set(Math.floor(Math.random() * (4 - (-5) + 1)) + (-5), Math.floor(Math.random() * (5 - (-3) + 1)) + (-3), 0);
-                console.log("Aumento velocidad pelota");
             }
         }
         if (this.addCustom1)
@@ -611,11 +602,9 @@ class PongGame extends HTMLElement {
             if (Math.abs(this.Custom1.position.x - this.ball.position.x) <= proximityRange &&
                 Math.abs(this.Custom1.position.y - this.ball.position.y) <= proximityRange)
             {
-                // Disminuir velocidad de la pelota
                 this.ballSpeedX -= 0.015;
                 this.ballSpeedY -= 0.005;
                 this.Custom1.position.set(Math.floor(Math.random() * (4 - (-5) + 1)) + (-5), Math.floor(Math.random() * (5 - (-3) + 1)) + (-3), 0);
-                console.log("Disminuir velocidad pelota");
             }
         }
         if (this.addCustom2)
@@ -623,7 +612,6 @@ class PongGame extends HTMLElement {
             if (Math.abs(this.Custom2.position.x - this.ball.position.x) <= proximityRange &&
                 Math.abs(this.Custom2.position.y - this.ball.position.y) <= proximityRange)
             {
-                // Disminuir velocidad de palas
                 if (this.ballDireccionX > 0)
                     this.aiSpeed -= 0.03;
                 else
@@ -633,7 +621,6 @@ class PongGame extends HTMLElement {
                 if (this.paddleSpeed < 0.03)
                     this.paddleSpeed = 0.03;
                 this.Custom2.position.set(Math.floor(Math.random() * (4 - (-5) + 1)) + (-5), Math.floor(Math.random() * (5 - (-3) + 1)) + (-3), 0);
-                console.log("Disminuir velocidad palas");
             }
         }
     }
@@ -708,7 +695,6 @@ class PongGame extends HTMLElement {
             }
 
             const result = await response.json();
-            console.log(result);
         } catch (error) {
             console.error(error);
         }
@@ -737,7 +723,6 @@ class PongGame extends HTMLElement {
     
     async pauseGameAndShowCountdown()
     {
-        // console.log("CUANTAS VEZES ENTRAS");
         this.gameStarted = false;
         this.ball.position.set(5, 2, 50);
         this.ballSpeedX = 0.15;
