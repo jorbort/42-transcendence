@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-s+c6@9ra%surq@)85i%lgvx@f*k$kz-vk1y_4wqeqc^++x0fgs
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 
 # Application definition
@@ -168,3 +168,13 @@ LOGGING = {
         'level': 'DEBUG',
     },
 }
+
+
+SESSION_COOKIE_NAME = 'sessionid'
+SESSION_COOKIE_SECURE = True  
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = 'Lax'
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+CSRF_COOKIE_SECURE = True
+SECURE_SSL_REDIRECT = True

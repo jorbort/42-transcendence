@@ -695,7 +695,7 @@ class PongGame extends HTMLElement {
         }
 
         try {
-            const response = await fetch("http://localhost:8000/matches/register", {
+            const response = await fetch("https://localhost:8000/matches/register", {
                 method: "POST",
                 headers: {
                     'Authorization': `Bearer ${token}`,

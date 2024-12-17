@@ -389,7 +389,7 @@ class profileconfig extends HTMLElement {
 				console.log(profileImage);
 
 				try {
-					const response = await fetch("http://localhost:8000/upload_avatar", {
+					const response = await fetch("https://localhost:8000/upload_avatar", {
 						method: "POST",
 						headers: {
 							'Authorization': `Bearer ${token}`,

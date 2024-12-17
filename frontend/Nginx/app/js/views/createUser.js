@@ -55,7 +55,7 @@ export function signup(){
 			};
 			const jsonString = JSON.stringify(formData);
 			try {
-				const response = await fetch('http://localhost:8000/users/create', {
+				const response = await fetch('https://localhost:8000/users/create', {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json'

@@ -141,7 +141,7 @@ export default class HomeComponent extends HTMLElement{
 	}
 	disconnectedCallback(){}
 	async fetchMatches(){
-		let url = `http://localhost:8000/matches/obtainHistory?username=${localStorage.getItem('username')}`;
+		let url = `https://localhost:8000/matches/obtainHistory?username=${localStorage.getItem('username')}`;
 		let token = getCookie('access_token');
 		try{
 			let response = await fetch(url, {

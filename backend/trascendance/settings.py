@@ -15,7 +15,7 @@ SECRET_KEY = 'django-insecure-$r1_wadruc=$3i$z2ki(@5xg!-baa4*h+3h-&j(-o9w!jx2k@h
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 
 # Application definition
@@ -196,7 +196,7 @@ LOGGING = {
 #42API
 CLIENT_ID=os.environ['CLIENT_ID']
 CLIENT_SECRET=os.environ['CLIENT_SECRET']
-REDIRECT_URI='http://localhost:2080/callback_42'
+REDIRECT_URI='https://localhost:443/callback_42'
 
 #django sesion configurations
 
@@ -204,7 +204,7 @@ REDIRECT_URI='http://localhost:2080/callback_42'
 SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
 
 SESSION_COOKIE_NAME = 'sessionid'
-SESSION_COOKIE_SECURE = False  
+SESSION_COOKIE_SECURE = True  
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SAMESITE = 'Lax'
 
@@ -217,3 +217,9 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ),
 }
+
+
+# Security settings for HTTPS
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+CSRF_COOKIE_SECURE = True
+SECURE_SSL_REDIRECT = True
