@@ -216,7 +216,7 @@ class GameStats extends HTMLElement {
 		let username = localStorage.getItem('username');
 		let token = getCookie('access_token');
 		try {
-			let response = await fetch(`https://localhost:8000/matches/obtainHistory?username=${username}`,{
+			let response = await fetch(`https://localhost:3042/users/matches/obtainHistory?username=${username}`,{
 			method: 'GET',
 			headers: {
 				'Authorization': `Bearer ${token}`

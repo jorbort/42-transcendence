@@ -23,7 +23,7 @@ function refreshAccessToken() {
     return;
   }
 
-  return fetch('https://localhost:8000/refresh-token', {
+  return fetch('https://localhost:3042/refresh-token', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
