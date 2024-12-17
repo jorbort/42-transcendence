@@ -63,20 +63,30 @@ def callback_42(request):
 	headers = {'Authorization': f'Bearer {access_token}'}
 	user_info_response = requests.get(user_info_url, headers=headers)
 	user_info = user_info_response.json()
-	coalition_info_url = f'https://api.intra.42.fr/v2/users/{user_info['id']}/coalitions'
-	headers = {'Authorization': f'Bearer {access_token}'}
-	coalition_info_response = requests.get(coalition_info_url, headers=headers)
-	user_coalition_info = coalition_info_response.json()
 	salt_string = get_random_string(length=16)
 	user_data = {
 		'username': user_info['login'],
-		'email': user_info['email'],
+		'mail': user_info['email'],
 		'password' : make_password('vivapacman',salt=salt_string),
 		'password2' : make_password('vivapacman',salt=salt_string),
 		'fortytwo_image_url' : user_info['image']['link']
     }
 	try:
 		user = PongUser.objects.get(username=user_info['login'])
+		django_login(request, user)
+		logging.info(user.fortytwo_image_url)
+		refresh_token = RefreshToken.for_user(user)
+		access_token = str(refresh_token.access_token)
+		ressponse = Response( {'access_token': access_token,
+			'refresh_token': str(refresh_token),
+			'username' : user_info['login'],
+			'user_img' : user.fortytwo_image_url,
+			'name' : user.first_name,
+			'last_name' : user.last_name,
+		},
+		status=status.HTTP_200_OK
+		)
+		return ressponse
 	except PongUser.DoesNotExist:
 		serializer = UserSerializer(data=user_data)
 		if serializer.is_valid():

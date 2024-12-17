@@ -221,7 +221,7 @@ export default class SideNavBar extends HTMLElement{
 		addClickListener('home', '/Profile');
 		addClickListener('configProfile', '/configProfile');
 		addClickListener('stats', '/highScores');
-		addClickListener('tour', '/tonreo');
+		addClickListener('tour', '/torneo');
 		addClickListener('onevsone', '/localgame1vs1');
 		addClickListener('onevsia', '/localgame1vsIA');
 		addClickListener('multiplayer', '/localgameMulti');

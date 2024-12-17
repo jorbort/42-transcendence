@@ -376,9 +376,17 @@ class profileconfig extends HTMLElement {
 		const actButton = shadow.querySelector("#act");
 		if (actButton) {
 			actButton.addEventListener("click", async () => {
-				const name = shadow.querySelector("#nombre").value;
-				console.log("name" + name)
-				const last_name = shadow.querySelector("#segundoname").value;
+				actButton.disabled = true;
+				let name = shadow.querySelector("#nombre").value;
+				if (!name)
+				{
+					name = localStorage.getItem('name');
+				}
+				let last_name = shadow.querySelector("#segundoname").value;
+				if (!last_name)
+				{
+					last_name = localStorage.getItem('last_name');
+				}
 				const profileImage = shadow.querySelector("#profileImage").src;
 				let token = getCookie('access_token');
 		

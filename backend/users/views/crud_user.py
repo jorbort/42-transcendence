@@ -80,7 +80,7 @@ def upload_avatar(request):
 
 	try:
 		user.first_name = request.POST.get('name')
-		user.last_name = request.POST.get('name')
+		user.last_name = request.POST.get('last_name')
 		user.fortytwo_image_url = request.POST.get('img')
 		user.save()
 		return Response({'status': 'Ok'}, status=200)
