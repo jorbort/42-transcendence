@@ -178,7 +178,7 @@ class friendsList extends HTMLElement{
 			const errorAddFriend = this.modal.querySelector('#error-addFriend');
 			errorAddFriend.textContent = '';
 			try {
-				const response = await fetch('https://localhost:3042/users/friends', {
+				const response = await fetch('https://localhost:3042/users/friends/', {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json',
@@ -219,7 +219,7 @@ class friendsList extends HTMLElement{
 
 	connectWebSocket() {
         const username = localStorage.getItem('username');
-        this.socket = new WebSocket(`ws://localhost:8000/ws/friends/${username}/`);
+        this.socket = new WebSocket(`wss://localhost:3042/ws/friends/${username}/`);
 
         this.socket.onmessage = (event) => {
             const data = JSON.parse(event.data);
@@ -308,7 +308,7 @@ export function getCookie(name) {
 
 async function refreshToken() {
     try {
-        let response = await fetch('https://localhost:8000/users/TokenRefresh', {
+        let response = await fetch('https://localhost:8000/users/TokenRefresh/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

@@ -1,10 +1,8 @@
 import {createUser, signup} from './views/createUser.js';
 import {loginView} from './views/loginView.js';
-import {} from './views/loginView.js';
 import homePage from './views/homeProfile.js';
 import {LoaderComponent} from './webComponents/loaderComponent.js';
 
-import OTPComponent from './webComponents/OTPInputComponent.js';
 
 import {otpView} from './views/otpView.js';
 
@@ -13,7 +11,6 @@ import renderPongGameIA from './views/pongIA.js';
 import renderPongGame from './views/pong.js';
 import renderPongGameMulti from './views/pongMulti.js';
 import { fortyTwoCallback } from './views/fortyTwoCallback.js';
-import { updateNav } from './utils/updateNav.js';
 import renderPongGameName from './views/pongNamePlayers.js';
 import rendertorneo from './views/torneo.js';
 import configProfile from './views/configProfile.js';
@@ -49,11 +46,7 @@ export function handleRouteChange() {
 				view = renderPongGameIA();
 				break;
 			case '/localgame1vs1':
-				// if (pathParts.length == 4)
-					// view = renderPongGameName(pathParts[2], pathParts[3]);
-				// else
 					view =  renderPongGame();
-				//view = renderPongGameName("Marc", "Edgar");
 				break;
 			case '/localgameMulti':
 				view = renderPongGameMulti();
@@ -78,21 +71,8 @@ export function handleRouteChange() {
 			case '/login':
 				view = loginView();
 				break;
-			case '/localgame1vsIA':
-				view = renderPongGameIA();
-				break;
 			case '/otpView':
 				view = otpView();
-				break;
-			case '/localgame1vs1':
-				// if (pathParts.length == 4)
-				// 	view = renderPongGameName(pathParts[2], pathParts[3]);
-				// else
-				 	view =  renderPongGame();
-				//view = renderPongGameName("Marc", "Edgar");
-					break;
-			case '/localgameMulti':
-				view = renderPongGameMulti();
 				break;
 			case '/callback_42':
 				view = /*html*/`<loader-component></loader-component>`;
@@ -100,12 +80,6 @@ export function handleRouteChange() {
 				break;
 			case '/Signup':
 				view = createUser();
-				break;
-			case '/torneo':
-				view = rendertorneo();
-				break;
-			case '/configProfile':
-				view = configProfile();
 				break;
 			default:
 				view = NotFound404();
@@ -134,7 +108,5 @@ document.querySelectorAll('.route').forEach(link => {
 	});
 });
 
-// Call handleRouteChange when the page loads
 window.addEventListener('load', handleRouteChange);
-// 'popstate': This is the event type being listened for. The popstate event is triggered when the active history entry changes.
 window.addEventListener('popstate', handleRouteChange);
