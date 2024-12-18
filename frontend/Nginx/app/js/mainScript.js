@@ -77,9 +77,9 @@ export function handleRouteChange() {
 				view = /*html*/`<loader-component></loader-component>`;
 				fortyTwoCallback();
 				break;
-			case '/torneo':
-				view = renderTournamentApp();
-				break;
+			// case '/torneo':
+			// 	view = renderTournamentApp();
+			// 	break;
 			case '/Signup':
 				view = createUser();
 				break;
