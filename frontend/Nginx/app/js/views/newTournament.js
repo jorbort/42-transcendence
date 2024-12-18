@@ -21,7 +21,7 @@ class TournamentView extends HTMLElement {
         this.firstSelect = false;
         this.SecondSelect = false;
         this.configsaved = false;
-        this.qttplayers = 2;
+        this.qttplayers = 4;
     }
     connectedCallback() {
         this.addStyles();
