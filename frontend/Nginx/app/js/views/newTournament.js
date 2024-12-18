@@ -212,7 +212,7 @@ class TournamentView extends HTMLElement {
                 if (name) {
                     this.tournamentData.name = name;
                     this.tournamentData.players = Array.from(
-                        { length: this.qttplayers }, (_, i) => `Player${i + 1}`
+                        { length: this.qttplayers }, (_, i) => `GAMER${i + 1}`
                     );
                     myModal.dispose();
                     document.getElementById('customModal').remove();
@@ -387,7 +387,7 @@ button#accept-players:hover {
             ${this.tournamentData.players.map((player, index) => `
                 <div class="player-input">
                     <label for="player-${index}">Jugador ${index + 1}:</label>
-                    <input id="player-${index}" data-index="${index}" value="${player}" maxlength="13" />
+                    <input id="player-${index}" data-index="${index}" value="${player}" maxlength="15" />
                 </div>
             `).join('')}
             <div id="error-message" style="color: red; display: none;"></div>
@@ -398,18 +398,29 @@ button#accept-players:hover {
             const inputs = Array.from(this.querySelectorAll('input[data-index]'));
             const playerNames = inputs.map(input => input.value.trim());
             const errorMessageElement = this.querySelector('#error-message');
+            
+            // Validar nombres vacíos
+            if (playerNames.some(name => name === "")) {
+                errorMessageElement.textContent = 'Todos los jugadores deben tener un nombre.';
+                errorMessageElement.style.display = 'block';
+                return; // Detener la ejecución si hay campos vacíos
+            }
+            
             // Validar nombres únicos
             const uniqueNames = new Set(playerNames);
             if (uniqueNames.size !== playerNames.length) {
                 errorMessageElement.textContent = 'Los nombres de los jugadores deben ser diferentes.';
                 errorMessageElement.style.display = 'block';
                 return; // Detener la ejecución si hay duplicados
-            }// Si no hay errores, ocultar el mensaje de error y continuar
+            }
+    
+            // Si no hay errores, ocultar el mensaje de error y continuar
             errorMessageElement.style.display = 'none';
             this.tournamentData.players = playerNames;
             this.initializeTournament();
         });
     }
+    
 
     initializeTournament() {
         const shuffledPlayers = this.tournamentData.players.sort(() => Math.random() - 0.5);
@@ -445,7 +456,11 @@ button#accept-players:hover {
                         <h3>Ronda ${roundIndex + 1}</h3>
                         ${round.map((match, matchIndex) => `
                             <div class="match">
-                                <span>${match.player1 || '---'}: ${match.player1_score || '_'} vs ${match.player2 || '---'}: ${match.player2_score || '_'}</span>
+                                <span>
+                                    ${match.player1 || '---'}: ${match.player1_score != null ? match.player1_score : (match.winner ? 0 : '_')} 
+                                    vs 
+                                    ${match.player2 || '---'}: ${match.player2_score != null ? match.player2_score : (match.winner ? 0 : '_')}
+                                </span>
                                 ${match.winner ? `
                                     <span>Ganador: ${match.winner}</span>
                                 ` : `
@@ -493,6 +508,7 @@ button#accept-players:hover {
             });
         });
     }
+    
 
     async save_tournament() {
         try {

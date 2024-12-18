@@ -48,34 +48,40 @@ class PongGameTournament extends HTMLElement {
         this.gameStarted = false;
     }
 
-    initObjects() {
+     initObjects()
+    {   
+  
         const sphereGeometry = new THREE.SphereGeometry(0.5, 27, 27);
         const sphereMaterial = new THREE.MeshStandardMaterial({ color: 0x87CEEB, metalness: 0.5, roughness: 0.5 });
         this.ball = new THREE.Mesh(sphereGeometry, sphereMaterial);
         this.ball.position.set(0, 2, 0);
         this.camera.position.set(0, 1, 20);
         this.scene.add(this.ball);
+
         const CustomGeometry = new THREE.ConeGeometry(0.5, 1, 16);
         const CustomMaterial = new THREE.MeshStandardMaterial({ color: 0xFFC0CB, metalness: 0.5, roughness: 0.5 });
         this.Custom = new THREE.Mesh(CustomGeometry, CustomMaterial);
         this.Custom.position.set(4, -2, 0);
         this.camera.position.set(0, 1, 20);
-        if (this.addCustom)
+        if (localStorage.getItem("addCustom"))
             this.scene.add(this.Custom);
+
         const Custom1Geometry = new THREE.IcosahedronGeometry(0.5);
         const Custom1Material = new THREE.MeshStandardMaterial({ color: 0x00FF00, metalness: 0.5, roughness: 0.5 });
         this.Custom1 = new THREE.Mesh(Custom1Geometry, Custom1Material);
         this.Custom1.position.set(-1, 4, 0);
         this.camera.position.set(0, 1, 20);
-        if (this.addCustom1)
+        if (localStorage.getItem("addCustom1"))
             this.scene.add(this.Custom1);
-        const Custom2Geometry = new THREE.TorusKnotGeometry(0.4, 0.12, 47, 7);
+
+        const Custom2Geometry =  new THREE.TorusKnotGeometry(0.4, 0.12, 47, 7);
         const Custom2Material = new THREE.MeshStandardMaterial({ color: 0x00FFFF, metalness: 0.5, roughness: 0.5 });
         this.Custom2 = new THREE.Mesh(Custom2Geometry, Custom2Material);
         this.Custom2.position.set(-4, -2, 0);
         this.camera.position.set(0, 1, 20);
-        if (this.addCustom2)
+        if (localStorage.getItem("addCustom2"))
             this.scene.add(this.Custom2);
+
         const paddleGeometry = new THREE.BoxGeometry(0.4, 2, 0.1);
         const paddleMaterial = new THREE.MeshStandardMaterial({ color: 0xff0000 });
         this.paddleLeft = new THREE.Mesh(paddleGeometry, paddleMaterial);
@@ -83,18 +89,25 @@ class PongGameTournament extends HTMLElement {
         this.paddleLeft.position.y = 2;
         this.targetPaddleLeftY = 2;
         this.scene.add(this.paddleLeft);
+
         this.paddleRight = new THREE.Mesh(paddleGeometry, paddleMaterial);
         this.paddleRight.position.x = 12.5;
         this.targetPaddleRightY = 2;
         this.paddleRight.position.y = 2;
         this.scene.add(this.paddleRight);
+
         const borderMaterial = new THREE.LineBasicMaterial({ color: 0xffffff });
-        const points = [new THREE.Vector3(-15, 8, 0), new THREE.Vector3(13.5, 8, 0), new THREE.Vector3(13.5, -4, 0), new THREE.Vector3(-15, -4, 0)];
+        const points = [
+            new THREE.Vector3(-15, 8, 0),
+            new THREE.Vector3(13.5, 8, 0),
+            new THREE.Vector3(13.5, -4, 0),
+            new THREE.Vector3(-15, -4, 0)
+        ];
+        
         const geometry = new THREE.BufferGeometry().setFromPoints(points);
         const border = new THREE.LineSegments(geometry, borderMaterial);
         this.scene.add(border);
     }
-
     async loadFont() {
         return new Promise((resolve, reject) => {
             const loader = new THREE.FontLoader();
@@ -228,17 +241,26 @@ class PongGameTournament extends HTMLElement {
     }
 
     checkPaddleCollision() {
-        if (this.ball.position.x <= this.paddleLeft.position.x + 0.2 && this.ball.position.y < this.paddleLeft.position.y + 1 && this.ball.position.y > this.paddleLeft.position.y - 1) {
+        // Detectar colisión con el paddle izquierdo
+        if (this.ball.position.x <= this.paddleLeft.position.x + 0.2 &&
+            this.ball.position.x > this.paddleLeft.position.x && // Asegurarse de que la pelota no esté detrás del paddle
+            this.ball.position.y < this.paddleLeft.position.y + 1 &&
+            this.ball.position.y > this.paddleLeft.position.y - 1) {
             this.ballDireccionX *= -1;
             this.ballSpeedX += 0.009;
             this.ballSpeedY += 0.0009;
         }
-        if (this.ball.position.x >= this.paddleRight.position.x - 0.2 && this.ball.position.y < this.paddleRight.position.y + 1 && this.ball.position.y > this.paddleRight.position.y - 1) {
+        // Detectar colisión con el paddle derecho
+        if (this.ball.position.x >= this.paddleRight.position.x - 0.2 &&
+            this.ball.position.x < this.paddleRight.position.x && // Asegurarse de que la pelota no esté detrás del paddle
+            this.ball.position.y < this.paddleRight.position.y + 1 &&
+            this.ball.position.y > this.paddleRight.position.y - 1) {
             this.ballDireccionX *= -1;
             this.ballSpeedX += 0.009;
             this.ballSpeedY += 0.0009;
         }
     }
+    
 
     resetBall() {
         this.ball.position.set(0, 2, 0);
