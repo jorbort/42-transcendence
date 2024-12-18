@@ -23,7 +23,7 @@ class Friendship(models.Model):
 	class Meta:
 		unique_together=['user1','user2']
 
-class Tournament(models.Model):
+class tournament(models.Model):
 	name = models.CharField(max_length=100)
 	date = models.DateTimeField()
 	players = models.JSONField()
@@ -33,7 +33,7 @@ class Tournament(models.Model):
 		return self.name
 	class Meta:
 		managed=True
-		db_table='Tournament'
+		db_table='users_tournament'
 
 class MatchHistory(models.Model):
 	player1=models.ForeignKey(PongUser, related_name='match_as_player1', on_delete=models.CASCADE,db_column='player1_name' )
@@ -42,7 +42,7 @@ class MatchHistory(models.Model):
 	player1_score = models.IntegerField()
 	player2_score=models.IntegerField()
 	winner=models.ForeignKey(PongUser, related_name='matches_won', on_delete=models.CASCADE,db_column='winner_name')
-	tournament_id = models.ForeignKey(Tournament, related_name='tournament_id', on_delete=models.CASCADE, null=True)
+	tournament_id = models.ForeignKey(tournament, related_name='tournament_id', on_delete=models.CASCADE, null=True)
 
 	def __str__(self):
 		return f"Match on {self.date} between {self.player1.username} and {self.player2.username}"
