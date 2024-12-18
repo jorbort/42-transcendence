@@ -1,4 +1,5 @@
 import {MarioComponent} from './marioComponent.js';
+import { getCookie } from '../utils/parseCookies.js';
 
 export default class HomeComponent extends HTMLElement{
 	constructor(){
@@ -90,6 +91,7 @@ export default class HomeComponent extends HTMLElement{
 				display: flex;
 				justify-content: center;
 				align-items: center;
+				flex-direction: column;
 			}
 			.win-rate{
 				text-align: center;
@@ -100,8 +102,14 @@ export default class HomeComponent extends HTMLElement{
 				align-self: center;
 				justify-self: center;
 				display: flex;
+				flex-direction: column;
 				justify-content: center;
 				align-items: center;
+			}
+			.win-Rate-Info{
+				text-align: center;
+				display: flex;
+				flex-direction: column;
 			}
 		`;
 		shadow.appendChild(style);
@@ -122,12 +130,66 @@ export default class HomeComponent extends HTMLElement{
 					<p>Last game</p>
 				</div>
 				<div class="win-rate">
-					<p>Win rate %</p>
+					<p>Win rate </p>
 				</div>
 		`;
 		shadow.appendChild(container);
 	}
-	connectedCallback(){}
+	connectedCallback(){
+		this.fetchMatches();
+
+	}
 	disconnectedCallback(){}
+	async fetchMatches(){
+		let url = `https://localhost:3042/users/matches/obtainHistory?username=${localStorage.getItem('username')}`;
+		let token = getCookie('access_token');
+		try{
+			let response = await fetch(url, {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json',
+					'Authorization': `Bearer ${token}`
+				}
+			});
+			if (!response.ok) {
+				throw new Error('Error fetching matches');
+			}
+			let data = await response.json();
+			let lastGame = data[data.length-1];
+			if (lastGame === undefined){
+				lastGame = {
+					player1_username: 'No games played yet',
+					player2_username: 'No games played yet',
+					winner_username: 'No games played yet'
+				};
+			}
+			let matchesPlayed = data.length;
+			let matchesWon = data.filter(match => match.winner_username === localStorage.getItem('username')).length;
+			let winPercentage;
+			if (matchesPlayed === 0){
+				winPercentage = 0;
+			}else{
+				winPercentage = (matchesWon/matchesPlayed)*100;
+			}
+			let winRate = this.shadowRoot.querySelector('.win-rate');
+			let lastGameContainer = this.shadowRoot.querySelector('.last-game');
+			let lastGameInfo = document.createElement('div');
+			let winRateInfo = document.createElement('div');
+			winRateInfo.className = 'win-Rate-Info';
+			winRateInfo.textContent = `${winPercentage.toFixed(2)}%`;
+			winRate.appendChild(winRateInfo);
+			
+			let gameinfoUl = document.createElement('ul');
+			gameinfoUl.innerHTML = `
+				<li>Player 1: ${lastGame.player1_username}</li>
+				<li>Player 2: ${lastGame.player2_username}</li>
+				<li>Winner: ${lastGame.winner_username}</li>
+			`;
+			lastGameInfo.appendChild(gameinfoUl);
+			lastGameContainer.appendChild(lastGameInfo);
+		}catch (error){
+			
+		}
+	}
 }
 window.customElements.define('home-component', HomeComponent);

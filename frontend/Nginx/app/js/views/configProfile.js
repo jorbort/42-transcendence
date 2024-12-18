@@ -337,15 +337,15 @@ class profileconfig extends HTMLElement {
 								<h3 id="textconf">Configura la informacion de tu perfil</h3>
 								<div class="form-row">
 									<label for="Alies" class="form-label">Alias</label>
-									<input type="name" id="Alies" placeholder="${localStorage.getItem('username')}" name="Alies" class="flip-card__input">
+									<input type="name" id="Alies" placeholder="${localStorage.getItem('username')}" name="Alies" class="flip-card__input" disabled>
 								</div>
 								<div class="form-row">
 									<label for="nombre" class="form-label">Nombre</label>
-									<input type="nombre" id="nombre" placeholder="${localStorage.getItem('name')}" name="nombre" class="flip-card__input" disabled>
+									<input type="nombre" id="nombre" placeholder="${localStorage.getItem('name')}" name="nombre" class="flip-card__input">
 								</div>
 								<div class="form-row">
 									<label for="segundoname" class="form-label">Segundo Nombre</label>
-									<input type="name" id="segundoname" placeholder="${localStorage.getItem('last_name')}" name="segundoname" class="flip-card__input" disabled>
+									<input type="name" id="segundoname" placeholder="${localStorage.getItem('last_name')}" name="segundoname" class="flip-card__input">
 								</div>
 								<div class="flip-card__btn" id="intra-button" href="">
 									<a id="act">Actualizar</a>
@@ -364,34 +364,44 @@ class profileconfig extends HTMLElement {
 	
 		if (imgUploadButton) {
 			imgUploadButton.addEventListener("click", () => {
-				// Crea dinámicamente el input y lo activa
 				const inputFile = document.createElement("input");
 				inputFile.type = "file";
 				inputFile.id = "imageUpload";
 				inputFile.className = "flip-card__input";
 				inputFile.accept = "image/*";
-				inputFile.onchange = (event) => this.loadImage(event); // Llama al método loadImage
+				inputFile.onchange = (event) => this.loadImage(event);
 				inputFile.click(); // Activa el input
 			});
 		}
 		const actButton = shadow.querySelector("#act");
 		if (actButton) {
 			actButton.addEventListener("click", async () => {
-				const alias = shadow.querySelector("#Alies").value;
+				actButton.disabled = true;
+				let name = shadow.querySelector("#nombre").value;
+				if (!name)
+				{
+					name = localStorage.getItem('name');
+				}
+				let last_name = shadow.querySelector("#segundoname").value;
+				if (!last_name)
+				{
+					last_name = localStorage.getItem('last_name');
+				}
 				const profileImage = shadow.querySelector("#profileImage").src;
 				let token = getCookie('access_token');
 		
 				const formData = new FormData();
-				formData.append("alias", alias);
-				formData.append("avatar", this.dataURLtoFile(profileImage, localStorage.getItem('user_img')));
-		
+				formData.append('name', name);
+				formData.append('last_name', last_name);
+				formData.append('img', profileImage)
+
 				try {
-					const response = await fetch("http://localhost:8000/users/upload-avatar/", {
+					const response = await fetch("https://localhost:3042/users/upload_avatar", {
 						method: "POST",
 						headers: {
-							'Authorization': `Bearer ${token}`, // Token de autenticación
+							'Authorization': `Bearer ${token}`,
 						},
-						body: formData, // Enviar los datos como FormData
+						body: formData,
 					});
 		
 					if (!response.ok) {
@@ -399,8 +409,9 @@ class profileconfig extends HTMLElement {
 					}
 		
 					const result = await response.json();
-					console.log(result.detail); // Mensaje de éxito del backend
-					// Puedes actualizar la interfaz o hacer algo después de la respuesta exitosa
+					localStorage.setItem('name', name);
+					localStorage.setItem('last_name', last_name);
+					localStorage.setItem('user_img', profileImage);
 		
 				} catch (error) {
 					console.error(error);
@@ -410,16 +421,6 @@ class profileconfig extends HTMLElement {
 		
 	}
 	
-	// Función para convertir la imagen en un archivo
-	dataURLtoFile(dataurl, filename) {
-		let arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
-			  bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
-		while(n--){
-			u8arr[n] = bstr.charCodeAt(n);
-		}
-		return new File([u8arr], filename, {type:mime});
-	}
-
 	loadImage(event) {
 		const file = event.target.files[0];
 		if (file) {
@@ -430,7 +431,7 @@ class profileconfig extends HTMLElement {
 					const profileImage = this.shadowRoot.querySelector("#profileImage");
 					profileImage.src = e.target.result;
 	
-					// Guardar la imagen en localStorage si deseas persistirla
+					// Guardar la imagen en localStorage
 					localStorage.setItem('user_img', e.target.result);
 				};
 				reader.readAsDataURL(file);

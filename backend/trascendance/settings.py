@@ -15,7 +15,7 @@ SECRET_KEY = 'django-insecure-$r1_wadruc=$3i$z2ki(@5xg!-baa4*h+3h-&j(-o9w!jx2k@h
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'https://localhost:3042']
 
 
 # Application definition
@@ -32,21 +32,29 @@ INSTALLED_APPS = [
 	'rest_framework_simplejwt',
 	'django_crontab',
 	'corsheaders',
+	'channels',
 ]
 
 MIDDLEWARE = [
+	'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-	'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
 
 ROOT_URLCONF = 'trascendance.urls'
-CORS_ALLOW_ALL_ORIGINS = True
+
+# CORS_ALLOW_ALL_ORIGINS = True
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3042",  # Replace with your frontend's URL
+    "http://127.0.0.1:3042",
+]
+
 CORS_ALLOW_METHODS = [
     "GET",
     "POST",
@@ -54,7 +62,7 @@ CORS_ALLOW_METHODS = [
 ]
 
 CORS_ALLOW_HEADERS = [
-    "accept",
+	 "accept",
     "authorization",
     "content-type",
     "dnt",
@@ -83,7 +91,7 @@ TEMPLATES = [
 
 ASGI_APPLICATION = 'trascendance.asgi.application'
 
-CHANNEl_LAYERS = {
+CHANNEL_LAYERS = {
 	'default' : {
 		'BACKEND': 'channels.layers.InMemoryChannelLayer',
 	},
@@ -163,7 +171,7 @@ CRONJOBS = [
 
 # jwt expiration info
 SIMPLE_JWT = {
-	'ACCESS_TOKEN_LIFETIME' : timedelta(minutes=60),
+	'ACCESS_TOKEN_LIFETIME' : timedelta(hours=24),
 	'REFRESH_TOKEN_LIFETIME' : timedelta(days=30),
 }
 
@@ -195,7 +203,7 @@ LOGGING = {
 #42API
 CLIENT_ID=os.environ['CLIENT_ID']
 CLIENT_SECRET=os.environ['CLIENT_SECRET']
-REDIRECT_URI='http://localhost:2080/callback_42'
+REDIRECT_URI='https://localhost:3042/callback_42'
 
 #django sesion configurations
 
@@ -203,7 +211,7 @@ REDIRECT_URI='http://localhost:2080/callback_42'
 SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
 
 SESSION_COOKIE_NAME = 'sessionid'
-SESSION_COOKIE_SECURE = False  
+SESSION_COOKIE_SECURE = True  
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SAMESITE = 'Lax'
 
@@ -216,3 +224,9 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ),
 }
+
+
+# Security settings for HTTPS
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+CSRF_COOKIE_SECURE = True
+SECURE_SSL_REDIRECT = True

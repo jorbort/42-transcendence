@@ -15,7 +15,6 @@ apt-get install cron -y
 python3 -m venv .venv && source .venv/bin/activate\
 && pip install -r requirements.txt\
 
-
 if [ ! -d "staticfiles" ]; then
     mkdir staticfiles
 fi
@@ -26,6 +25,9 @@ fi
 # python3 manage.py flush --no-input
 python3 manage.py makemigrations
 python3 manage.py migrate
+
+# python3 manage.py shell < create_localusers.py
+
 python3 manage.py collectstatic --no-input
 python3 manage.py crontab add
 python manage.py crontab show

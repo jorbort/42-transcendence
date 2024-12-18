@@ -31,7 +31,6 @@ export function createUser() {
 }
 
 export function signup(){
-	console.log('Signup function called');
 	const form = document.getElementById('signUpForm');
 	const signUpButton = document.getElementById('sign_up');
 	const buttonText = signUpButton.querySelector('.button-text');
@@ -41,7 +40,6 @@ export function signup(){
 	if (form) {
 		form.addEventListener('submit', async function(event) {
 			event.preventDefault();
-			console.log('Sign form submitted');
 			
 			showSpinner();
 			
@@ -56,9 +54,8 @@ export function signup(){
 				password2: confirm_password
 			};
 			const jsonString = JSON.stringify(formData);
-			console.log(jsonString);
 			try {
-				const response = await fetch('http://localhost:8000/users/create', {
+				const response = await fetch('https://localhost:3042/users/create', {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json'
@@ -67,7 +64,6 @@ export function signup(){
 				});
 				if(response.ok){
 					const data = await response.json();
-					console.log(data);
 					alert("User created succesfully")
 					window.history.pushState({}, '', '/login');
 					handleRouteChange();
@@ -77,10 +73,10 @@ export function signup(){
 					const emailError = errorData.serializer_errors?.email?.[0];
 					const usernameError = errorData.serializer_errors?.username?.[0];
 					const errorMessage = emailError || usernameError || 'An error occurred';
-					alert(`Error: ${errorMessage}`);
+					
 				}
 			} catch (error) {
-				console.error('Error:', error);
+		
 			} finally {
 				hideSpinner();
 			}

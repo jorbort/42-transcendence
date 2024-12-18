@@ -9,6 +9,9 @@ export default class OTPComponent extends HTMLElement{
 		:host{
 			font-family: 'Press Start 2P', cursive;
 		}
+		#error-otp{
+			font-family: 'Press Start 2P', cursive;
+		}
 		.brutalist-container {
 			position: relative;
 			width: 250px;
@@ -221,6 +224,7 @@ export default class OTPComponent extends HTMLElement{
 			/>
 			<label class="brutalist-label">Enter One Time Password</label>
 			<button class="flip-card__btn" type="submit">Submit!</button>
+			<div id="error-otp" style="color: red;"></div>
 		</div>
 		</div>
 
@@ -240,9 +244,9 @@ export default class OTPComponent extends HTMLElement{
 		event.preventDefault();
 		let user = localStorage.getItem('username');
 		let pass = localStorage.getItem('pass');
-		// let pass = this.getAttribute('pass');
 		let otpValue = this.container.querySelector('.brutalist-input').value;
-
+		let error = this.container.querySelector('#error-otp');
+		error.innerHTML = '';
 		const formData = {
 			otp: otpValue,
 			username: user,
@@ -250,7 +254,7 @@ export default class OTPComponent extends HTMLElement{
 		};
 		const jsonString = JSON.stringify(formData);
 		try{
-			const response = await fetch('http://localhost:8000/users/verify', {
+			const response = await fetch('https://localhost:3042/users/verify/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -259,22 +263,26 @@ export default class OTPComponent extends HTMLElement{
             });
 			if (response.ok){
 				const responseData = await response.json();
-                console.log(responseData);
-                alert("OTP verified successfully");
-
                 const accessToken = responseData.access_token;
                 const refreshToken = responseData.refresh_token;
+				const user_img = responseData.avatar;
 				
+				if (user_img){
+					localStorage.setItem('user_img', user_img);
+				}else {
+					localStorage.setItem('user_img', 'images/userPlaceholderImg.webp')
+				}
 				localStorage.removeItem('pass');
                 document.cookie = `access_token=${accessToken}; path=/`;
                 document.cookie = `refresh_token=${refreshToken}; path=/`;
                 window.location.pathname = '/Profile';
 				handleRouteChange();
 			}else{
-				alert("OTP verification failed");
+				const errorData = await response.json();
+				error.innerHTML = "Invalid OTP";
+				
 			}
 		}catch(error){
-			console.error(error);
 		}
 	}
 }

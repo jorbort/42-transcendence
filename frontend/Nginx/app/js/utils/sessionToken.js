@@ -23,7 +23,7 @@ function refreshAccessToken() {
     return;
   }
 
-  return fetch('http://localhost:8000/refresh-token', {
+  return fetch('https://localhost:3042/refresh-token', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -43,7 +43,6 @@ function refreshAccessToken() {
     }
   })
   .catch(error => {
-    console.error('Error refreshing access token:', error);
     window.location.href = '/login';
   });
 }
