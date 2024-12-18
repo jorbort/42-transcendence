@@ -5,16 +5,12 @@ services:
       context: .
       dockerfile: frontend/Nginx/Dockerfile
     ports:
-      - "8080:8080"
-      - "3042:3042"
+      - "2080:2080"
     networks:
       - trascendence
     restart: always
     volumes:
       - frontend_data:/usr/share/nginx/html
-    depends_on:
-      - backend
-      - tournament
   tournament:
     depends_on:
       - postgres
@@ -23,8 +19,8 @@ services:
     image: tournament
     volumes:
       - tournament_data:/app
-    expose:
-      - "8001"
+    ports:
+      - "8001:8001"
     env_file:
       - .env
     networks:
@@ -39,8 +35,8 @@ services:
     image: backend
     volumes:
       - django_data:/app
-    expose:
-      - "8000"
+    ports:
+      - "8000:8000"
     env_file:
       - .env
     networks:
@@ -54,8 +50,8 @@ services:
     container_name: postgres
     env_file:
       - .env
-    expose:
-      - "5432"
+    ports:
+      - "5432:5432"
     networks:
       - trascendence
     volumes:

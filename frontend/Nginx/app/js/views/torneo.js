@@ -12,6 +12,7 @@ class torneo extends HTMLElement {
         this.SecondSelect = false;
         this.configsaved = false;
         this.qttplayers = 4;
+        console.log(this.app)
         this.app.innerHTML = /* html */`
         <style>
             .torneo {
@@ -61,10 +62,13 @@ class torneo extends HTMLElement {
         const shadow = this.attachShadow({ mode: 'open' });
 
         this.container = document.getElementById("torneo");
+        console.log(this.container)
     }
     connectedCallback(){
+        console.log("btnsave = ", localStorage.getItem("btnsave") == "false")
         if (localStorage.getItem("btnsave") == "false" || localStorage.getItem("btnsave") == undefined)
         {
+            console.log("AAAAAAAA")
             localStorage.setItem("btnsave", this.configsaved);
             this.createModalData(this.container);    
         }
@@ -169,6 +173,7 @@ class torneo extends HTMLElement {
         myModal.show();
     
         const handleResponse = (responseType, action) => {
+            console.log(`${responseType} respondido: ${action}`);
             this.checkSavebtn();
         };
     
@@ -260,6 +265,7 @@ class torneo extends HTMLElement {
         document.getElementById("btnSave").addEventListener('click', async () => {
             if (this.firstSelect && this.SecondSelect && this.lastSelect)
             {
+                // myModal.hide();
                 myModal.dispose()
                 document.getElementById('customModal').remove();
                 localStorage.setItem("addCustom", this.addCustom);
@@ -268,8 +274,30 @@ class torneo extends HTMLElement {
                 this.configsaved = true;
                 localStorage.setItem("btnsave", this.configsaved );
                 localStorage.setItem("qttplayers", this.qttplayers );
+
+                //Guardar variables localstoarge
             }
         });
+        // document.getElementById("btnCancel").addEventListener('click', async () => {
+        //     console.log("Cancel Seleccionado.");
+        //     this.addCustom = false;
+        //     this.addCustom1 = false;
+        //     this.addCustom2 = false;
+        //     // myModal.hide();
+        //     myModal.dispose()
+        //     document.getElementById('customModal').remove();
+        //     await this.startGame();
+        // });
+        // document.getElementById("btncruz").addEventListener('click', async () => {
+        //     console.log("Cruz Seleccionado.");
+        //     this.addCustom = false;
+        //     this.addCustom1 = false;
+        //     this.addCustom2 = false;
+        //     // myModal.hide();
+        //     myModal.dispose()
+        //     document.getElementById('customModal').remove();
+        //     await this.startGame();
+        // });
     }
 }
 

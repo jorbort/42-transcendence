@@ -6,7 +6,7 @@ from .models import PongUser, Friendship
 class FriendConsumer(AsyncWebsocketConsumer):
 	async def connect(self):
 		self.username = self.scope['url_route']['kwargs']['username']
-		self.group_name = f'friends_{self.username}'
+		self.group_name = f'friemds_{self.username}'
 
 		await self.channel_layer.group_add(
 			self.group_name,

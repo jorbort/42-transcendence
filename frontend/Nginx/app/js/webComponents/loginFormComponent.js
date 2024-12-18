@@ -232,13 +232,12 @@ export default class loginFormComponent extends HTMLElement{
 					<div class="flip-card__front">
 						<div class="title">Log in</div>
 						<form action="" id="loginForm" class="flip-card__form">
-							<div id="error-signIn" style="color: red;"></div>
 							<input type="name" id="username" placeholder="username" name="username" class="flip-card__input">
 							<input type="password" id="password" placeholder="Password" name="password" class="flip-card__input">
 							<button class="flip-card__btn">Lets go!</button>
 						</form>
-						<div class="flip-card__btn" id="intra-button" href="">	
-								<a href="https://localhost:3042/users/login_42">
+						<div class="flip-card__btn" id="intra-button" href="http://localhost:8000/users/login_42">	
+								<a href="http://localhost:8000/users/login_42">
 									Log in with
 									<svg version="1.1"id="Calque_1" sodipodi:docname="42_logo.svg" inkscape:version="0.48.2 r9819" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 -200 960 960"enable-background="new 0 -200 960 960" xml:space="preserve">
 										<polygon id="polygon5" points="32,412.6 362.1,412.6 362.1,578 526.8,578 526.8,279.1 197.3,279.1 526.8,-51.1 362.1,-51.1 32,279.1 "/>
@@ -252,7 +251,6 @@ export default class loginFormComponent extends HTMLElement{
 					<div class="flip-card__back">
 						<div class="title">Sign up</div>
 						<form action="" id="signUpForm" class="flip-card__form">
-							<div id="error-signUp" style="color: red;"></div>
 							<input type="name" placeholder="User Name" id="username" class="flip-card__input">
 							<input type="email" placeholder="Email" id="email" name="email" class="flip-card__input">
 							<input type="password" id="password" placeholder="Password" name="password" class="flip-card__input">
@@ -272,8 +270,9 @@ export default class loginFormComponent extends HTMLElement{
         const form = this.shadowRoot.getElementById('loginForm');
 
         if (form) {
-            form.addEventListener('submit', async (event) => {
+            form.addEventListener('submit', async function(event) {
                 event.preventDefault();
+                console.log('Sign in form submitted');
 
                 const username = form.querySelector('#username').value;
                 const password = form.querySelector('#password').value;
@@ -282,11 +281,10 @@ export default class loginFormComponent extends HTMLElement{
                     password: password,
                 };
                 const jsonString = JSON.stringify(formData);
+                console.log(jsonString);
 
-				const errorMessageElement = this.shadowRoot.getElementById('error-signIn');
-				errorMessageElement.textContent = '';
                 try {
-                    const response = await fetch('https://localhost:3042/users/login/', {
+                    const response = await fetch('http://localhost:8000/users/login', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -295,20 +293,25 @@ export default class loginFormComponent extends HTMLElement{
                     });
                     if (response.ok) {
                         const data = await response.json();
+                        console.log(data);
                         if (data.detail === 'Verification code sent successfully.') {
+                            console.log('Verification code sent successfully.');
                             localStorage.setItem('username', username);
 							localStorage.setItem('pass', password);
 							window.location.pathname = '/otpView';
-							handleRouteChange();		
+							handleRouteChange();
                         }
                     } else {
                         const errorData = await response.json();
-						errorMessageElement.textContent = 'Invalid username or password';    
+                        console.log('HTTP error:', response.status);
+						console.log('HTTP error:', errorData.detail);
                     }
                 } catch (error) {
+                    alert('Error:', error);
                 }
             });
         } else {
+            console.error('Signin form not found');
         }
     }
 	signup() {
@@ -316,8 +319,9 @@ export default class loginFormComponent extends HTMLElement{
         const signUpButton = this.shadowRoot.getElementById('sign_up');
 
         if (form) {
-            form.addEventListener('submit', async (event) =>{
+            form.addEventListener('submit', async function(event) {
                 event.preventDefault();
+                console.log('Sign form submitted');
 
                 let username = form.querySelector('#username').value;
                 const email = form.querySelector('#email').value;
@@ -330,12 +334,10 @@ export default class loginFormComponent extends HTMLElement{
                     password2: confirm_password
                 };
                 const jsonString = JSON.stringify(formData);
-                
-				const errorMessageElement = this.shadowRoot.getElementById('error-signUp');
-				errorMessageElement.textContent = '';
+                console.log(jsonString);
 
                 try {
-                    const response = await fetch('https://localhost:3042/users/create/', {
+                    const response = await fetch('http://localhost:8000/users/create', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -344,20 +346,25 @@ export default class loginFormComponent extends HTMLElement{
                     });
                     if(response.ok){
                         const data = await response.json();
+                        console.log(data);
+                        alert("User created successfully");
 						localStorage.setItem('username', username);
-						errorMessageElement.style.color = 'green';
-						errorMessageElement.textContent = 'User created successfully';
+						window.location.pathname = '/otpView';
+						handleRouteChange();
                     }
                     else{
                         const errorData = await response.json();
-						errorMessageElement.style.color = 'red';
-						errorMessageElement.textContent = 'Username or email already exists';
+                        const emailError = errorData.serializer_errors?.email?.[0];
+                        const usernameError = errorData.serializer_errors?.username?.[0];
+                        const errorMessage = emailError || usernameError || 'An error occurred';
+                        alert(`Error: ${errorMessage}`);
                     }
                 } catch (error) {
-                    
+                    console.error('Error:', error);
                 }
             });
         } else {
+            console.error('Signup form not found');
         }
     }
 	disconnectedCallback() {

@@ -40,39 +40,16 @@ class UpdateUserSerializer(serializers.ModelSerializer):
 			validated_data.pop('password')
 		return super().update(instance, validated_data)
 class MatcHistorySerializer(serializers.ModelSerializer):
-	player1_username = serializers.SerializerMethodField()
-	player2_username = serializers.SerializerMethodField()
-	winner_username = serializers.SerializerMethodField()
-
 	class Meta:
 		model = MatchHistory
-		fields = ['id', 'date', 'player1_score', 'player2_score', 'player1', 'player2', 'winner', 'tournament_id', 'player1_username', 'player2_username', 'winner_username']
-
-	def get_player1_username(self, obj):
-		return obj.player1.username
-
-	def get_player2_username(self, obj):
-		return obj.player2.username
-
-	def get_winner_username(self, obj):
-		return obj.winner.username
+		fields = '__all__'
 
 class FrienshipSerializer(serializers.ModelSerializer):
-	user1 = serializers.CharField(source='user1.username')
-	user2 = serializers.CharField(source='user2.username')
-
 	class Meta:
 		model = Friendship
-		fields = ['user1','user2']
-	def create(self, validated_data):
-		user1_username = validated_data.pop('user1')['username']
-		user2_username = validated_data.pop('user2')['username']
-		user1 = PongUser.objects.get(username=user1_username)
-		user2 = PongUser.objects.get(username=user2_username)
-		friendship = Friendship.objects.create(user1=user1, user2=user2)
-		return friendship
+		field = ['user1','user2']
 
 class AvatarUploadSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = PongUser
-		fields = ['alias']
+		fields = ['alias', 'avatar']

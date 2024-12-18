@@ -219,6 +219,7 @@ class PongGame extends HTMLElement {
         myModal.show();
     
         const handleResponse = (responseType, action) => {
+            console.log(`${responseType} respondido: ${action}`);
             this.checkSavebtn();
         };
     
@@ -310,23 +311,28 @@ class PongGame extends HTMLElement {
         document.getElementById("btnSave").addEventListener('click', async () => {
             if (this.firstSelect && this.SecondSelect && this.lastSelect)
             {
+                // myModal.hide();
                 myModal.dispose()
                 document.getElementById('customModal').remove();
                 await this.startGame();
             }
         });
         document.getElementById("btnCancel").addEventListener('click', async () => {
+            console.log("Cancel Seleccionado.");
             this.addCustom = false;
             this.addCustom1 = false;
             this.addCustom2 = false;
+            // myModal.hide();
             myModal.dispose()
             document.getElementById('customModal').remove();
             await this.startGame();
         });
         document.getElementById("btncruz").addEventListener('click', async () => {
+            console.log("Cruz Seleccionado.");
             this.addCustom = false;
             this.addCustom1 = false;
             this.addCustom2 = false;
+            // myModal.hide();
             myModal.dispose()
             document.getElementById('customModal').remove();
             await this.startGame();
@@ -337,6 +343,7 @@ class PongGame extends HTMLElement {
         return new Promise((resolve, reject) => {
             const loader = new THREE.FontLoader();
             loader.load('https://threejs.org/examples/fonts/helvetiker_bold.typeface.json', (font) => {
+                console.log("Font loaded successfully.");
                 this.loadfont = font;
                 const textMaterial = new THREE.MeshStandardMaterial({ color: 0xe67e80 });
                 this.textred = this.createText("Team Red: " + this.ptsred, new THREE.Vector3(-18, -5.5, 0), font, textMaterial);
@@ -350,10 +357,10 @@ class PongGame extends HTMLElement {
                 this.scene.add(this.textgreen);
                 this.scene.add(this.textyellow);
                 this.scene.add(this.sohard);
-                resolve(font);
+                resolve(font); // Resolvemos la promesa con la fuente
             }, undefined, (error) => {
                 console.error("Error loading font:", error);
-                reject(error);
+                reject(error); // Rechazamos la promesa en caso de error
             });
         });
     }
@@ -436,20 +443,25 @@ class PongGame extends HTMLElement {
         let center = new THREE.Vector3(0, 0, 0);
     
         this.points.forEach(point => {
-            center.add(point);
+            center.add(point); // Sumar cada punto al centro
         });
-        center.divideScalar(this.points.length);
+    
+        center.divideScalar(this.points.length); // Dividir entre el número total de puntos
     
         const geometry = new THREE.SphereGeometry(0.1, 8, 8);
         const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
         const marker = new THREE.Mesh(geometry, material);
+        // console.log(center)
         marker.position.copy(center)
+        // this.scene.add(marker);
 
         return center;
     }
 
     calculateDistance(point1, point2)
     {
+        // console.log("Distancia: " , point1.distanceTo(point2))
+        // console.log("Radio:", this.radio);
         return point1.distanceTo(point2);
     }
 
@@ -762,15 +774,17 @@ class PongGame extends HTMLElement {
         }
     }
 
-    checkPaddleCollision()
-    {
+    checkPaddleCollision() {
+        // Tolerancia para las colisiones (ancho de la pala)
         const paddleWidth = 0.3;
     
+        // Colisión con la pala horizontal (paddle3)
         if (this.ball.position.y >= this.paddle3.position.y - paddleWidth &&
             this.ball.position.y <= this.paddle3.position.y + paddleWidth &&
             this.ball.position.x >= this.paddle3.position.x - 1 &&
             this.ball.position.x <= this.paddle3.position.x + 1) {
             this.lastTouch = "Y";
+            // console.log(this.lastTouch);
             this.ballDireccionY *= -1;
         }
         else if (this.ball.position.y >= this.paddle1.position.y - paddleWidth &&
@@ -778,6 +792,7 @@ class PongGame extends HTMLElement {
             this.ball.position.x >= this.paddle1.position.x - 1 &&
             this.ball.position.x <= this.paddle1.position.x + 1) {
             this.lastTouch = "R";
+            // console.log(this.lastTouch);
             this.ball.position.x -= this.velocity.x * this.ballDireccionX;
             this.ball.position.y -= this.velocity.y * this.ballDireccionY;
             this.ballDireccionY *= -1;
@@ -785,12 +800,14 @@ class PongGame extends HTMLElement {
             const tmp = this.velocity.x;
             this.velocity.x = this.velocity.y;
             this.velocity.y = tmp;
+            // this.velocity.x += 0.02;
             }
         else if (this.ball.position.y >= this.paddle2.position.y - paddleWidth &&
             this.ball.position.y <= this.paddle2.position.y + paddleWidth &&
             this.ball.position.x >= this.paddle2.position.x - 1 &&
             this.ball.position.x <= this.paddle2.position.x + 1) {
             this.lastTouch = "G";
+            // console.log(this.lastTouch);
             this.ball.position.x -= this.velocity.x * this.ballDireccionX;
             this.ball.position.y -= this.velocity.y * this.ballDireccionY;
             this.ballDireccionY *= -1;
@@ -798,6 +815,7 @@ class PongGame extends HTMLElement {
             const tmp = this.velocity.x;
             this.velocity.x = this.velocity.y;
             this.velocity.y = tmp;
+            // this.velocity.x += 0.02;
         }
     }
 
@@ -877,14 +895,18 @@ class PongGame extends HTMLElement {
 
     customGame() {
         const proximityRange = 1.5;
+        // console.log(this.addCustom, this.addCustom1, this.addCustom2);
+        // console.log("X =", this.Custom2.position.x, "Y =",this.Custom2.position.y, "Xpelota =", this.ball.position.x, "Y =",this.ball.position.y);
         if (this.addCustom)
         {
             if (Math.abs(this.Custom.position.x - this.ball.position.x) <= proximityRange &&
                 Math.abs(this.Custom.position.y - this.ball.position.y) <= proximityRange)
             {
+                // Aumentar velocidad pelota
                 this.velocity.x += 0.005;
                 this.velocity.y += 0.005;
                 this.Custom.position.set(Math.floor(Math.random() * (4 - (-5) + 1)) + (-5), Math.floor(Math.random() * (5 - (-3) + 1)) + (-3), 0);
+                console.log("Aumento velocidad pelota");
             }
         }
         if (this.addCustom1)
@@ -892,9 +914,11 @@ class PongGame extends HTMLElement {
             if (Math.abs(this.Custom1.position.x - this.ball.position.x) <= proximityRange &&
                 Math.abs(this.Custom1.position.y - this.ball.position.y) <= proximityRange)
             {
+                // Disminuir velocidad de la pelota
                 this.velocity.x -= 0.005;
                 this.velocity.y -= 0.005;
                 this.Custom1.position.set(Math.floor(Math.random() * (4 - (-5) + 1)) + (-5), Math.floor(Math.random() * (5 - (-3) + 1)) + (-3), 0);
+                console.log("Disminuir velocidad pelota");
             }
         }
         if (this.addCustom2)
@@ -902,14 +926,79 @@ class PongGame extends HTMLElement {
             if (Math.abs(this.Custom2.position.x - this.ball.position.x) <= proximityRange &&
                 Math.abs(this.Custom2.position.y - this.ball.position.y) <= proximityRange)
             {
+                // Disminuir velocidad de palas
                 this.speed -= 0.003;
                 if (this.paddleSpeed < 0.03)
                     this.paddleSpeed = 0.03;
                 this.Custom2.position.set(Math.floor(Math.random() * (4 - (-5) + 1)) + (-5), Math.floor(Math.random() * (5 - (-3) + 1)) + (-3), 0);
+                console.log("Disminuir velocidad palas");
             }
         }
     }
 
+
+    //  async detectAndReflect() {
+    //     // Calcula la nueva posición de la pelota sin actualizarla aún
+    //     var nextPosition = new THREE.Vector3(
+    //         this.ball.position.x + this.velocity.x * this.ballDireccionX,
+    //         this.ball.position.y + this.velocity.y * this.ballDireccionY,
+    //         this.ball.position.z
+    //     );
+
+    //     if (this.calculateDistance(this.center, nextPosition) > this.radio + 2) {
+    //         await this.pauseGameAndShowCountdown();
+    //         return;
+    //     }
+
+    //     // Revisa colisión con cada borde
+    //     for (let edge of this.edges) {
+    //         const start = edge.start;
+    //         const end = edge.end;
+
+    //         const edgeVector = new THREE.Vector3().subVectors(end, start);
+    //         const edgeLength = edgeVector.length();
+
+    //         if (edgeLength === 0) continue; // Previene divisiones por cero
+
+    //         const toBall = new THREE.Vector3().subVectors(nextPosition, start);
+    //         const projection = edgeVector.clone().normalize().multiplyScalar(toBall.dot(edgeVector) / edgeLength);
+    //         const closestPoint = start.clone().add(projection);
+
+    //         // Verifica si el punto más cercano está dentro de la arista
+    //         const t = projection.length() / edgeLength;
+    //         if (t >= 0 && t <= 1) {
+    //             const distanceToEdge = nextPosition.distanceTo(closestPoint);
+
+    //             if (distanceToEdge <= 0.5) {
+    //                 const normal = new THREE.Vector3().subVectors(nextPosition, closestPoint);
+    //                 if (normal.length() === 0) continue; // Evita normalización de un vector nulo
+
+    //                 normal.normalize();
+
+    //                 // Refleja la dirección de la velocidad
+    //                 const velocityVector = new THREE.Vector3(
+    //                     this.velocity.x * this.ballDireccionX,
+    //                     this.velocity.y * this.ballDireccionY,
+    //                     0 // Asume 2D
+    //                 );
+
+    //                 const reflectedVelocity = velocityVector.reflect(normal);
+    //                 // nextPosition = new THREE.Vector3(
+    //                 //     this.ball.position.x - this.velocity.x * this.ballDireccionX,
+    //                 //     this.ball.position.y - this.velocity.y * this.ballDireccionY,
+    //                 //     this.ball.position.z
+    //                 // );
+    //                 this.ballDireccionX = reflectedVelocity.x > 0 ? 1 : -1;
+    //                 this.ballDireccionY = reflectedVelocity.y > 0 ? 1 : -1;
+
+    //                 return; // Evita múltiples colisiones en un solo frame
+    //             }
+    //         }
+    //     }
+
+    //     // Actualiza la posición de la pelota solo si no hay colisión
+    //     this.ball.position.copy(nextPosition);
+    // }
     async detectAndReflect() 
     {
        this.ball.position.x += this.velocity.x * this.ballDireccionX;
@@ -917,6 +1006,7 @@ class PongGame extends HTMLElement {
 
        if (this.calculateDistance(this.center, this.ball.position) > this.radio + 2)
        {
+           // console.log("Entras!")
            await this.pauseGameAndShowCountdown()
        }
        const ballPos = this.ball.position;
@@ -945,11 +1035,16 @@ class PongGame extends HTMLElement {
                const dir = new THREE.Vector3(this.ballDireccionX, this.ballDireccionY, 0);
                if (distanceToEdge <= 0.8) {
                    const normal = new THREE.Vector3().subVectors(ballPos, closestPoint).normalize();
+                   //    console.log(normal)
+                   // Refleja la velocidad sobre la normal
+                   //    this.dir.reflect(normal);
                    this.ball.position.x -= this.velocity.x * this.ballDireccionX;
                    this.ball.position.y -= this.velocity.y * this.ballDireccionY;
+
                    dir.reflect(normal);
                    this.ballDireccionX = dir.x;
                    this.ballDireccionY = dir.y;
+                //    console.log(this.ballDireccionX, this.ballDireccionY);
                    return;
                }
            }
@@ -986,6 +1081,7 @@ class PongGame extends HTMLElement {
                 if (distanceToEdge <= 0.2) {
                     const normal = new THREE.Vector3().subVectors(ballPos, closestPoint).normalize();
                         this.velocity.reflect(normal);
+                    // console.log(this.lastTouch)
                     this.reprint(this.lastTouch, "noreset", this.detectLineGoal(i));
                     if (this.pointsG != 3 && this.pointsR != 3 && this.pointsY != 3)
                         await this.pauseGameAndShowCountdown()
@@ -1021,7 +1117,8 @@ class PongGame extends HTMLElement {
     
     async pauseGameAndShowCountdown()
     {
-         this.gameStarted = false;
+        // console.log("CUANTAS VEZES ENTRAS");
+        this.gameStarted = false;
         this.ball.position.set(0, 2, 0);
         this.ballDireccionX = (Math.random() < 0.5 ? -1 : 1);
         this.ballDireccionY = (Math.random() < 0.5 ? -1 : 1);

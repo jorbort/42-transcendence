@@ -1,8 +1,6 @@
 import { handleRouteChange } from "../mainScript.js";
 import headerNavBar from '../webComponents/headerNavBar.js';
 import SideNavBar from  '../webComponents/sideNavBarComponent.js';
-import { getCookie } from '../webComponents/friendsListComponent.js';
-
 
 class PongGame extends HTMLElement {
     constructor() {
@@ -22,7 +20,6 @@ class PongGame extends HTMLElement {
         this.ball = null; // ocultar pelota
         this.countdownText = null;
         this.loadfont = null;
-        this.user_name = localStorage.getItem('username');
         this.playerText = null;
         this.IAText = null;
         this.gameStarted = false;
@@ -37,7 +34,6 @@ class PongGame extends HTMLElement {
         this.lastSelect = false;
         this.handleKeyDown = this.handleKeyDown.bind(this);
         this.handleKeyUp = this.handleKeyUp.bind(this);
-        this.handleKeyUpL = this.handleKeyUpL.bind(this);
         this.handleKeyDownL = this.handleKeyDownL.bind(this);
     }
 
@@ -57,7 +53,7 @@ class PongGame extends HTMLElement {
 
 z
 
-    newModal( goHome, tryAgain, btncruz, winnerMessage) {
+    newModal( goHome, tryAgain, btncruz) {
         const modalContainer = document.createElement('div');
         modalContainer.innerHTML = /* html */`
             <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalCenterTitle" data-bs-backdrop="static" aria-hidden="true">
@@ -69,7 +65,6 @@ z
                         </div>
                         <div class="modal-body d-flex flex-column justify-content-center align-items-center">
                             <p>!Game Over!</p>
-                            <p>${winnerMessage}</p>
                         </div>
                         <div class="modal-footer">
                             ${goHome}
@@ -85,27 +80,14 @@ z
         const   goHome = `<button id="Go-Home" type="button" class="btn btn-secondary">Go Home</button>`
         const   tryAgain = `<button id="try-again" type="button" class="btn btn-primary">Try Againg</button>`
         const   btncruzend = `<button id="btn-cruz" type="button" class="btn-close" aria-label="Close"></button>`
-    
-        // Determinar el ganador
-        const winners = [];
-        if (this.pointsPlayer >= 3) winners.push(this.user_name);
-        if (this.pointsIA >= 3) winners.push("localplayer");
-    
-        let winnerMessage;
-        if (winners.length === 0) {
-            winnerMessage = "No winners yet!";
-        } else if (winners.length === 1)
-            winnerMessage = `${winners[0]} wins!`;
-
-        const newModal = this.newModal(goHome, tryAgain, btncruzend, winnerMessage);
-            
+        const   newModal = this.newModal( goHome, tryAgain, btncruzend);
+        
         this.appendChild(newModal);
         const myModal = new bootstrap.Modal(document.getElementById('myModal'), {
             keyboard: false
         });
         myModal.show();
 
-        
         const btnTryAgain = document.getElementById("try-again");
         if (btnTryAgain) {
             btnTryAgain.addEventListener('click', () => {
@@ -178,8 +160,8 @@ z
         if (this.firstSelect && this.SecondSelect && this.lastSelect)
         {
             const btnSave = document.getElementById("btnSave");
-            btnSave.disabled = false;
-            btnSave.style.backgroundColor = "#007bff";
+            btnSave.disabled = false; // Habilita el botón
+            btnSave.style.backgroundColor = "#007bff"; // Cambia el color a azul (color por defecto de Bootstrap)
             btnSave.style.cursor = "pointer"; 
         }
     }
@@ -195,6 +177,7 @@ z
         myModal.show();
     
         const handleResponse = (responseType, action) => {
+            console.log(`${responseType} respondido: ${action}`);
             this.checkSavebtn();
         };
     
@@ -286,23 +269,28 @@ z
         document.getElementById("btnSave").addEventListener('click', async () => {
             if (this.firstSelect && this.SecondSelect && this.lastSelect)
             {
+                // myModal.hide();
                 myModal.dispose()
                 document.getElementById('customModal').remove();
                 await this.startGame();
             }
         });
         document.getElementById("btnCancel").addEventListener('click', async () => {
+            console.log("Cancel Seleccionado.");
             this.addCustom = false;
             this.addCustom1 = false;
             this.addCustom2 = false;
+            // myModal.hide();
             myModal.dispose()
             document.getElementById('customModal').remove();
             await this.startGame();
         });
         document.getElementById("btncruz").addEventListener('click', async () => {
+            console.log("Cruz Seleccionado.");
             this.addCustom = false;
             this.addCustom1 = false;
             this.addCustom2 = false;
+            // myModal.hide();
             myModal.dispose()
             document.getElementById('customModal').remove();
             await this.startGame();
@@ -313,10 +301,11 @@ z
         return new Promise((resolve, reject) => {
             const loader = new THREE.FontLoader();
             loader.load('https://threejs.org/examples/fonts/helvetiker_bold.typeface.json', (font) => {
+                console.log("Font loaded successfully.");
                 this.loadfont = font;
                 const textMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff });
-                this.playerText = this.createText(localStorage.getItem('username') + ":" + this.pointsPlayer, new THREE.Vector3(-15, 9.5, 0), font, textMaterial);
-                this.IAText = this.createText("localplayer: " + this.pointsIA, new THREE.Vector3(8, 9.5, 0), font, textMaterial);
+                this.playerText = this.createText("Player1: " + this.pointsPlayer, new THREE.Vector3(-15, 9.5, 0), font, textMaterial);
+                this.IAText = this.createText("Player2: " + this.pointsIA, new THREE.Vector3(8, 9.5, 0), font, textMaterial);
                 this.scene.add(this.playerText);
                 this.scene.add(this.IAText);
                 resolve(font); // Resolvemos la promesa con la fuente
@@ -554,7 +543,7 @@ z
 
     reprint(name,points)
     {
-        if (name == 'localplayer')
+        if (name == 'Player2')
         {
             this.IAText.geometry.dispose(); // Eliminamos anterior
             this.IAText.geometry = new THREE.TextGeometry(name + ": " + points, {
@@ -575,8 +564,8 @@ z
                     font: this.loadfont,
                     size: 0.8,
                     height: 0.1,
-                    curveSegments: 12,
-                    bevelEnabled: true,
+                    curveSegments: 12, // Suavidad
+                    bevelEnabled: true, // biselado para el borde
                     bevelThickness: 0.03,
                     bevelSize: 0.02,
                     bevelSegments: 5
@@ -586,14 +575,18 @@ z
 
     customGame() {
         const proximityRange = 1.5;
+        // console.log(this.addCustom, this.addCustom1, this.addCustom2);
+        // console.log("X =", this.Custom2.position.x, "Y =",this.Custom2.position.y, "Xpelota =", this.ball.position.x, "Y =",this.ball.position.y);
         if (this.addCustom)
         {
             if (Math.abs(this.Custom.position.x - this.ball.position.x) <= proximityRange &&
                 Math.abs(this.Custom.position.y - this.ball.position.y) <= proximityRange)
             {
+                // Aumentar velocidad pelota
                 this.ballSpeedX += 0.0015;
                 this.ballSpeedY += 0.0005;
                 this.Custom.position.set(Math.floor(Math.random() * (4 - (-5) + 1)) + (-5), Math.floor(Math.random() * (5 - (-3) + 1)) + (-3), 0);
+                console.log("Aumento velocidad pelota");
             }
         }
         if (this.addCustom1)
@@ -601,9 +594,11 @@ z
             if (Math.abs(this.Custom1.position.x - this.ball.position.x) <= proximityRange &&
                 Math.abs(this.Custom1.position.y - this.ball.position.y) <= proximityRange)
             {
+                // Disminuir velocidad de la pelota
                 this.ballSpeedX -= 0.015;
                 this.ballSpeedY -= 0.005;
                 this.Custom1.position.set(Math.floor(Math.random() * (4 - (-5) + 1)) + (-5), Math.floor(Math.random() * (5 - (-3) + 1)) + (-3), 0);
+                console.log("Disminuir velocidad pelota");
             }
         }
         if (this.addCustom2)
@@ -611,6 +606,7 @@ z
             if (Math.abs(this.Custom2.position.x - this.ball.position.x) <= proximityRange &&
                 Math.abs(this.Custom2.position.y - this.ball.position.y) <= proximityRange)
             {
+                // Disminuir velocidad de palas
                 if (this.ballDireccionX < 0)
                     this.aiSpeed -= 0.03;
                 else
@@ -620,6 +616,7 @@ z
                 if (this.paddleSpeed < 0.03)
                     this.paddleSpeed = 0.03;
                 this.Custom2.position.set(Math.floor(Math.random() * (4 - (-5) + 1)) + (-5), Math.floor(Math.random() * (5 - (-3) + 1)) + (-3), 0);
+                console.log("Disminuir velocidad palas");
             }
         }
     }
@@ -631,13 +628,13 @@ z
         this.ball.position.y += this.ballSpeedY * this.ballDireccionY;
         if (this.ball.position.x > 17) {
             this.pointsPlayer++;
-            this.reprint(localStorage.getItem('username'), this.pointsPlayer);
+            this.reprint("Player1", this.pointsPlayer);
             await this.pauseGameAndShowCountdown()
             this.resetBall();
         }
         if (this.ball.position.x < -17) {
             this.pointsIA++;
-            this.reprint("localplayer", this.pointsIA);
+            this.reprint("Player2", this.pointsIA);
             await this.pauseGameAndShowCountdown()
             this.resetBall();
         }
@@ -659,51 +656,15 @@ z
         }
     }
 
-    async insertresultinbd(username, localplayer, bool)
-    {
-        let token = getCookie('access_token');
-
-        const formData = new FormData();
-        formData.append('player1', username);
-        formData.append('player2', localplayer);
-        formData.append('player1_score', this.pointsPlayer);
-        formData.append('player2_score', this.pointsIA);
-        if (bool == 0){
-            formData.append('winner', username);
-        } else {
-            formData.append('winner', localplayer);
-        }
-
-        try {
-            const response = await fetch("https://localhost:3042/users/matches/register", {
-                method: "POST",
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                },
-                body: formData,
-            });
-
-            if (!response.ok) {
-                throw new Error('Error en la petición');
-            }
-
-            const result = await response.json();
-        } catch (error) {
-            console.error(error);
-        }
-    }
-
     checkIfLost()
     {
         if (this.pointsPlayer >= 3) {
-            this.insertresultinbd(localStorage.getItem('username'), "localplayer", 0);
-            this.createModal();
+            this.createModal()
             this.resetGame(this.ball);
             this.gameStarted = true;
             return true;
         }
         else if (this.pointsIA >= 3) {
-            this.insertresultinbd(localStorage.getItem('username'), "localplayer", 1);
             this.createModal()
             this.resetGame(this.ball);
             this.gameStarted = true;
@@ -714,6 +675,7 @@ z
     
     async pauseGameAndShowCountdown()
     {
+        // console.log("CUANTAS VEZES ENTRAS");
         this.gameStarted = false;
         this.ball.position.set(5, 2, 50);
         this.ballSpeedX = 0.15;
@@ -729,8 +691,8 @@ z
     {
         this.pointsIA = 0;
         this.pointsPlayer = 0;
-        this.reprint(localStorage.getItem('username'), this.pointsPlayer);
-        this.reprint("localplayer", this.pointsIA);
+        this.reprint("Player X", this.pointsPlayer);
+        this.reprint("IA", this.pointsIA);
         this.ball = null;
         this.gameStarted = false;
     }

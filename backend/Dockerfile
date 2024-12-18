@@ -10,6 +10,5 @@ RUN apt-get update && apt-get install -y netcat-openbsd
 COPY requirements.txt /app
 
 COPY . /app
-
 ENTRYPOINT ["/app/django_start.sh"]
 

@@ -101,6 +101,7 @@ z
         return new Promise((resolve, reject) => {
             const loader = new THREE.FontLoader();
             loader.load('https://threejs.org/examples/fonts/helvetiker_bold.typeface.json', (font) => {
+                console.log("Font loaded successfully.");
                 this.loadfont = font;
                 const textMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff });
                 this.playerText = this.createText(this.player1 + ": " + this.pointsPlayer, new THREE.Vector3(-15, 9.5, 0), font, textMaterial);
@@ -373,15 +374,18 @@ z
 
     customGame() {
         const proximityRange = 1.5;
-       
+        // console.log(this.addCustom, this.addCustom1, this.addCustom2);
+        // console.log("X =", this.Custom2.position.x, "Y =",this.Custom2.position.y, "Xpelota =", this.ball.position.x, "Y =",this.ball.position.y);
         if (localStorage.getItem("addCustom"))
         {
             if (Math.abs(this.Custom.position.x - this.ball.position.x) <= proximityRange &&
                 Math.abs(this.Custom.position.y - this.ball.position.y) <= proximityRange)
             {
+                // Aumentar velocidad pelota
                 this.ballSpeedX += 0.0015;
                 this.ballSpeedY += 0.0005;
                 this.Custom.position.set(Math.floor(Math.random() * (4 - (-5) + 1)) + (-5), Math.floor(Math.random() * (5 - (-3) + 1)) + (-3), 0);
+                console.log("Aumento velocidad pelota");
             }
         }
         if (localStorage.getItem("addCustom1"))
@@ -389,9 +393,11 @@ z
             if (Math.abs(this.Custom1.position.x - this.ball.position.x) <= proximityRange &&
                 Math.abs(this.Custom1.position.y - this.ball.position.y) <= proximityRange)
             {
+                // Disminuir velocidad de la pelota
                 this.ballSpeedX -= 0.015;
                 this.ballSpeedY -= 0.005;
                 this.Custom1.position.set(Math.floor(Math.random() * (4 - (-5) + 1)) + (-5), Math.floor(Math.random() * (5 - (-3) + 1)) + (-3), 0);
+                console.log("Disminuir velocidad pelota");
             }
         }
         if (localStorage.getItem("addCusto2"))
@@ -399,6 +405,7 @@ z
             if (Math.abs(this.Custom2.position.x - this.ball.position.x) <= proximityRange &&
                 Math.abs(this.Custom2.position.y - this.ball.position.y) <= proximityRange)
             {
+                // Disminuir velocidad de palas
                 if (this.ballDireccionX < 0)
                     this.aiSpeed -= 0.03;
                 else
@@ -408,6 +415,7 @@ z
                 if (this.paddleSpeed < 0.03)
                     this.paddleSpeed = 0.03;
                 this.Custom2.position.set(Math.floor(Math.random() * (4 - (-5) + 1)) + (-5), Math.floor(Math.random() * (5 - (-3) + 1)) + (-3), 0);
+                console.log("Disminuir velocidad palas");
             }
         }
     }
@@ -466,6 +474,7 @@ z
     
     async pauseGameAndShowCountdown()
     {
+        // console.log("CUANTAS VEZES ENTRAS");
         this.gameStarted = false;
         this.ball.position.set(5, 2, 50);
         this.ballSpeedX = 0.15;

@@ -1,5 +1,6 @@
 
 export function updateNav(){
+	console.log('UpdateNav function called');
 	const elements = document.querySelectorAll('.hidden');
 	elements.forEach(element => {
 		if (element.style.display === 'none' || element.style.display === '') {

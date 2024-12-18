@@ -3,8 +3,6 @@ import string
 import requests
 import logging
 from django.conf import settings
-from django.utils.crypto import get_random_string
-from django.contrib.auth.hashers import make_password
 from django.shortcuts import redirect
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
@@ -40,7 +38,6 @@ def callback_42(request):
 	state = request.data.get('state')
 	code = request.data.get('code')
 	
-	logging.info(f"State: {state} code: {code}")
 	token_url = "https://api.intra.42.fr/oauth/token"
 	token_data = {
 		'grant_type': 'authorization_code',
@@ -64,32 +61,19 @@ def callback_42(request):
 	headers = {'Authorization': f'Bearer {access_token}'}
 	user_info_response = requests.get(user_info_url, headers=headers)
 	user_info = user_info_response.json()
-	salt_string = get_random_string(length=16)
+	coalition_info_url = f'https://api.intra.42.fr/v2/users/{user_info['id']}/coalitions'
+	headers = {'Authorization': f'Bearer {access_token}'}
+	coalition_info_response = requests.get(coalition_info_url, headers=headers)
+	user_coalition_info = coalition_info_response.json()
 	user_data = {
 		'username': user_info['login'],
 		'email': user_info['email'],
-		'password' : make_password('vivapacman',salt=salt_string),
-		'password2' : make_password('vivapacman',salt=salt_string),
+		'password' : 'vivapacman',
+		'password2' : 'vivapacman',
 		'fortytwo_image_url' : user_info['image']['link']
     }
-	logging.info(user_data)
 	try:
 		user = PongUser.objects.get(username=user_info['login'])
-		django_login(request, user)
-		logging.info(user.fortytwo_image_url)
-		refresh_token = RefreshToken.for_user(user)
-		access_token = str(refresh_token.access_token)
-		ressponse = Response( {'access_token': access_token,
-			'refresh_token': str(refresh_token),
-			'username' : user_info['login'],
-			'user_img' : user.fortytwo_image_url,
-			'name' : user.first_name,
-			'last_name' : user.last_name,
-			'email' : user.email,
-		},
-		status=status.HTTP_200_OK
-		)
-		return ressponse
 	except PongUser.DoesNotExist:
 		serializer = UserSerializer(data=user_data)
 		if serializer.is_valid():
@@ -103,17 +87,18 @@ def callback_42(request):
 	refresh_token = RefreshToken.for_user(user)
 	access_token = str(refresh_token.access_token)
 
-	# Esto devuelve simpre lo que hay en la intra por lo tanto no se muestran los 
-	# cambios guardados en la base de datos en caso de hacer log in con intra
 	response = Response({'access_token': access_token,
 		'refresh_token': str(refresh_token),
 		'user_img' : user_info['image']['link'],
 		'username' : user_info['login'],
 		'name' : user_info['first_name'],
 		'last_name' : user_info['last_name'],
-		'email' : user_info['email'],
+		'mail' : user_info['email'],
 		},
 		status=status.HTTP_200_OK)
 	response.set_cookie('access_token', access_token)
 	response.set_cookie('refresh_token', str(refresh_token))
 	return response
+
+	# frontend_url = f"http://localhost:80/profile?access_token={access_token}&refresh_token={str(refresh_token)}"
+	# return redirect(frontend_url)
