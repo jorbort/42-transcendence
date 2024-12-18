@@ -40,6 +40,7 @@ def callback_42(request):
 	state = request.data.get('state')
 	code = request.data.get('code')
 	
+	logging.info(f"State: {state} code: {code}")
 	token_url = "https://api.intra.42.fr/oauth/token"
 	token_data = {
 		'grant_type': 'authorization_code',
@@ -66,11 +67,12 @@ def callback_42(request):
 	salt_string = get_random_string(length=16)
 	user_data = {
 		'username': user_info['login'],
-		'mail': user_info['email'],
+		'email': user_info['email'],
 		'password' : make_password('vivapacman',salt=salt_string),
 		'password2' : make_password('vivapacman',salt=salt_string),
 		'fortytwo_image_url' : user_info['image']['link']
     }
+	logging.info(user_data)
 	try:
 		user = PongUser.objects.get(username=user_info['login'])
 		django_login(request, user)
@@ -83,6 +85,7 @@ def callback_42(request):
 			'user_img' : user.fortytwo_image_url,
 			'name' : user.first_name,
 			'last_name' : user.last_name,
+			'email' : user.email,
 		},
 		status=status.HTTP_200_OK
 		)
@@ -108,7 +111,7 @@ def callback_42(request):
 		'username' : user_info['login'],
 		'name' : user_info['first_name'],
 		'last_name' : user_info['last_name'],
-		'mail' : user_info['email'],
+		'email' : user_info['email'],
 		},
 		status=status.HTTP_200_OK)
 	response.set_cookie('access_token', access_token)
