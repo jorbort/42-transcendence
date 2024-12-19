@@ -1,6 +1,6 @@
 FROM python:3.12-bookworm
 
-EXPOSE 8000
+EXPOSE 8001
 
 WORKDIR /app
 

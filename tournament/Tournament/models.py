@@ -33,7 +33,7 @@ class tournament(models.Model):
 		return self.name
 	class Meta:
 		managed=True
-		db_table='users_tournament'
+		db_table='Tournament'
 
 class MatchHistory(models.Model):
 	player1=models.ForeignKey(PongUser, related_name='match_as_player1', on_delete=models.CASCADE,db_column='player1_name' )

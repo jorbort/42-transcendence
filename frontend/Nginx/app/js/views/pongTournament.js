@@ -32,7 +32,6 @@ class PongGameTournament extends HTMLElement {
         window.addEventListener('keydown', this.handleKeyDownL.bind(this));
         window.addEventListener('keyup', this.handleKeyUpL.bind(this));
         return await this.startGame();
-
     }
 
     disconnectedCallback() {
