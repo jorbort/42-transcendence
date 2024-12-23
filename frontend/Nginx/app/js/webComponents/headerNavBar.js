@@ -1,3 +1,4 @@
+import { userStatusService } from "./UserStatusService.js";
 
 export default class headerNavBar extends HTMLElement{
 	constructor(){
@@ -358,6 +359,7 @@ export default class headerNavBar extends HTMLElement{
 				document.cookie = `${cookie}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.intra.42.fr`;
 				document.cookie = `${cookie}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=localhost`;
 			});
+			userStatusService.disconnect();
 			window.location.href = '/';
 		});
 	}

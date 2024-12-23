@@ -82,7 +82,6 @@ export function signup(){
 			}
 		});
 	} else {
-		console.error('Signin form not found');
 	}
 
 	function showSpinner() {

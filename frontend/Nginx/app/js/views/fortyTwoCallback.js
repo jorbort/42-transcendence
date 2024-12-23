@@ -1,6 +1,6 @@
-import { updateNav } from '../utils/updateNav.js';
+
 import { handleRouteChange } from '../mainScript.js';
-import {LoaderComponent} from '../webComponents/loaderComponent.js';
+import { userStatusService } from "../webComponents/UserStatusService.js";
 
 export function fortyTwoCallback(){
 	const urlParams = new URLSearchParams(window.location.search);

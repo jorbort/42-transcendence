@@ -253,9 +253,9 @@ export default class loginFormComponent extends HTMLElement{
 						<div class="title">Sign up</div>
 						<form action="" id="signUpForm" class="flip-card__form">
 							<div id="error-signUp" style="color: red;"></div>
-							<input type="name" placeholder="User Name" id="username" class="flip-card__input">
+							<input type="name" placeholder="User Name" id="name" class="flip-card__input">
 							<input type="email" placeholder="Email" id="email" name="email" class="flip-card__input">
-							<input type="password" id="password" placeholder="Password" name="password" class="flip-card__input">
+							<input type="password" id="pass" placeholder="Password" name="password" class="flip-card__input">
 							<input type="password" id="confirm_password" placeholder="Repeat Password" name="password2" class="flip-card__input">
 							<button class="flip-card__btn">Confirm!</button>
 						</form>
@@ -319,9 +319,9 @@ export default class loginFormComponent extends HTMLElement{
             form.addEventListener('submit', async (event) =>{
                 event.preventDefault();
 
-                let username = form.querySelector('#username').value;
+                let username = form.querySelector('#name').value;
                 const email = form.querySelector('#email').value;
-                const password = form.querySelector('#password').value;
+                const password = form.querySelector('#pass').value;
                 const confirm_password = form.querySelector('#confirm_password').value;
                 const formData = {
                     username: username,

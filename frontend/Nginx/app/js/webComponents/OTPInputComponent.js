@@ -1,4 +1,5 @@
 import {handleRouteChange}  from '../mainScript.js';
+import { userStatusService } from "./UserStatusService.js";
 
 export default class OTPComponent extends HTMLElement{
 	constructor(){

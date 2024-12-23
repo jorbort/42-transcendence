@@ -2,6 +2,7 @@ import {createUser, signup} from './views/createUser.js';
 import {loginView} from './views/loginView.js';
 import homePage from './views/homeProfile.js';
 import {LoaderComponent} from './webComponents/loaderComponent.js';
+import {userStatusService} from './webComponents/UserStatusService.js';
 
 
 import {otpView} from './views/otpView.js';
@@ -40,6 +41,7 @@ export function handleRouteChange() {
 	if (accessToken){
 		switch (path) {
 			case '/Profile':
+				userStatusService.connect(localStorage.getItem('username'));
 				view = homePage();
 				break;
 			case '/localgame1vsIA':

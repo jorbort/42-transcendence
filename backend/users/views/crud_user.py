@@ -8,7 +8,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework import status
 from users.models import PongUser , Friendship
-from users.serializer import UserSerializer, FrienshipSerializer, AvatarUploadSerializer, UpdateUserSerializer
+from users.serializer import UserSerializer,FriendshipSerializer , AvatarUploadSerializer, UpdateUserSerializer
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -114,7 +114,7 @@ def add_friend(request):
 		'user1': current_user.username,
 		'user2': friend_user.username
 	}
-	serializer = FrienshipSerializer(data=data)
+	serializer = FriendshipSerializer(data=data)
 	if serializer.is_valid():
 		serializer.save()
 		return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -132,5 +132,5 @@ def get_friends(request):
         return Response({'error': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
 
     friendships = Friendship.objects.filter(user1=user) | Friendship.objects.filter(user2=user)
-    serializer = FrienshipSerializer(friendships, many=True)
+    serializer = FriendshipSerializer(friendships, many=True)
     return Response(serializer.data)

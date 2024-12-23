@@ -57,13 +57,25 @@ class MatcHistorySerializer(serializers.ModelSerializer):
 	def get_winner_username(self, obj):
 		return obj.winner.username
 
-class FrienshipSerializer(serializers.ModelSerializer):
+class FriendshipSerializer(serializers.ModelSerializer):
 	user1 = serializers.CharField(source='user1.username')
 	user2 = serializers.CharField(source='user2.username')
+	user1_log_state = serializers.SerializerMethodField()
+	user2_log_state = serializers.SerializerMethodField()
 
 	class Meta:
 		model = Friendship
-		fields = ['user1','user2']
+		fields = ['user1', 'user2', 'user1_log_state', 'user2_log_state']
+
+	def get_user1_log_state(self, obj):
+		return self.get_log_state(obj.user1)
+
+	def get_user2_log_state(self, obj):
+		return self.get_log_state(obj.user2)
+
+	def get_log_state(self, user):
+		return 'online' if user.online_status else 'offline'
+
 	def create(self, validated_data):
 		user1_username = validated_data.pop('user1')['username']
 		user2_username = validated_data.pop('user2')['username']

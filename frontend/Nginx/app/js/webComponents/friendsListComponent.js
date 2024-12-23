@@ -1,8 +1,10 @@
+import { userStatusService } from "./UserStatusService.js";
 class friendsList extends HTMLElement{
 	constructor(){
 		super();
 		let shadow = this.attachShadow({mode: 'open'});
 		let style = document.createElement('style');
+		this.handleStatusUpdate = this.handleStatusUpdate.bind(this);
 		
 		style.textContent = /*css*/`
 				.active{
@@ -198,7 +200,7 @@ class friendsList extends HTMLElement{
 		});
 	}
 	async connectedCallback(){
-		this.connectWebSocket();
+		userStatusService.addListener(this.handleStatusUpdate);
 		this.fetchFriends();
 
 		this.addButton.addEventListener('click', () => {
@@ -217,18 +219,9 @@ class friendsList extends HTMLElement{
 
 	}
 
-	connectWebSocket() {
-        const username = localStorage.getItem('username');
-        this.socket = new WebSocket(`wss://localhost:3042/ws/friends/${username}/`);
-
-        this.socket.onmessage = (event) => {
-            const data = JSON.parse(event.data);
-            this.updateFriendStatus(data.message);
-        };
-
-        this.socket.onclose = (event) => {
-        };
-    }
+	handleStatusUpdate(message) {
+		this.updateFriendStatus(message)
+	}
 
     updateFriendStatus(message) {
         const [username, status] = message.split(' is ');
@@ -277,7 +270,8 @@ class friendsList extends HTMLElement{
 				let logstatus = document.createElement('div');
 				friendDiv.setAttribute('data-username', friend.user1 === localStorage.getItem('username') ? friend.user2 : friend.user1);
 				logstatus.id = 'logstatus';
-				logstatus.className = 'inactive';
+				const logstate = friend.user1 === localStorage.getItem('username') ? friend.user2_log_state : friend.user1_log_state;
+				logstatus.className = logstate === 'online' ? 'active' : 'inactive';
 				friendDiv.textContent = friend.user1 === localStorage.getItem('username') ? friend.user2 : friend.user1; 
 				friendDiv.appendChild(logstatus);
 				this.container.appendChild(friendDiv);
@@ -286,9 +280,7 @@ class friendsList extends HTMLElement{
 
 	}
 	disconectedCallback(){
-		if (this.socket){
-			this.socket.close();
-		}
+		userStatusService.removeListener(this.handleStatusUpdate);
 	}
 }
 
