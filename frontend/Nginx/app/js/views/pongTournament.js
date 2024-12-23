@@ -25,11 +25,7 @@ class PongGameTournament extends HTMLElement {
         this.onGameEnd = null;
         this.gameStarted = false;
         this.IA = false;
-    }
-   
-
-    
-    
+    }  
     async connectedCallback() {
         window.addEventListener('keydown', this.handleKeyDown.bind(this));
         window.addEventListener('keyup', this.handleKeyUp.bind(this));
@@ -58,7 +54,6 @@ class PongGameTournament extends HTMLElement {
         this.ball.position.set(0, 2, 0);
         this.camera.position.set(0, 1, 20);
         this.scene.add(this.ball);
-
         const CustomGeometry = new THREE.ConeGeometry(0.5, 1, 16);
         const CustomMaterial = new THREE.MeshStandardMaterial({ color: 0xFFC0CB, metalness: 0.5, roughness: 0.5 });
         this.Custom = new THREE.Mesh(CustomGeometry, CustomMaterial);
@@ -66,7 +61,6 @@ class PongGameTournament extends HTMLElement {
         this.camera.position.set(0, 1, 20);
         if (this.addCustom)
             this.scene.add(this.Custom);
-
         const Custom1Geometry = new THREE.IcosahedronGeometry(0.5);
         const Custom1Material = new THREE.MeshStandardMaterial({ color: 0x00FF00, metalness: 0.5, roughness: 0.5 });
         this.Custom1 = new THREE.Mesh(Custom1Geometry, Custom1Material);
@@ -74,7 +68,6 @@ class PongGameTournament extends HTMLElement {
         this.camera.position.set(0, 1, 20);
         if (this.addCustom1)
             this.scene.add(this.Custom1);
-
         const Custom2Geometry = new THREE.TorusKnotGeometry(0.4, 0.12, 47, 7);
         const Custom2Material = new THREE.MeshStandardMaterial({ color: 0x00FFFF, metalness: 0.5, roughness: 0.5 });
         this.Custom2 = new THREE.Mesh(Custom2Geometry, Custom2Material);
@@ -82,7 +75,6 @@ class PongGameTournament extends HTMLElement {
         this.camera.position.set(0, 1, 20);
         if (this.addCustom2)
             this.scene.add(this.Custom2);
-
         const paddleGeometry = new THREE.BoxGeometry(0.4, 2, 0.1);
         const paddleMaterial = new THREE.MeshStandardMaterial({ color: 0xff0000 });
         this.paddleLeft = new THREE.Mesh(paddleGeometry, paddleMaterial);
@@ -103,7 +95,6 @@ class PongGameTournament extends HTMLElement {
             new THREE.Vector3(13.5, -4, 0),
             new THREE.Vector3(-15, -4, 0)
         ];
-
         const geometry = new THREE.BufferGeometry().setFromPoints(points);
         const border = new THREE.LineSegments(geometry, borderMaterial);
         this.scene.add(border);
@@ -236,26 +227,21 @@ class PongGameTournament extends HTMLElement {
         } else if (event.key === "ArrowDown")
             this.movePaddleRight = -1;
     }
-
     handleKeyUp(event) {
         if (event.key === "ArrowUp" || event.key === "ArrowDown")
             this.movePaddleRight = 0;
     }
-
     handleKeyDownL(event) {
         if (event.key === 'w' || event.key === 'W') {
             this.movePaddleLeft = 1;
         } else if (event.key === 's' || event.key === 'S')
             this.movePaddleLeft = -1;
     }
-
     handleKeyUpL(event) {
         if (event.key === 'w' || event.key === 's')
             this.movePaddleLeft = 0;
     }
-
-    checkPaddleCollision() {
-        // Detectar colisión con el paddle izquierdo
+    checkPaddleCollision() {// Detectar colisión con el paddle izquierdo
         if (this.ball.position.x <= this.paddleLeft.position.x + 0.2 &&
             this.ball.position.x > this.paddleLeft.position.x && // Asegurarse de que la pelota no esté detrás del paddle
             this.ball.position.y < this.paddleLeft.position.y + 1 &&
@@ -263,8 +249,7 @@ class PongGameTournament extends HTMLElement {
             this.ballDireccionX *= -1;
             this.ballSpeedX += 0.009;
             this.ballSpeedY += 0.0009;
-        }
-        // Detectar colisión con el paddle derecho
+        } // Detectar colisión con el paddle derecho
         if (this.ball.position.x >= this.paddleRight.position.x - 0.2 &&
             this.ball.position.x < this.paddleRight.position.x && // Asegurarse de que la pelota no esté detrás del paddle
             this.ball.position.y < this.paddleRight.position.y + 1 &&
@@ -274,8 +259,6 @@ class PongGameTournament extends HTMLElement {
             this.ballSpeedY += 0.0009;
         }
     }
-
-
     resetBall() {
         this.ball.position.set(0, 2, 0);
         this.ballDireccionX = (Math.random() < 0.5 ? -1 : 1);
@@ -285,7 +268,6 @@ class PongGameTournament extends HTMLElement {
         this.aiSpeed = 0.16;
         this.paddleSpeed = 0.16
     }
-
     reprint(name, points) {
         const playerMaterial1 = new THREE.MeshStandardMaterial({ color: 0xff0000 }); // Rojo para jugador 1
         const playerMaterial2 = new THREE.MeshStandardMaterial({ color: 0x0000FF }); // Azul para jugador 2
@@ -319,7 +301,6 @@ class PongGameTournament extends HTMLElement {
             this.playerText.material = playerMaterial1; // Aplicamos el material rojo
         }
     }
-
     customGame() {
         const proximityRange = 1.5;
         if (this.addCustom) {
@@ -353,7 +334,6 @@ class PongGameTournament extends HTMLElement {
             }
         }
     }
-
     async moveBall() {
         this.ball.position.x += this.ballSpeedX * this.ballDireccionX;
         this.ball.position.y += this.ballSpeedY * this.ballDireccionY;
@@ -372,7 +352,6 @@ class PongGameTournament extends HTMLElement {
         if (this.ball.position.y > 8 || this.ball.position.y < -3.8)
             this.ballDireccionY *= -1;
     }
-
     movePaddles()
     {
         if (this.movePaddleLeft === 1 && this.targetPaddleLeftY < 8) {
@@ -385,7 +364,6 @@ class PongGameTournament extends HTMLElement {
             this.targetPaddleRightY -= this.paddleSpeed;
         }
     }
-
     // Verificar si alguien perdió
     checkIfLost() {
         if (this.pointsPlayer >= 3) {
@@ -410,7 +388,7 @@ class PongGameTournament extends HTMLElement {
     }
 }
 customElements.define('pong-tournament', PongGameTournament);
-export default function renderPonTournament(addCustom, player1, player2, onGameEnd) {
+export default function renderPonTournament(addCustom, addCustom1, addCustom2, player1, player2, onGameEnd) {
     const element = document.createElement('pong-tournament');
     element.player1 = player1;
     element.player2 = player2;
@@ -422,11 +400,8 @@ export default function renderPonTournament(addCustom, player1, player2, onGameE
         element.player2 = player1;
     }
     element.onGameEnd = onGameEnd;
-    if (addCustom > 0)
-        element.addCustom = true;
-    if (addCustom > 1)
-        element.addCustom1 = true;
-    if (addCustom > 2)
-        element.addCustom2 = true;
+        element.addCustom = addCustom;
+        element.addCustom1 = addCustom1;
+        element.addCustom2 = addCustom2;
     return element;
 }

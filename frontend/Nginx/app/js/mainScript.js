@@ -81,6 +81,9 @@ export function handleRouteChange() {
 			case '/Signup':
 				view = createUser();
 				break;
+			case '/torneo':
+				view = renderTournamentApp();
+				break;
 			default:
 				view = NotFound404();
 		}

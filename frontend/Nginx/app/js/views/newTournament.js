@@ -9,7 +9,9 @@ class TournamentView extends HTMLElement {
         this.tournamentData = { name: '', date: new Date().toISOString().split('.')[0], players: [], rounds: [], winner: null, };
         this.currentMatch = null;
         this.currentRoundIndex = 0;
-        this.addCustom = 0;
+        this.addCustom = false;
+        this.addCustom1 = false;
+        this.addCustom2 = false;
         this.configsaved = false;
         this.qttplayers = 4;
         this.IAplayers = 1;
@@ -101,10 +103,9 @@ class TournamentView extends HTMLElement {
                     ...Array.from({ length: realPlayersCount }, (_, i) => ({ type: 'REAL', name: `GAMER${i + 1}` })),
                     ...Array.from({ length: aiPlayersCount }, (_, i) => ({ type: 'AI', name: `IA${i + 1}` }))
                 ];
-                console.log(this.tournamentData.players);
-                if (formContainer.querySelector('#chkSpeed').checked) this.addCustom++;
-                if (formContainer.querySelector('#chkSize').checked) this.addCustom++;
-                if (formContainer.querySelector('#chkDecrease').checked) this.addCustom++;
+                if (formContainer.querySelector('#chkSpeed').checked) this.addCustom=true;
+                if (formContainer.querySelector('#chkSize').checked) this.addCustom1=true;
+                if (formContainer.querySelector('#chkDecrease').checked) this.addCustom2=true;
                 container.removeChild(formContainer);// Ocultar el formulario y mostrar la vista de edición de jugadores
                 this.renderEditPlayersView();
             } else
@@ -510,7 +511,6 @@ class TournamentView extends HTMLElement {
                     }))),
                 winner: this.tournamentData.winner.name // Nombre del ganador del torneo
             };
-            console.log('Payload enviado:', payload);
             const response = await fetch('https://localhost:3042/api/tournaments/', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload), });
             if (!response.ok) {
                 console.error('Error al guardar el ganador:', response.statusText);
@@ -567,11 +567,11 @@ class TournamentView extends HTMLElement {
             return onGameEnd(winner, player1Score, player2Score);
         }
         else if (player2.type === 'AI') {
-            pongGame = renderPonTournament(this.addCustom, player2, player1, (winner, player1Score, player2Score) => {
+            pongGame = renderPonTournament(this.addCustom, this.addCustom1, this.addCustom2, player2, player1, (winner, player1Score, player2Score) => {
                 onGameEnd(winner, player1Score, player2Score);
             });
         } else {
-            pongGame = renderPonTournament(this.addCustom, player1, player2, (winner, player1Score, player2Score) => { // Callback al terminar el juego
+            pongGame = renderPonTournament(this.addCustom, this.addCustom1, this.addCustom2, player1, player2, (winner, player1Score, player2Score) => { // Callback al terminar el juego
                 onGameEnd(winner, player1Score, player2Score);
             });
         }
