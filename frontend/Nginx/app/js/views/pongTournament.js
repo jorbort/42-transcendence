@@ -157,7 +157,7 @@ class PongGameTournament extends HTMLElement {
             await this.moveBall();
             if (this.IA)
                 this.IntervalIA = setInterval(this.moveAI(this), 1000, this);
-            this.movaPaddles();
+            this.movePaddles();
             this.checkPaddleCollision();
             this.customGame();
             this.paddleLeft.position.y = THREE.MathUtils.clamp(this.targetPaddleLeftY, -3, 7);
@@ -372,18 +372,8 @@ class PongGameTournament extends HTMLElement {
         if (this.ball.position.y > 8 || this.ball.position.y < -3.8)
             this.ballDireccionY *= -1;
     }
-    // movaPaddles() {
-    //     if (this.movePaddleLeft === 1) {
-    //         this.targetPaddleLeftY += this.paddleSpeed;
-    //     } else if (this.movePaddleLeft === -1)
-    //         this.targetPaddleLeftY -= this.paddleSpeed;
-    //     if (this.movePaddleRight === 1) {
-    //         this.targetPaddleRightY += this.paddleSpeed;
-    //     } else if (this.movePaddleRight === -1)
-    //         this.targetPaddleRightY -= this.paddleSpeed;
-    // }
 
-    movaPaddles()
+    movePaddles()
     {
         if (this.movePaddleLeft === 1 && this.targetPaddleLeftY < 8) {
             this.targetPaddleLeftY += this.aiSpeed;
