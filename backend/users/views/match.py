@@ -32,6 +32,7 @@ def record_match(request):
 		winner_username = request.data.get('winner')
 		tournament_id = request.data.get('tournament_id')
 
+		logging.info(f"{player1_username}, {player2_username}, {winner_username}")
 		try:
 			player1 = PongUser.objects.get(username=player1_username)
 			player2 = PongUser.objects.get(username=player2_username)

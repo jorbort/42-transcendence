@@ -1,11 +1,11 @@
-import {createUser, signup} from './views/createUser.js';
-import {loginView} from './views/loginView.js';
+import { createUser, signup } from './views/createUser.js';
+import { loginView } from './views/loginView.js';
 import homePage from './views/homeProfile.js';
 import {LoaderComponent} from './webComponents/loaderComponent.js';
 import {userStatusService} from './webComponents/UserStatusService.js';
 
 
-import {otpView} from './views/otpView.js';
+import { otpView } from './views/otpView.js';
 
 import tableView from './views/highScores.js';
 import renderPongGameIA from './views/pongIA.js';
@@ -16,7 +16,7 @@ import renderPongGameName from './views/pongNamePlayers.js';
 import rendertorneo from './views/torneo.js';
 import configProfile from './views/configProfile.js';
 import NotFound404 from './views/404.js';
-
+import renderTournamentApp from './views/newTournament.js';
 
 
 let accessToken = 0;
@@ -27,7 +27,7 @@ function getCookie(name) {
 	if (parts.length === 2) return parts.pop().split(';').shift();
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
 	accessToken = getCookie('access_token');
 });
 
@@ -37,8 +37,8 @@ export function handleRouteChange() {
 	if (path === '/') {
 		path = '/login';
 	}
-  
-	if (accessToken){
+
+	if (accessToken) {
 		switch (path) {
 			case '/Profile':
 				userStatusService.connect(localStorage.getItem('username'));
@@ -48,13 +48,13 @@ export function handleRouteChange() {
 				view = renderPongGameIA();
 				break;
 			case '/localgame1vs1':
-					view =  renderPongGame();
+				view = renderPongGame();
 				break;
 			case '/localgameMulti':
 				view = renderPongGameMulti();
 				break;
 			case '/torneo':
-				view = rendertorneo();
+				view = renderTournamentApp();
 				break;
 			case '/login':
 				view = loginView();
@@ -64,11 +64,11 @@ export function handleRouteChange() {
 				break;
 			case '/highScores':
 				view = tableView();
-				break;			
+				break;
 			default:
 				view = NotFound404();
 		}
-	}else{
+	} else {
 		switch (path) {
 			case '/login':
 				view = loginView();
@@ -82,6 +82,9 @@ export function handleRouteChange() {
 				break;
 			case '/Signup':
 				view = createUser();
+				break;
+			case '/torneo':
+				view = renderTournamentApp();
 				break;
 			default:
 				view = NotFound404();
@@ -103,7 +106,7 @@ function handleEventListeners(path) {
 }
 
 document.querySelectorAll('.route').forEach(link => {
-	link.addEventListener('click', function(e) {
+	link.addEventListener('click', function (e) {
 		e.preventDefault();
 		history.pushState(null, '', this.href);
 		handleRouteChange();
