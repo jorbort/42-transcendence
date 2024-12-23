@@ -3,7 +3,7 @@ import os
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-s+c6@9ra%surq@)85i%lgvx@f*k$kz-vk1y_4wqeqc^++x0fgs'
 DEBUG = True
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'https://localhost:3042']
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -30,7 +30,13 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'tournament.urls'
-CORS_ALLOW_ALL_ORIGINS = True
+
+# CORS_ALLOW_ALL_ORIGINS = True  # Permitir todas las conexiones
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3042",  # Replace with your frontend's URL
+    "http://127.0.0.1:3042",
+]
+CORS_ALLOW_CREDENTIALS = True  # Permitir credenciales (si las necesitas)
 CORS_ALLOW_METHODS = [
     "GET",
     "POST",
@@ -120,3 +126,7 @@ LOGGING = {
         'level': 'DEBUG',
     },
 }
+# Security settings for HTTPS
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+CSRF_COOKIE_SECURE = True
+SECURE_SSL_REDIRECT = True

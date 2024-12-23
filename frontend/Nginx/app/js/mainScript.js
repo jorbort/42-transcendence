@@ -11,10 +11,11 @@ import renderPongGameIA from './views/pongIA.js';
 import renderPongGame from './views/pong.js';
 import renderPongGameMulti from './views/pongMulti.js';
 import { fortyTwoCallback } from './views/fortyTwoCallback.js';
+import renderPongGameName from './views/pongNamePlayers.js';
+import rendertorneo from './views/torneo.js';
 import configProfile from './views/configProfile.js';
 import NotFound404 from './views/404.js';
 import renderTournamentApp from './views/newTournament.js';
-
 
 
 let accessToken = 0;
@@ -77,11 +78,11 @@ export function handleRouteChange() {
 				view = /*html*/`<loader-component></loader-component>`;
 				fortyTwoCallback();
 				break;
-			case '/torneo':
-				view = renderTournamentApp();
-				break;
 			case '/Signup':
 				view = createUser();
+				break;
+			case '/torneo':
+				view = renderTournamentApp();
 				break;
 			default:
 				view = NotFound404();

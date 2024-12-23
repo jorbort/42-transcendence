@@ -22,6 +22,7 @@ class TournamentSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         rounds_data = validated_data.pop('rounds', [])
         players = validated_data.pop('players', [])
+
         # Crear el torneo
         tournament_1 = tournament.objects.create(
             name=validated_data['name'],
@@ -30,6 +31,7 @@ class TournamentSerializer(serializers.ModelSerializer):
             rounds=rounds_data,
             winner=validated_data.get('winner')
         )
+
         # Crear los partidos en MatchHistory
         for round_data in rounds_data:
             for match_data in round_data:
@@ -55,6 +57,7 @@ class TournamentSerializer(serializers.ModelSerializer):
                         "password": "defaultpassword"
                     }
                 )
+
                 # Guardar los datos en MatchHistory
                 MatchHistory.objects.create(
                     player1=player1,
@@ -64,4 +67,5 @@ class TournamentSerializer(serializers.ModelSerializer):
                     winner=winner,
                     tournament_id=tournament_1
                 )
+
         return tournament_1

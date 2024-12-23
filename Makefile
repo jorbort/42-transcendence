@@ -23,7 +23,6 @@ clean:
 	@if [ ! -z "$$(docker network ls -q --filter type=custom)" ]; then \
 		docker network rm $$(docker network ls -q --filter type=custom); \
 	fi
-	rm -rf "./postgres/res"
 	@echo "Deleted all docker containers, volumes, networks, and images succesfully"
 
 re: clean up

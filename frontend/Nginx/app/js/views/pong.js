@@ -637,7 +637,7 @@ z
         }
         if (this.ball.position.x < -17) {
             this.pointsIA++;
-            this.reprint("localplayer", this.pointsIA);
+            this.reprint("localhost", this.pointsIA);
             await this.pauseGameAndShowCountdown()
             this.resetBall();
         }
@@ -662,25 +662,23 @@ z
     async insertresultinbd(username, localplayer, bool)
     {
         let token = getCookie('access_token');
+		let winner = bool == 0 ? username : "localhost";
 
-        const formData = new FormData();
-        formData.append('player1', username);
-        formData.append('player2', localplayer);
-        formData.append('player1_score', this.pointsPlayer);
-        formData.append('player2_score', this.pointsIA);
-        if (bool == 0){
-            formData.append('winner', username);
-        } else {
-            formData.append('winner', localplayer);
-        }
-
+        const body = {
+			"player1" : username,
+			"player2" : "localhost",
+			"winner" : winner,
+			"player1_score" :  this.pointsPlayer,
+			"player2_score" : this.pointsIA
+		};
         try {
-            const response = await fetch("https://localhost:3042/users/matches/register", {
+            const response = await fetch("/users/matches/register/", {
                 method: "POST",
                 headers: {
+					'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`,
                 },
-                body: formData,
+                body: JSON.stringify(body),
             });
 
             if (!response.ok) {

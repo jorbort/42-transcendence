@@ -346,8 +346,18 @@ export default class headerNavBar extends HTMLElement{
 		const logOut = this.shadow.getElementById('logOut');
 		logOut.addEventListener('click', () => {
 			localStorage.clear();
-			document.cookie = 'access_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-			document.cookie = 'refresh_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+			sessionStorage.clear();
+			const cookies = [
+				'_intra_42_session_production',
+				'access_token',
+				'csrftoken',
+				'refresh_token',
+				'sessionid'
+			];
+			cookies.forEach(cookie => {
+				document.cookie = `${cookie}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.intra.42.fr`;
+				document.cookie = `${cookie}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=localhost`;
+			});
 			window.location.href = '/';
 		});
 	}

@@ -109,7 +109,7 @@ class GameStats extends HTMLElement {
 				.bar-chart-container {
 					position: absolute;
 					top: 20px;
-					left: 450px;
+					left: 577px;
 					width:40%; 
 					height: 60%; 
 					background-color: #2b3339;
@@ -124,7 +124,7 @@ class GameStats extends HTMLElement {
 				.tournaments-container {
 					position: absolute;
 					top: 20px;
-					left: 1100px;
+					left: 1450px;
 					width:28%; 
 					height: 60%; 
 					background-color: #2b3339;
@@ -168,44 +168,44 @@ class GameStats extends HTMLElement {
 		const parentContainer = document.createElement('div');
 		parentContainer.className = 'parent-container';
 
-		const pieChartContainer = document.createElement('div');
-		pieChartContainer.className = 'pie-chart-container';
-		const pieChartTitle = document.createElement('h1');
-		pieChartTitle.textContent = 'Wins vs Losses %';
-		pieChartContainer.appendChild(pieChartTitle);
-		const pieChartDiv = document.createElement('div');
-		pieChartDiv.id = 'pieChartDiv';
-		pieChartContainer.appendChild(pieChartDiv);
+		// const pieChartContainer = document.createElement('div');
+		// pieChartContainer.className = 'pie-chart-container';
+		// const pieChartTitle = document.createElement('h1');
+		// pieChartTitle.textContent = 'Wins vs Losses %';
+		// pieChartContainer.appendChild(pieChartTitle);
+		// const pieChartDiv = document.createElement('div');
+		// pieChartDiv.id = 'pieChartDiv';
+		// pieChartContainer.appendChild(pieChartDiv);
 
-		const barChartContainer = document.createElement('div');
-		barChartContainer.className = 'bar-chart-container';
-		const barChartTitle = document.createElement('h1');
-		barChartTitle.textContent = 'Goals History';
-		barChartTitle.style.textAlign = 'center';
-		barChartTitle.style.color = 'rgba(160, 215, 160, 0.9)';
-		barChartTitle.style.fontFamily = 'Press Start 2P';
-		barChartContainer.appendChild(barChartTitle);
-		barChartContainer
-		const barChartDiv = document.createElement('div');
-		barChartDiv.id = 'barChartDiv';
-		barChartContainer.appendChild(barChartDiv);
+		// const barChartContainer = document.createElement('div');
+		// barChartContainer.className = 'bar-chart-container';
+		// const barChartTitle = document.createElement('h1');
+		// barChartTitle.textContent = 'Goals History';
+		// barChartTitle.style.textAlign = 'center';
+		// barChartTitle.style.color = 'rgba(160, 215, 160, 0.9)';
+		// barChartTitle.style.fontFamily = 'Press Start 2P';
+		// barChartContainer.appendChild(barChartTitle);
+		// barChartContainer
+		// const barChartDiv = document.createElement('div');
+		// barChartDiv.id = 'barChartDiv';
+		// barChartContainer.appendChild(barChartDiv);
 
 		// Nuevo contenedor para el número de torneos jugados
-		const tournamentsContainer = document.createElement('div');
-		tournamentsContainer.className = 'tournaments-container';
-		const tournamentsTitle = document.createElement('h1');
-		tournamentsTitle.textContent = 'Tournaments Played';
-		tournamentsTitle.style.textAlign = 'center';
-		tournamentsTitle.style.color = 'rgba(160, 215, 160, 0.9)';
-		tournamentsTitle.style.fontFamily = 'Press Start 2P';
-		tournamentsContainer.appendChild(tournamentsTitle);
-		const tournamentsDiv = document.createElement('div');
-		tournamentsDiv.id = 'tournamentsDiv';
-		tournamentsContainer.appendChild(tournamentsDiv);
+		// const tournamentsContainer = document.createElement('div');
+		// tournamentsContainer.className = 'tournaments-container';
+		// const tournamentsTitle = document.createElement('h1');
+		// tournamentsTitle.textContent = 'Tournaments Played';
+		// tournamentsTitle.style.textAlign = 'center';
+		// tournamentsTitle.style.color = 'rgba(160, 215, 160, 0.9)';
+		// tournamentsTitle.style.fontFamily = 'Press Start 2P';
+		// tournamentsContainer.appendChild(tournamentsTitle);
+		// const tournamentsDiv = document.createElement('div');
+		// tournamentsDiv.id = 'tournamentsDiv';
+		// tournamentsContainer.appendChild(tournamentsDiv);
 
-		parentContainer.appendChild(pieChartContainer);
-		parentContainer.appendChild(barChartContainer);
-		parentContainer.appendChild(tournamentsContainer);
+		// parentContainer.appendChild(pieChartContainer);
+		// parentContainer.appendChild(barChartContainer);
+		// parentContainer.appendChild(tournamentsContainer);
 
 		this.container.appendChild(parentContainer);
 	}
@@ -247,6 +247,20 @@ rendergamehistory(gamehistory){
 		nogamehistory.className = 'nogamehistory';
 		nogamehistory.textContent = 'No hay partidas recientes';
 		this.container.appendChild(nogamehistory);
+
+		let pieChartDiv = document.getElementById('pieChartDiv');
+		let barChartDiv = document.getElementById('barChartDiv');
+		let tournamentsDiv = document.getElementById('tournamentsDiv');
+
+		if (pieChartDiv) {
+			pieChartDiv.remove();
+		}
+		if (barChartDiv) {
+			barChartDiv.remove();
+		}
+		if (tournamentsDiv) {
+			tournamentsDiv.remove();
+		}
 		return;
 	}
 
@@ -368,6 +382,19 @@ rendergamehistory(gamehistory){
 	if (gamehistory.length === 0) {
 		return;
 	}
+		const barChartContainer = document.createElement('div');
+		barChartContainer.className = 'bar-chart-container';
+		const barChartTitle = document.createElement('h1');
+		barChartTitle.textContent = 'Goals History';
+		barChartTitle.style.textAlign = 'center';
+		barChartTitle.style.color = 'rgba(160, 215, 160, 0.9)';
+		barChartTitle.style.fontFamily = 'Press Start 2P';
+		barChartContainer.appendChild(barChartTitle);
+		barChartContainer
+		const barChartDiv = document.createElement('div');
+		barChartDiv.id = 'barChartDiv';
+		barChartContainer.appendChild(barChartDiv);
+		this.container.appendChild(barChartContainer);
 
 	const goalsFor = [];
 	const goalsAgainst = [];
@@ -440,11 +467,27 @@ rendergamehistory(gamehistory){
 	}
 
 	renderTournamentsPlayed(tournamentsPlayed) {
-		const tournamentsDiv = this.shadowRoot.getElementById('tournamentsDiv');
+		if (tournamentsPlayed.length === 0) {
+			return;
+		}
+
+		const tournamentsContainer = document.createElement('div');
+		tournamentsContainer.className = 'tournaments-container';
+		const tournamentsTitle = document.createElement('h1');
+		tournamentsTitle.textContent = 'Tournaments Played';
+		tournamentsTitle.style.textAlign = 'center';
+		tournamentsTitle.style.color = 'rgba(160, 215, 160, 0.9)';
+		tournamentsTitle.style.fontFamily = 'Press Start 2P';
+		tournamentsContainer.appendChild(tournamentsTitle);
+		const tournamentsDiv = document.createElement('div');
+		tournamentsDiv.id = 'tournamentsDiv';
+		
 		tournamentsDiv.textContent = tournamentsPlayed;
 		tournamentsDiv.style.color = 'rgba(160, 215, 160, 0.9)';
 		tournamentsDiv.style.fontFamily = 'Press Start 2P';
 		tournamentsDiv.style.fontSize = '2.5rem';
+		tournamentsContainer.appendChild(tournamentsDiv);
+		this.container.appendChild(tournamentsContainer);
 
 	}
 

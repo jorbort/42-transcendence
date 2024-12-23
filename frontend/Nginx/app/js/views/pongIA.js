@@ -682,7 +682,7 @@ class PongGame extends HTMLElement {
         }
 
         try {
-            const response = await fetch("https://localhost:3042/users/matches/register", {
+            const response = await fetch("https://localhost:3042/users/matches/register/", {
                 method: "POST",
                 headers: {
                     'Authorization': `Bearer ${token}`,
