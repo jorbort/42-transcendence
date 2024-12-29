@@ -1,9 +1,9 @@
 class GameStats extends HTMLElement {
-	constructor(){
-		super();
-		let shadow = this.attachShadow({ mode: 'open' });
-		let style = document.createElement('style');
-		style.textContent = /*css*/`
+  constructor() {
+    super();
+    let shadow = this.attachShadow({ mode: "open" });
+    let style = document.createElement("style");
+    style.textContent = /*css*/ `
 				#logstatus {
 					background-color: green;
 					border-radius: 50%;
@@ -31,7 +31,7 @@ class GameStats extends HTMLElement {
 					background-color: #2b3339;
 					display: flex;
 					flex-direction: column;
-					justify-content: flex-end;
+					justify-content: space-evenly;
 					align-items: center;
 					width: 79vw;
 					height: 70vh;
@@ -76,7 +76,7 @@ class GameStats extends HTMLElement {
 					position: sticky; /* Hace que el encabezado sea pegajoso */
 					top: 0; /* Posición del encabezado pegajoso */
 					z-index: 1; /* Asegura que el encabezado esté por encima del contenido */
-				}	
+				}
 				th{
 					background-color: #1d252a;
 					color: rgba(160, 215, 160, 0.9);
@@ -86,20 +86,23 @@ class GameStats extends HTMLElement {
 				}
 				tr:nth-child(even) {
 					background-color: #323c41;
-					
+
 				}
 				tr:nth-child(odd) {
 					background-color: #2b3339;
 				}
+				.parent-container {
+				  display: flex;
+					justify-content: space-evenly;
+					align-items: center;
+					width: 100%;
+				}
 				.pie-chart-container {
-					position: absolute;
-					top: 20px;
-					left: 20px;
-					width: 25%; 
-					height: 60%; 
+					width: 25%;
+					height: 80%;
 					background-color: #2b3339;
-					border-radius: 10px; 
-					box-shadow: 0 0 10px 2px rgba(0,0,0,0.5); 
+					border-radius: 10px;
+					box-shadow: 0 0 10px 2px rgba(0,0,0,0.5);
 					display: flex;
 					flex-direction: column;
 					justify-content: space-evenly;
@@ -107,14 +110,11 @@ class GameStats extends HTMLElement {
 					overflow: hidden;
 				}
 				.bar-chart-container {
-					position: absolute;
-					top: 20px;
-					left: 577px;
-					width:40%; 
-					height: 60%; 
+					width:40%;
+					height: 80%;
 					background-color: #2b3339;
-					border-radius: 10px; 
-					box-shadow: 0 0 10px 2px rgba(0,0,0,0.5); 
+					border-radius: 10px;
+					box-shadow: 0 0 10px 2px rgba(0,0,0,0.5);
 					display: flex;
 					flex-direction: column;
 					justify-content: space-evenly;
@@ -122,17 +122,14 @@ class GameStats extends HTMLElement {
 					overflow: hidden;
 				}
 				.tournaments-container {
-					position: absolute;
-					top: 20px;
-					left: 1450px;
-					width:28%; 
-					height: 60%; 
+					width:28%;
+					height: 80%;
 					background-color: #2b3339;
-					border-radius: 10px; 
-					box-shadow: 0 0 10px 2px rgba(0,0,0,0.5); 
+					border-radius: 10px;
+					box-shadow: 0 0 10px 2px rgba(0,0,0,0.5);
 					display: flex;
 					flex-direction: column;
-					justify-content: flex-start;
+					justify-content: space-evenly;
 					align-items: center;
 					overflow: hidden;
 				}
@@ -159,353 +156,374 @@ class GameStats extends HTMLElement {
 					align-items: center;
 				}
 		`;
-	
-		shadow.appendChild(style);
-		this.container = document.createElement('div');
-		this.container.className = 'GameStatsContainer';
-		shadow.appendChild(this.container);
 
-		const parentContainer = document.createElement('div');
-		parentContainer.className = 'parent-container';
+    shadow.appendChild(style);
+    this.container = document.createElement("div");
+    this.container.className = "GameStatsContainer";
+    shadow.appendChild(this.container);
 
-		// const pieChartContainer = document.createElement('div');
-		// pieChartContainer.className = 'pie-chart-container';
-		// const pieChartTitle = document.createElement('h1');
-		// pieChartTitle.textContent = 'Wins vs Losses %';
-		// pieChartContainer.appendChild(pieChartTitle);
-		// const pieChartDiv = document.createElement('div');
-		// pieChartDiv.id = 'pieChartDiv';
-		// pieChartContainer.appendChild(pieChartDiv);
+    const parentContainer = document.createElement("div");
+    parentContainer.className = "parent-container";
 
-		// const barChartContainer = document.createElement('div');
-		// barChartContainer.className = 'bar-chart-container';
-		// const barChartTitle = document.createElement('h1');
-		// barChartTitle.textContent = 'Goals History';
-		// barChartTitle.style.textAlign = 'center';
-		// barChartTitle.style.color = 'rgba(160, 215, 160, 0.9)';
-		// barChartTitle.style.fontFamily = 'Press Start 2P';
-		// barChartContainer.appendChild(barChartTitle);
-		// barChartContainer
-		// const barChartDiv = document.createElement('div');
-		// barChartDiv.id = 'barChartDiv';
-		// barChartContainer.appendChild(barChartDiv);
+    // const pieChartContainer = document.createElement('div');
+    // pieChartContainer.className = 'pie-chart-container';
+    // const pieChartTitle = document.createElement('h1');
+    // pieChartTitle.textContent = 'Wins vs Losses %';
+    // pieChartContainer.appendChild(pieChartTitle);
+    // const pieChartDiv = document.createElement('div');
+    // pieChartDiv.id = 'pieChartDiv';
+    // pieChartContainer.appendChild(pieChartDiv);
 
-		// Nuevo contenedor para el número de torneos jugados
-		// const tournamentsContainer = document.createElement('div');
-		// tournamentsContainer.className = 'tournaments-container';
-		// const tournamentsTitle = document.createElement('h1');
-		// tournamentsTitle.textContent = 'Tournaments Played';
-		// tournamentsTitle.style.textAlign = 'center';
-		// tournamentsTitle.style.color = 'rgba(160, 215, 160, 0.9)';
-		// tournamentsTitle.style.fontFamily = 'Press Start 2P';
-		// tournamentsContainer.appendChild(tournamentsTitle);
-		// const tournamentsDiv = document.createElement('div');
-		// tournamentsDiv.id = 'tournamentsDiv';
-		// tournamentsContainer.appendChild(tournamentsDiv);
+    // const barChartContainer = document.createElement('div');
+    // barChartContainer.className = 'bar-chart-container';
+    // const barChartTitle = document.createElement('h1');
+    // barChartTitle.textContent = 'Goals History';
+    // barChartTitle.style.textAlign = 'center';
+    // barChartTitle.style.color = 'rgba(160, 215, 160, 0.9)';
+    // barChartTitle.style.fontFamily = 'Press Start 2P';
+    // barChartContainer.appendChild(barChartTitle);
+    // barChartContainer
+    // const barChartDiv = document.createElement('div');
+    // barChartDiv.id = 'barChartDiv';
+    // barChartContainer.appendChild(barChartDiv);
 
-		// parentContainer.appendChild(pieChartContainer);
-		// parentContainer.appendChild(barChartContainer);
-		// parentContainer.appendChild(tournamentsContainer);
+    // Nuevo contenedor para el número de torneos jugados
+    // const tournamentsContainer = document.createElement('div');
+    // tournamentsContainer.className = 'tournaments-container';
+    // const tournamentsTitle = document.createElement('h1');
+    // tournamentsTitle.textContent = 'Tournaments Played';
+    // tournamentsTitle.style.textAlign = 'center';
+    // tournamentsTitle.style.color = 'rgba(160, 215, 160, 0.9)';
+    // tournamentsTitle.style.fontFamily = 'Press Start 2P';
+    // tournamentsContainer.appendChild(tournamentsTitle);
+    // const tournamentsDiv = document.createElement('div');
+    // tournamentsDiv.id = 'tournamentsDiv';
+    // tournamentsContainer.appendChild(tournamentsDiv);
 
-		this.container.appendChild(parentContainer);
-	}
+    // parentContainer.appendChild(pieChartContainer);
+    // parentContainer.appendChild(barChartContainer);
+    // parentContainer.appendChild(tournamentsContainer);
 
-	
-	
-	async connectedCallback(){
-		let username = localStorage.getItem('username');
-		let token = getCookie('access_token');
-		try {
-			let response = await fetch(`https://localhost:3042/users/matches/obtainHistory?username=${username}`,{
-			method: 'GET',
-			headers: {
-				'Authorization': `Bearer ${token}`
-			}
-		});
-		if (!response.ok){
-			throw new Error('Error en la peticion');
-		}
-		let gamehistory = await response.json();
-		let tournamentIds = new Set(gamehistory.filter(match => match.tournament_id !== null).map(match => match.tournament_id));
-		let tournamentsPlayed = tournamentIds.size;
-			
-		this.rendergamehistory(gamehistory);
-		this.renderPieChart(gamehistory);
-		this.renderBarChart(gamehistory);
-		this.renderTournamentsPlayed(tournamentsPlayed);
-	}catch(error){
-		console.error('Error en la peticion', error);
-	}
-}
+    this.container.appendChild(parentContainer);
+  }
 
-rendergamehistory(gamehistory){
-	const tbody = document.createElement('tbody');
-	tbody.innerHTML = '';
+  async connectedCallback() {
+    let username = localStorage.getItem("username");
+    let token = getCookie("access_token");
+    try {
+      let response = await fetch(
+        `https://localhost:3042/users/matches/obtainHistory?username=${username}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+      if (!response.ok) {
+        throw new Error("Error en la peticion");
+      }
+      let gamehistory = await response.json();
+      let tournamentIds = new Set(
+        gamehistory
+          .filter((match) => match.tournament_id !== null)
+          .map((match) => match.tournament_id),
+      );
+      let tournamentsPlayed = tournamentIds.size;
 
-	if (gamehistory.length === 0) {
-		let nogamehistory = document.createElement('div');
-		nogamehistory.className = 'nogamehistory';
-		nogamehistory.textContent = 'No hay partidas recientes';
-		this.container.appendChild(nogamehistory);
+      this.rendergamehistory(gamehistory);
+      this.renderPieChart(gamehistory);
+      this.renderBarChart(gamehistory);
+      this.renderTournamentsPlayed(tournamentsPlayed);
+    } catch (error) {
+      console.error("Error en la peticion", error);
+    }
+  }
 
-		let pieChartDiv = document.getElementById('pieChartDiv');
-		let barChartDiv = document.getElementById('barChartDiv');
-		let tournamentsDiv = document.getElementById('tournamentsDiv');
+  rendergamehistory(gamehistory) {
+    const tbody = document.createElement("tbody");
+    tbody.innerHTML = "";
 
-		if (pieChartDiv) {
-			pieChartDiv.remove();
-		}
-		if (barChartDiv) {
-			barChartDiv.remove();
-		}
-		if (tournamentsDiv) {
-			tournamentsDiv.remove();
-		}
-		return;
-	}
+    if (gamehistory.length === 0) {
+      let nogamehistory = document.createElement("div");
+      nogamehistory.className = "nogamehistory";
+      nogamehistory.textContent = "No hay partidas recientes";
+      this.container.appendChild(nogamehistory);
 
-	const tableContainer = document.createElement('div');
-	tableContainer.className = 'table-container';
+      let pieChartDiv = document.getElementById("pieChartDiv");
+      let barChartDiv = document.getElementById("barChartDiv");
+      let tournamentsDiv = document.getElementById("tournamentsDiv");
 
-	const table = document.createElement('table');
-	table.className = 'stats-table';
+      if (pieChartDiv) {
+        pieChartDiv.remove();
+      }
+      if (barChartDiv) {
+        barChartDiv.remove();
+      }
+      if (tournamentsDiv) {
+        tournamentsDiv.remove();
+      }
+      return;
+    }
 
-	const thead = document.createElement('thead');
-	const headerRow = document.createElement('tr');
-	const headers = ['Date', 'Player 1', 'Score', 'Player 2', 'Score', 'Winner'];
-	headers.forEach(headerText => {
-		const th = document.createElement('th');
-		th.textContent = headerText;
-		headerRow.appendChild(th);
-	});
-	thead.appendChild(headerRow);
-	table.appendChild(thead);
+    const tableContainer = document.createElement("div");
+    tableContainer.className = "table-container";
 
-	tbody.className = 'stats-tbody';
-	table.appendChild(tbody);
+    const table = document.createElement("table");
+    table.className = "stats-table";
 
-	tableContainer.appendChild(table);
-	this.container.appendChild(tableContainer);
+    const thead = document.createElement("thead");
+    const headerRow = document.createElement("tr");
+    const headers = [
+      "Date",
+      "Player 1",
+      "Score",
+      "Player 2",
+      "Score",
+      "Winner",
+    ];
+    headers.forEach((headerText) => {
+      const th = document.createElement("th");
+      th.textContent = headerText;
+      headerRow.appendChild(th);
+    });
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
 
-	gamehistory.forEach(match => {
-		const row = document.createElement('tr');
+    tbody.className = "stats-tbody";
+    table.appendChild(tbody);
 
-		const dateCell = document.createElement('td');
-		const date = new Date(match.date);
-		dateCell.innerHTML = `${date.toLocaleDateString()}`;
-		row.appendChild(dateCell);
+    tableContainer.appendChild(table);
+    this.container.appendChild(tableContainer);
 
-		const player1Cell = document.createElement('td');
-		player1Cell.textContent = match.player1_username;
-		row.appendChild(player1Cell);
+    gamehistory.forEach((match) => {
+      const row = document.createElement("tr");
 
-		const player1ScoreCell = document.createElement('td');
-		player1ScoreCell.textContent = match.player1_score;
-		row.appendChild(player1ScoreCell);
+      const dateCell = document.createElement("td");
+      const date = new Date(match.date);
+      dateCell.innerHTML = `${date.toLocaleDateString()}`;
+      row.appendChild(dateCell);
 
-		const player2Cell = document.createElement('td');
-		player2Cell.textContent = match.player2_username;
-		row.appendChild(player2Cell);
+      const player1Cell = document.createElement("td");
+      player1Cell.textContent = match.player1_username;
+      row.appendChild(player1Cell);
 
-		const player2ScoreCell = document.createElement('td');
-		player2ScoreCell.textContent = match.player2_score;
-		row.appendChild(player2ScoreCell);
+      const player1ScoreCell = document.createElement("td");
+      player1ScoreCell.textContent = match.player1_score;
+      row.appendChild(player1ScoreCell);
 
-		const winnerCell = document.createElement('td');
-		winnerCell.textContent = match.winner_username;
-		row.appendChild(winnerCell);
+      const player2Cell = document.createElement("td");
+      player2Cell.textContent = match.player2_username;
+      row.appendChild(player2Cell);
 
-		tbody.appendChild(row);
-	});
-	}
+      const player2ScoreCell = document.createElement("td");
+      player2ScoreCell.textContent = match.player2_score;
+      row.appendChild(player2ScoreCell);
 
-		renderPieChart(gamehistory) {
+      const winnerCell = document.createElement("td");
+      winnerCell.textContent = match.winner_username;
+      row.appendChild(winnerCell);
 
-			if (gamehistory.length === 0) {
-				return;
-			}
+      tbody.appendChild(row);
+    });
+  }
 
-			const wins = gamehistory.filter(match => match.winner_username === localStorage.getItem("username")).length;
-			const losses = gamehistory.length - wins;
+  renderPieChart(gamehistory) {
+    if (gamehistory.length === 0) {
+      return;
+    }
 
-			const pieChartContainer = document.createElement('div');
-			pieChartContainer.className = 'pie-chart-container';
-			const pieChartitle= document.createElement('h1');
-			pieChartitle.textContent = 'Wins vs Losses %';
-			pieChartitle.style.textAlign = 'center';
-			pieChartitle.style.color = 'rgba(160, 215, 160, 0.9)';
-			pieChartitle.style.fontFamily = 'Press Start 2P';
-			pieChartContainer.appendChild(pieChartitle);
-			const pieChartDiv = document.createElement('div');
-			pieChartDiv.id = 'pieChartDiv';
-			pieChartContainer.appendChild(pieChartDiv);
-			this.container.appendChild(pieChartContainer);
+    const wins = gamehistory.filter(
+      (match) => match.winner_username === localStorage.getItem("username"),
+    ).length;
+    const losses = gamehistory.length - wins;
 
-			const data = [{
-				values: [wins, losses],
-				labels: ['Wins', 'Losses'],
-				textinfo: 'label+percent',
-				type: 'pie',
-				textposition: "outside",
-				automargin: true,
-				marker: {
-					colors: ['#4caf50', '#f44336']
-				},
-				domain: {
-					x: [0, 1], // Adjust the x domain to control the width
-					y: [0, 1]  // Adjust the y domain to control the height
-				}
-			}];
+    const pieChartContainer = document.createElement("div");
+    pieChartContainer.className = "pie-chart-container";
+    const pieChartitle = document.createElement("h1");
+    pieChartitle.textContent = "Wins vs Losses %";
+    pieChartitle.style.textAlign = "center";
+    pieChartitle.style.color = "rgba(160, 215, 160, 0.9)";
+    pieChartitle.style.fontFamily = "Press Start 2P";
+    pieChartContainer.appendChild(pieChartitle);
+    const pieChartDiv = document.createElement("div");
+    pieChartDiv.id = "pieChartDiv";
+    pieChartContainer.appendChild(pieChartDiv);
+    let parentContainer = this.container.querySelector(".parent-container");
+    parentContainer.appendChild(pieChartContainer);
 
-	
-			const layout = {
-				paper_bgcolor: '#2b3339',
-				font: {
-					color: 'rgba(160, 215, 160, 0.9)'
-				},
-				width: 300,
-				height: 300,
-				showlegend: false,
-				margin: {
-					l: 10,
-					r: 10,
-					b: 10,
-					t: 30,
-					pad: 0
-				}
-			};
+    const data = [
+      {
+        values: [wins, losses],
+        labels: ["Wins", "Losses"],
+        textinfo: "label+percent",
+        type: "pie",
+        textposition: "outside",
+        automargin: true,
+        marker: {
+          colors: ["#4caf50", "#f44336"],
+        },
+        domain: {
+          x: [0, 1], // Adjust the x domain to control the width
+          y: [0, 1], // Adjust the y domain to control the height
+        },
+      },
+    ];
 
-			Plotly.newPlot(pieChartDiv, data, layout, {responsive: true});
-	}
+    const layout = {
+      paper_bgcolor: "#2b3339",
+      font: {
+        color: "rgba(160, 215, 160, 0.9)",
+      },
+      width: 300,
+      height: 300,
+      showlegend: false,
+      margin: {
+        l: 10,
+        r: 10,
+        b: 10,
+        t: 30,
+        pad: 0,
+      },
+    };
 
-   renderBarChart(gamehistory) {
-	if (gamehistory.length === 0) {
-		return;
-	}
-		const barChartContainer = document.createElement('div');
-		barChartContainer.className = 'bar-chart-container';
-		const barChartTitle = document.createElement('h1');
-		barChartTitle.textContent = 'Goals History';
-		barChartTitle.style.textAlign = 'center';
-		barChartTitle.style.color = 'rgba(160, 215, 160, 0.9)';
-		barChartTitle.style.fontFamily = 'Press Start 2P';
-		barChartContainer.appendChild(barChartTitle);
-		barChartContainer
-		const barChartDiv = document.createElement('div');
-		barChartDiv.id = 'barChartDiv';
-		barChartContainer.appendChild(barChartDiv);
-		this.container.appendChild(barChartContainer);
+    Plotly.newPlot(pieChartDiv, data, layout, { responsive: true });
+  }
 
-	const goalsFor = [];
-	const goalsAgainst = [];
-	const matchDates = [];
-	const totalGoals = [];
+  renderBarChart(gamehistory) {
+    if (gamehistory.length === 0) {
+      return;
+    }
+    const barChartContainer = document.createElement("div");
+    barChartContainer.className = "bar-chart-container";
+    const barChartTitle = document.createElement("h1");
+    barChartTitle.textContent = "Goals History";
+    barChartTitle.style.textAlign = "center";
+    barChartTitle.style.color = "rgba(160, 215, 160, 0.9)";
+    barChartTitle.style.fontFamily = "Press Start 2P";
+    barChartContainer.appendChild(barChartTitle);
+    barChartContainer;
+    const barChartDiv = document.createElement("div");
+    barChartDiv.id = "barChartDiv";
+    barChartContainer.appendChild(barChartDiv);
+    let parentContainer = this.container.querySelector(".parent-container");
+    parentContainer.appendChild(barChartContainer);
 
-	gamehistory.forEach(match => {
-		matchDates.push(new Date(match.date).toLocaleDateString());
-		if (match.player1_username === localStorage.getItem("username")) {
-			goalsFor.push(match.player1_score);
-			goalsAgainst.push(match.player2_score);
-			totalGoals.push(match.player1_score + match.player2_score);
-		} else {
-			goalsFor.push(match.player2_score);
-			goalsAgainst.push(match.player1_score);
-			totalGoals.push(match.player2_score + match.player1_score);
-		}
-	});
+    const goalsFor = [];
+    const goalsAgainst = [];
+    const matchDates = [];
+    const totalGoals = [];
 
-	const trace1 = {
-		x: 'Goles a favor',
-		y: goalsFor,
-		name: 'Goles a favor',
-		type: 'bar',
-		marker: {
-			color: '#4caf50'
-		}
-	};
+    gamehistory.forEach((match) => {
+      matchDates.push(new Date(match.date).toLocaleDateString());
+      if (match.player1_username === localStorage.getItem("username")) {
+        goalsFor.push(match.player1_score);
+        goalsAgainst.push(match.player2_score);
+        totalGoals.push(match.player1_score + match.player2_score);
+      } else {
+        goalsFor.push(match.player2_score);
+        goalsAgainst.push(match.player1_score);
+        totalGoals.push(match.player2_score + match.player1_score);
+      }
+    });
 
-	const trace2 = {
-		x: 'Goles en contra',
-		y: goalsAgainst,
-		name: 'Goles en contra',
-		type: 'bar',
-		marker: {
-			color: '#f44336'
-		}
-	};
+    const trace1 = {
+      x: "Goles a favor",
+      y: goalsFor,
+      name: "Goles a favor",
+      type: "bar",
+      marker: {
+        color: "#4caf50",
+      },
+    };
 
-	const data = [trace1, trace2];
+    const trace2 = {
+      x: "Goles en contra",
+      y: goalsAgainst,
+      name: "Goles en contra",
+      type: "bar",
+      marker: {
+        color: "#f44336",
+      },
+    };
 
-	const layout = {
-		barmode: 'group',
-		paper_bgcolor: '#2b3339',
-		plot_bgcolor: '#2b3339',
-		legend: {
-			x: 0,
-			y: -0.3,
-			xanchor: 'center',
-			yanchor: 'top',
-			orientation: 'v'
-		},
-		showlegend: true,
-		width: 500,
-		height: 420,
-		bargap: 0.1,
-		margin: {
-			l: 100,
-			r: 10,
-			b: 40,
-			t: 0,
-			pad: 0
-		},
-		font: {
-			color: 'rgba(160, 215, 160, 0.9)'
-		}
-	};
+    const data = [trace1, trace2];
 
-	Plotly.newPlot(this.shadowRoot.getElementById('barChartDiv'), data, layout, {responsive: true});
-	}
+    const layout = {
+      barmode: "group",
+      paper_bgcolor: "#2b3339",
+      plot_bgcolor: "#2b3339",
+      legend: {
+        x: 0,
+        y: -0.3,
+        xanchor: "center",
+        yanchor: "top",
+        orientation: "v",
+      },
+      showlegend: true,
+      width: 500,
+      height: 420,
+      bargap: 0.1,
+      margin: {
+        l: 100,
+        r: 10,
+        b: 40,
+        t: 0,
+        pad: 0,
+      },
+      font: {
+        color: "rgba(160, 215, 160, 0.9)",
+      },
+    };
 
-	renderTournamentsPlayed(tournamentsPlayed) {
-		if (tournamentsPlayed.length === 0) {
-			return;
-		}
+    Plotly.newPlot(
+      this.shadowRoot.getElementById("barChartDiv"),
+      data,
+      layout,
+      { responsive: true },
+    );
+  }
 
-		const tournamentsContainer = document.createElement('div');
-		tournamentsContainer.className = 'tournaments-container';
-		const tournamentsTitle = document.createElement('h1');
-		tournamentsTitle.textContent = 'Tournaments Played';
-		tournamentsTitle.style.textAlign = 'center';
-		tournamentsTitle.style.color = 'rgba(160, 215, 160, 0.9)';
-		tournamentsTitle.style.fontFamily = 'Press Start 2P';
-		tournamentsContainer.appendChild(tournamentsTitle);
-		const tournamentsDiv = document.createElement('div');
-		tournamentsDiv.id = 'tournamentsDiv';
-		
-		tournamentsDiv.textContent = tournamentsPlayed;
-		tournamentsDiv.style.color = 'rgba(160, 215, 160, 0.9)';
-		tournamentsDiv.style.fontFamily = 'Press Start 2P';
-		tournamentsDiv.style.fontSize = '2.5rem';
-		tournamentsContainer.appendChild(tournamentsDiv);
-		this.container.appendChild(tournamentsContainer);
+  renderTournamentsPlayed(tournamentsPlayed) {
+    if (tournamentsPlayed.length === 0) {
+      return;
+    }
 
-	}
+    const tournamentsContainer = document.createElement("div");
+    tournamentsContainer.className = "tournaments-container";
+    const tournamentsTitle = document.createElement("h1");
+    tournamentsTitle.textContent = "Tournaments Played";
+    tournamentsTitle.style.textAlign = "center";
+    tournamentsTitle.style.color = "rgba(160, 215, 160, 0.9)";
+    tournamentsTitle.style.fontFamily = "Press Start 2P";
+    tournamentsContainer.appendChild(tournamentsTitle);
+    const tournamentsDiv = document.createElement("div");
+    tournamentsDiv.id = "tournamentsDiv";
 
-	disconectedCallback(){}
+    tournamentsDiv.textContent = tournamentsPlayed;
+    tournamentsDiv.style.color = "rgba(160, 215, 160, 0.9)";
+    tournamentsDiv.style.fontFamily = "Press Start 2P";
+    tournamentsDiv.style.fontSize = "2.5rem";
+    tournamentsContainer.appendChild(tournamentsDiv);
+    let parentContainer = this.container.querySelector(".parent-container");
+    parentContainer.appendChild(tournamentsContainer);
+  }
+
+  disconectedCallback() {}
 }
 
 window.customElements.define("gamestats-component", GameStats);
 export default GameStats;
 
 function getCookie(name) {
-	let cookieArr = document.cookie.split(";");
-	for (let i = 0; i < cookieArr.length; i++) {
-		let cookiePair = cookieArr[i].split("=");
-		if (name == cookiePair[0].trim()) {
-		return decodeURIComponent(cookiePair[1]);
-		}
-	}
-	return null;
+  let cookieArr = document.cookie.split(";");
+  for (let i = 0; i < cookieArr.length; i++) {
+    let cookiePair = cookieArr[i].split("=");
+    if (name == cookiePair[0].trim()) {
+      return decodeURIComponent(cookiePair[1]);
+    }
+  }
+  return null;
 }
 
 // https://plotly.com/javascript/bar-charts/
