@@ -7,7 +7,7 @@ class PongGameTournament extends HTMLElement {
         this.ballDireccionY = (Math.random() < 0.5 ? -1 : 1);
         this.pointsPlayer = 0;
         this.pointsIA = 0;
-        this.aiSpeed = 0.016;
+        this.aiSpeed = 0.16;
         this.paddleSpeed = 0.16;
         this.movePaddleLeft = 0;
         this.movePaddleRight = 0;
@@ -29,6 +29,10 @@ class PongGameTournament extends HTMLElement {
     async connectedCallback() {
         window.addEventListener('keydown', this.handleKeyDown.bind(this));
         window.addEventListener('keyup', this.handleKeyUp.bind(this));
+		if (!this.IA) {
+			window.addEventListener('keydown', this.handleKeyDownL.bind(this));
+        	window.addEventListener('keyup', this.handleKeyUpL.bind(this));
+		}
         return await this.startPong();
     }
     disconnectedCallback() {

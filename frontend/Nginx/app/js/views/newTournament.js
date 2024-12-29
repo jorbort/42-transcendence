@@ -19,11 +19,8 @@ class TournamentView extends HTMLElement {
         this.playeron = false;
     }
     connectedCallback() {
-        const body = document.querySelector('body');
-        const navBar = document.createElement('header-nav-bar');
-        body.insertAdjacentElement('afterbegin', navBar);
-        this.addStyles();
-    }
+		this.addStyles();
+	}
     createFormData(container) {
         const formContainer = document.createElement('div');
         formContainer.id = 'form-container'; // Asignar un ID para manejar la visibilidad
@@ -117,15 +114,6 @@ class TournamentView extends HTMLElement {
     addStyles() {
         const style = document.createElement('style');
         style.textContent = `
-        header-nav-bar {
-			position: relative;
-            top: 0;
-            left: 0;
-            width: 100%;
-			margin-bottom: 2rem;
-            z-index: 1000;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
         .form-container {
             padding: 20px;
             border: 1px solid #ccc;
@@ -239,9 +227,6 @@ class TournamentView extends HTMLElement {
     color: #4A90E2;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
 }
-#app{
-	display: flex;
-}
 #bracket {
     display: flex;
     justify-content: center;
@@ -254,19 +239,17 @@ class TournamentView extends HTMLElement {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    align-items: stretch;
+    align-items: center;
     height: 100%;
     position: relative;
 }
-
 #winner-buttons {
     display: flex;
     justify-content: space-between;
-    width: 100%;
+    width: 40%;
     margin-top: auto;
-	gap: 2rem;
+    gap: 2rem;
 }
-
 #winner-buttons button {
     flex: 1;
     padding: 20px;
@@ -274,23 +257,33 @@ class TournamentView extends HTMLElement {
     border-radius: 4px;
     cursor: pointer;
     font-size: 1rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
-
+#winner-buttons button:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+}
 #winner-buttons button#new-tournament {
     background-color: #28a745;
     color: white;
 }
-
+#winner-buttons button#new-tournament:hover {
+    background-color: #218838;
+}
 #winner-buttons button#save-winner {
     background-color: #007bff;
     color: white;
 }
-
+#winner-buttons button#save-winner:hover {
+    background-color: #0056b3;
+}
 #winner-buttons button#exit {
     background-color: #dc3545;
     color: white;
 }
-
+#winner-buttons button#exit:hover {
+    background-color: #c82333;
+}
 #tournament-view {
 	padding-top: 2rem;
 	padding-bottom: 10rem;
@@ -595,4 +588,4 @@ class TournamentView extends HTMLElement {
     }
 }
 customElements.define('tournament-view', TournamentView);
-export default function renderTournamentApp() { return '<side-nav-bar></side-nav-bar><tournament-view></tournament-view>'; }
+export default function renderTournamentApp() { return '<header-nav-bar></header-nav-bar><side-nav-bar></side-nav-bar><tournament-view></tournament-view>'; }

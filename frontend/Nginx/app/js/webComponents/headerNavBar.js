@@ -32,6 +32,7 @@ export default class headerNavBar extends HTMLElement{
 				transition: all 0.5s ease-in-out;
 			}
 			.headerNavBar{
+				position: relative;
 				height: 12vh;
 				width: 100vw;
 				background-color: rgba(43,51,57);
