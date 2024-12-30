@@ -12,8 +12,7 @@ import renderPongGameIA from './views/pongIA.js';
 import renderPongGame from './views/pong.js';
 import renderPongGameMulti from './views/pongMulti.js';
 import { fortyTwoCallback } from './views/fortyTwoCallback.js';
-import renderPongGameName from './views/pongNamePlayers.js';
-import rendertorneo from './views/torneo.js';
+import renderHall from './views/hall.js';
 import configProfile from './views/configProfile.js';
 import NotFound404 from './views/404.js';
 import renderTournamentApp from './views/newTournament.js';
@@ -56,6 +55,9 @@ export function handleRouteChange() {
 			case '/torneo':
 				view = renderTournamentApp();
 				break;
+			case '/hall':
+				view = renderHall();
+				break;
 			case '/login':
 				view = loginView();
 				break;
@@ -82,9 +84,6 @@ export function handleRouteChange() {
 				break;
 			case '/Signup':
 				view = createUser();
-				break;
-			case '/torneo':
-				view = renderTournamentApp();
 				break;
 			default:
 				view = NotFound404();
