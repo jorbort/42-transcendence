@@ -91,13 +91,15 @@ class TournamentView extends HTMLElement {
         }; // Manejo del botón Guardar
         formContainer.querySelector('#btnSave').addEventListener('click', () => {
             const name = formContainer.querySelector('#tournament-name').value;
+            const user = localStorage.getItem('username')
             if (name) {
                 this.tournamentData.name = name;
                 if (formContainer.querySelector('#chkIA').checked) this.IA = true;
                 const realPlayersCount = this.qttplayers - (this.IA ? this.IAplayers : 0);
                 const aiPlayersCount = this.IA ? this.IAplayers : 0;
                 this.tournamentData.players = [
-                    ...Array.from({ length: realPlayersCount }, (_, i) => ({ type: 'REAL', name: `GAMER${i + 1}` })),
+                    { type: 'REAL', name: user },
+                    ...Array.from({ length: realPlayersCount - 1 }, (_, i) => ({ type: 'REAL', name: `GAMER${i + 1}` })),
                     ...Array.from({ length: aiPlayersCount }, (_, i) => ({ type: 'AI', name: `IA${i + 1}` }))
                 ];
                 if (formContainer.querySelector('#chkSpeed').checked) this.addCustom = true;
@@ -356,13 +358,19 @@ class TournamentView extends HTMLElement {
             this.createFormData(document.getElementById("app"));
     }
     renderEditPlayersView() {
+        const realPlayers = this.tournamentData.players.filter(player => player.type === 'REAL');
+        if (realPlayers.length - 1 === 0) {
+            this.initializeTournament();
+            return; // Salir de la función si no hay jugadores
+        }
         this.innerHTML = `<div id="form-container">
 		<div class="form-container">
             <h2>Editar Jugadores</h2>
-            ${this.tournamentData.players.filter(player => player.type === 'REAL').map((player, index) => `
+            ${realPlayers.slice(1)  // Omitir el primer jugador
+                .map((player, index) => `
                     <div class="player-input">
-                        <label for="player-${index}">Jugador ${index + 1}:</label>
-                        <input id="player-${index}" data-index="${index}"value="${player.name}" maxlength="15" />
+                        <label for="player-${index + 1}">Jugador ${index + 2}:</label>
+                        <input id="player-${index + 1}" data-index="${index + 1}"value="${player.name}" maxlength="15" />
                     </div>
                 `).join('')}
             <div id="error-message" style="color: red; display: none;"></div>
@@ -393,7 +401,7 @@ class TournamentView extends HTMLElement {
                 } else {
                     console.warn(`El jugador con índice ${index} no existe en la lista de jugadores.`);
                 }
-            });//this.tournamentData.players = updatedPlayers;
+            });
             this.initializeTournament();
         });
     }
@@ -505,7 +513,6 @@ class TournamentView extends HTMLElement {
                 winner: this.tournamentData.winner.name // Nombre del ganador del torneo
             };
             const token = getCookie('access_token');
-            // const response = await fetch('https://localhost:3042/api/tournaments/', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload), });
             const response = await fetch('https://localhost:3042/api/tournaments/', {
                 method: 'POST',
                 headers: {
