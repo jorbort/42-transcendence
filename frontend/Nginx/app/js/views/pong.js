@@ -92,37 +92,41 @@ class PongGame extends HTMLElement {
             winnerMessage = `${winners[0]} wins!`;
         const newModal = this.newModal(goHome, tryAgain, btncruzend, winnerMessage);
         this.appendChild(newModal);
-        const myModal = new bootstrap.Modal(document.getElementById('myModal'), {
-            keyboard: false
-        });
-        myModal.show();
-        const btnTryAgain = document.getElementById("try-again");
-        if (btnTryAgain) {
-            btnTryAgain.addEventListener('click', () => {
-                myModal.dispose();
-                document.getElementById('myModal').remove();
-                history.pushState('', '', '/localgame1vs1');
-                handleRouteChange();
+        const myModalElement = document.getElementById('myModal');
+        if (myModalElement) {
+            const myModal = new bootstrap.Modal(myModalElement, {
+                keyboard: false
             });
-        }
-        const btnGoHome = document.getElementById("Go-Home");
-        if (btnGoHome) {
-            btnGoHome.addEventListener('click', () => {
-                myModal.dispose();
-                document.getElementById('myModal').remove();
-                history.pushState('', '', '/Profile');
-                handleRouteChange();
-            });
-        }
-        const btncruz = document.getElementById("btn-cruz");
-        if (btncruz) {
-            btncruz.addEventListener('click', () => {
-                myModal.hide();
-                document.getElementById('myModal').remove();
-                history.pushState('', '', '/Profile');
-                handleRouteChange();
-            });
-        }
+
+            myModal.show();
+            const btnTryAgain = document.getElementById("try-again");
+            if (btnTryAgain) {
+                btnTryAgain.addEventListener('click', () => {
+                    myModal.dispose();
+                    document.getElementById('myModal').remove();
+                    history.pushState('', '', '/localgame1vs1');
+                    handleRouteChange();
+                });
+            }
+            const btnGoHome = document.getElementById("Go-Home");
+            if (btnGoHome) {
+                btnGoHome.addEventListener('click', () => {
+                    myModal.dispose();
+                    document.getElementById('myModal').remove();
+                    history.pushState('', '', '/Profile');
+                    handleRouteChange();
+                });
+            }
+            const btncruz = document.getElementById("btn-cruz");
+            if (btncruz) {
+                btncruz.addEventListener('click', () => {
+                    myModal.hide();
+                    document.getElementById('myModal').remove();
+                    history.pushState('', '', '/Profile');
+                    handleRouteChange();
+                });
+            }
+        } 
     }
 
     ModalData() {

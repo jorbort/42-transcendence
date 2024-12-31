@@ -25,14 +25,14 @@ class PongGameTournament extends HTMLElement {
         this.onGameEnd = null;
         this.gameStarted = false;
         this.IA = false;
-    }  
+    }
     async connectedCallback() {
         window.addEventListener('keydown', this.handleKeyDown.bind(this));
         window.addEventListener('keyup', this.handleKeyUp.bind(this));
-		if (!this.IA) {
-			window.addEventListener('keydown', this.handleKeyDownL.bind(this));
-        	window.addEventListener('keyup', this.handleKeyUpL.bind(this));
-		}
+        if (!this.IA) {
+            window.addEventListener('keydown', this.handleKeyDownL.bind(this));
+            window.addEventListener('keyup', this.handleKeyUpL.bind(this));
+        }
         return await this.startPong();
     }
     disconnectedCallback() {
@@ -173,12 +173,12 @@ class PongGameTournament extends HTMLElement {
         const maxY = 8;  // Límite superior del área de juego
         let futureLeft = object.ball.position.y + ((object.paddleLeft.position.x - object.ball.position.x) / ballSpeedX) * ballSpeedY;
         while (futureLeft < minY || futureLeft > maxY) {
-            if (futureLeft < minY) 
+            if (futureLeft < minY)
                 futureLeft = minY + (minY - futureLeft);
-            else if (futureLeft > maxY) 
+            else if (futureLeft > maxY)
                 futureLeft = maxY - (futureLeft - maxY);
         }
-        object.targetPaddleLeftY+=(object.aiSpeed * (futureLeft > object.paddleLeft.position.y ? 1 : -1));
+        object.targetPaddleLeftY += (object.aiSpeed * (futureLeft > object.paddleLeft.position.y ? 1 : -1));
         object.paddleLeft.position.y = THREE.MathUtils.clamp(object.paddleLeft.position.y, minY, maxY);
     }
     printCountdown(countdown, countdownMesh, scene, font) {
@@ -246,31 +246,35 @@ class PongGameTournament extends HTMLElement {
             this.movePaddleLeft = 0;
     }
     checkPaddleCollision() {// Detectar colisión con el paddle izquierdo
-        if (this.ball.position.x <= this.paddleLeft.position.x + 0.2 &&
-            this.ball.position.x > this.paddleLeft.position.x && // Asegurarse de que la pelota no esté detrás del paddle
-            this.ball.position.y < this.paddleLeft.position.y + 1 &&
-            this.ball.position.y > this.paddleLeft.position.y - 1) {
-            this.ballDireccionX *= -1;
-            this.ballSpeedX += 0.009;
-            this.ballSpeedY += 0.0009;
-        } // Detectar colisión con el paddle derecho
-        if (this.ball.position.x >= this.paddleRight.position.x - 0.2 &&
-            this.ball.position.x < this.paddleRight.position.x && // Asegurarse de que la pelota no esté detrás del paddle
-            this.ball.position.y < this.paddleRight.position.y + 1 &&
-            this.ball.position.y > this.paddleRight.position.y - 1) {
-            this.ballDireccionX *= -1;
-            this.ballSpeedX += 0.009;
-            this.ballSpeedY += 0.0009;
+        if (this.ball) {
+            if (this.ball.position.x <= this.paddleLeft.position.x + 0.2 &&
+                this.ball.position.x > this.paddleLeft.position.x && // Asegurarse de que la pelota no esté detrás del paddle
+                this.ball.position.y < this.paddleLeft.position.y + 1 &&
+                this.ball.position.y > this.paddleLeft.position.y - 1) {
+                this.ballDireccionX *= -1;
+                this.ballSpeedX += 0.009;
+                this.ballSpeedY += 0.0009;
+            } // Detectar colisión con el paddle derecho
+            if (this.ball.position.x >= this.paddleRight.position.x - 0.2 &&
+                this.ball.position.x < this.paddleRight.position.x && // Asegurarse de que la pelota no esté detrás del paddle
+                this.ball.position.y < this.paddleRight.position.y + 1 &&
+                this.ball.position.y > this.paddleRight.position.y - 1) {
+                this.ballDireccionX *= -1;
+                this.ballSpeedX += 0.009;
+                this.ballSpeedY += 0.0009;
+            }
         }
     }
     resetBall() {
-        this.ball.position.set(0, 2, 0);
-        this.ballDireccionX = (Math.random() < 0.5 ? -1 : 1);
-        this.ballDireccionY = (Math.random() < 0.5 ? -1 : 1);
-        this.ballSpeedX = 0.15;
-        this.ballSpeedY = 0.05;
-        this.aiSpeed = 0.16;
-        this.paddleSpeed = 0.16
+        if (this.ball) {
+            this.ball.position.set(0, 2, 0);
+            this.ballDireccionX = (Math.random() < 0.5 ? -1 : 1);
+            this.ballDireccionY = (Math.random() < 0.5 ? -1 : 1);
+            this.ballSpeedX = 0.15;
+            this.ballSpeedY = 0.05;
+            this.aiSpeed = 0.16;
+            this.paddleSpeed = 0.16
+        }
     }
     reprint(name, points) {
         const playerMaterial1 = new THREE.MeshStandardMaterial({ color: 0xff0000 }); // Rojo para jugador 1
@@ -339,25 +343,26 @@ class PongGameTournament extends HTMLElement {
         }
     }
     async moveBall() {
-        this.ball.position.x += this.ballSpeedX * this.ballDireccionX;
-        this.ball.position.y += this.ballSpeedY * this.ballDireccionY;
-        if (this.ball.position.x > 15) {
-            this.pointsPlayer++;
-            this.reprint(this.player1.name, this.pointsPlayer);
-            await this.pauseGameAndShowCountdown();
-            this.resetBall();
+        if (this.ball) {
+            this.ball.position.x += this.ballSpeedX * this.ballDireccionX;
+            this.ball.position.y += this.ballSpeedY * this.ballDireccionY;
+            if (this.ball.position.x > 15) {
+                this.pointsPlayer++;
+                this.reprint(this.player1.name, this.pointsPlayer);
+                await this.pauseGameAndShowCountdown();
+                this.resetBall();
+            }
+            if (this.ball.position.x < -15) {
+                this.pointsIA++;
+                this.reprint(this.player2.name, this.pointsIA);
+                await this.pauseGameAndShowCountdown();
+                this.resetBall();
+            }
+            if (this.ball.position.y > 8 || this.ball.position.y < -3.8)
+                this.ballDireccionY *= -1;
         }
-        if (this.ball.position.x < -15) {
-            this.pointsIA++;
-            this.reprint(this.player2.name, this.pointsIA);
-            await this.pauseGameAndShowCountdown();
-            this.resetBall();
-        }
-        if (this.ball.position.y > 8 || this.ball.position.y < -3.8)
-            this.ballDireccionY *= -1;
     }
-    movePaddles()
-    {
+    movePaddles() {
         if (this.movePaddleLeft === 1 && this.targetPaddleLeftY < 8) {
             this.targetPaddleLeftY += this.aiSpeed;
         } else if (this.movePaddleLeft === -1 && this.targetPaddleLeftY > -4)
@@ -371,11 +376,11 @@ class PongGameTournament extends HTMLElement {
     // Verificar si alguien perdió
     checkIfLost() {
         if (this.pointsPlayer >= 3) {
-                this.onGameEnd(this.player1, this.pointsPlayer, this.pointsIA);// Llamar al callback con el ganador
+            this.onGameEnd(this.player1, this.pointsPlayer, this.pointsIA);// Llamar al callback con el ganador
             return true;
         }
         else if (this.pointsIA >= 3) {
-                this.onGameEnd(this.player2, this.pointsPlayer, this.pointsIA);// Llamar al callback con el ganador
+            this.onGameEnd(this.player2, this.pointsPlayer, this.pointsIA);// Llamar al callback con el ganador
             return true;
         }
         return false;
@@ -404,8 +409,8 @@ export default function renderPonTournament(addCustom, addCustom1, addCustom2, p
         element.player2 = player1;
     }
     element.onGameEnd = onGameEnd;
-        element.addCustom = addCustom;
-        element.addCustom1 = addCustom1;
-        element.addCustom2 = addCustom2;
+    element.addCustom = addCustom;
+    element.addCustom1 = addCustom1;
+    element.addCustom2 = addCustom2;
     return element;
 }
