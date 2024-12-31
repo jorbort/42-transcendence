@@ -424,6 +424,7 @@ class TournamentView extends HTMLElement {
             this.tournamentData.rounds.push(roundMatches);
             currentRound = nextRound;
         }
+        this.saveTournamentData()
         this.renderTournamentView();
     }
     saveTournamentData() {
