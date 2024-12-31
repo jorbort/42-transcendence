@@ -36,6 +36,9 @@ export function handleRouteChange() {
 	if (path === '/') {
 		path = '/login';
 	}
+	if (accessToken && path === '/login') {
+		path = '/Profile';
+	}
 
 	if (accessToken) {
 		switch (path) {
