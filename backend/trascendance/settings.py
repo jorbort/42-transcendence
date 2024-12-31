@@ -97,6 +97,10 @@ CHANNEL_LAYERS = {
 	},
 }
 
+CHANNEL_SETTINGS = {
+    'WS_PROTOCOL': 'wss',
+    'WS_TIMEOUT': 86400,  # 24 hours in seconds
+}
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 

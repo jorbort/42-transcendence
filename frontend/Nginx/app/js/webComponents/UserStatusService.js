@@ -19,12 +19,10 @@ class UserStatusService{
 		};
 
 		this.socket.onerror = (event) => {
-			console.error('WebSocket error observed:', event);
 			this.socket = null;
 		}
 
 		this.socket.onclose = (event) => {
-			console.error('WebSocket error observed:', event);
 			this.socket = null;
 		};
 	}

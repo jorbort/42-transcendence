@@ -40,7 +40,6 @@ def callback_42(request):
 	state = request.data.get('state')
 	code = request.data.get('code')
 	
-	logging.info(f"State: {state} code: {code}")
 	token_url = "https://api.intra.42.fr/oauth/token"
 	token_data = {
 		'grant_type': 'authorization_code',
@@ -56,7 +55,6 @@ def callback_42(request):
 		token_response.raise_for_status()
 		token_json = token_response.json()
 	except requests.exceptions.RequestException as e:
-		logging.debug(str(e))
 		return Response({'detail': f'Failed to obtain access token: {str(e)}'}, status=status.HTTP_400_BAD_REQUEST)
 	
 	access_token = token_json['access_token']
@@ -72,11 +70,9 @@ def callback_42(request):
 		'password2' : make_password('vivapacman',salt=salt_string),
 		'fortytwo_image_url' : user_info['image']['link']
     }
-	logging.info(user_data)
 	try:
 		user = PongUser.objects.get(username=user_info['login'])
 		django_login(request, user)
-		logging.info(user.fortytwo_image_url)
 		refresh_token = RefreshToken.for_user(user)
 		access_token = str(refresh_token.access_token)
 		ressponse = Response( {'access_token': access_token,
@@ -95,7 +91,6 @@ def callback_42(request):
 		if serializer.is_valid():
 			user = serializer.save()
 		else:
-			logging.error(serializer.errors)
 			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 		
 	django_login(request, user)

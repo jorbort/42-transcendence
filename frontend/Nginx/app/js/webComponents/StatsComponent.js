@@ -165,45 +165,6 @@ class GameStats extends HTMLElement {
     const parentContainer = document.createElement("div");
     parentContainer.className = "parent-container";
 
-    // const pieChartContainer = document.createElement('div');
-    // pieChartContainer.className = 'pie-chart-container';
-    // const pieChartTitle = document.createElement('h1');
-    // pieChartTitle.textContent = 'Wins vs Losses %';
-    // pieChartContainer.appendChild(pieChartTitle);
-    // const pieChartDiv = document.createElement('div');
-    // pieChartDiv.id = 'pieChartDiv';
-    // pieChartContainer.appendChild(pieChartDiv);
-
-    // const barChartContainer = document.createElement('div');
-    // barChartContainer.className = 'bar-chart-container';
-    // const barChartTitle = document.createElement('h1');
-    // barChartTitle.textContent = 'Goals History';
-    // barChartTitle.style.textAlign = 'center';
-    // barChartTitle.style.color = 'rgba(160, 215, 160, 0.9)';
-    // barChartTitle.style.fontFamily = 'Press Start 2P';
-    // barChartContainer.appendChild(barChartTitle);
-    // barChartContainer
-    // const barChartDiv = document.createElement('div');
-    // barChartDiv.id = 'barChartDiv';
-    // barChartContainer.appendChild(barChartDiv);
-
-    // Nuevo contenedor para el número de torneos jugados
-    // const tournamentsContainer = document.createElement('div');
-    // tournamentsContainer.className = 'tournaments-container';
-    // const tournamentsTitle = document.createElement('h1');
-    // tournamentsTitle.textContent = 'Tournaments Played';
-    // tournamentsTitle.style.textAlign = 'center';
-    // tournamentsTitle.style.color = 'rgba(160, 215, 160, 0.9)';
-    // tournamentsTitle.style.fontFamily = 'Press Start 2P';
-    // tournamentsContainer.appendChild(tournamentsTitle);
-    // const tournamentsDiv = document.createElement('div');
-    // tournamentsDiv.id = 'tournamentsDiv';
-    // tournamentsContainer.appendChild(tournamentsDiv);
-
-    // parentContainer.appendChild(pieChartContainer);
-    // parentContainer.appendChild(barChartContainer);
-    // parentContainer.appendChild(tournamentsContainer);
-
     this.container.appendChild(parentContainer);
   }
 
