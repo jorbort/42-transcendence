@@ -1,7 +1,7 @@
 import renderPonTournament from "./pongTournament.js";
 import { connectToMetaMask, saveToBlockchain } from './blockchain.js';
 import { handleRouteChange } from "../mainScript.js";
-
+import { getCookie } from '../webComponents/friendsListComponent.js';
 
 class TournamentView extends HTMLElement {
     constructor() {
@@ -19,8 +19,8 @@ class TournamentView extends HTMLElement {
         this.playeron = false;
     }
     connectedCallback() {
-		this.addStyles();
-	}
+        this.addStyles();
+    }
     createFormData(container) {
         const formContainer = document.createElement('div');
         formContainer.id = 'form-container'; // Asignar un ID para manejar la visibilidad
@@ -100,9 +100,9 @@ class TournamentView extends HTMLElement {
                     ...Array.from({ length: realPlayersCount }, (_, i) => ({ type: 'REAL', name: `GAMER${i + 1}` })),
                     ...Array.from({ length: aiPlayersCount }, (_, i) => ({ type: 'AI', name: `IA${i + 1}` }))
                 ];
-                if (formContainer.querySelector('#chkSpeed').checked) this.addCustom=true;
-                if (formContainer.querySelector('#chkSize').checked) this.addCustom1=true;
-                if (formContainer.querySelector('#chkDecrease').checked) this.addCustom2=true;
+                if (formContainer.querySelector('#chkSpeed').checked) this.addCustom = true;
+                if (formContainer.querySelector('#chkSize').checked) this.addCustom1 = true;
+                if (formContainer.querySelector('#chkDecrease').checked) this.addCustom2 = true;
                 container.removeChild(formContainer);// Ocultar el formulario y mostrar la vista de edición de jugadores
                 this.renderEditPlayersView();
             } else
@@ -455,9 +455,9 @@ class TournamentView extends HTMLElement {
         buttons.forEach(button => {
             button.addEventListener('click', (e) => {
                 buttons.forEach(btn => btn.disabled = true);
-				const tournamentView = this.querySelector('#tournament-view');
-            	tournamentView.style.paddingTop = '0rem';
-				tournamentView.style.paddingBottom = '0rem';
+                const tournamentView = this.querySelector('#tournament-view');
+                tournamentView.style.paddingTop = '0rem';
+                tournamentView.style.paddingBottom = '0rem';
                 const roundIndex = parseInt(button.dataset.roundIndex, 10);
                 const matchIndex = parseInt(button.dataset.matchIndex, 10);
                 const match = this.tournamentData.rounds[roundIndex][matchIndex];
@@ -480,8 +480,8 @@ class TournamentView extends HTMLElement {
                     }
                     this.currentMatch = null;
                     this.saveTournamentData();
-					tournamentView.style.paddingTop = '2rem';
-					tournamentView.style.paddingBottom = '10rem';
+                    tournamentView.style.paddingTop = '2rem';
+                    tournamentView.style.paddingBottom = '10rem';
                     this.renderTournamentView();
                 });
             });
@@ -504,7 +504,16 @@ class TournamentView extends HTMLElement {
                     }))),
                 winner: this.tournamentData.winner.name // Nombre del ganador del torneo
             };
-            const response = await fetch('https://localhost:3042/api/tournaments/', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload), });
+            const token = getCookie('access_token');
+            // const response = await fetch('https://localhost:3042/api/tournaments/', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload), });
+            const response = await fetch('https://localhost:3042/api/tournaments/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}` // Agregar el token al encabezado
+                },
+                body: JSON.stringify(payload),
+            });
             if (!response.ok) {
                 console.error('Error al guardar el ganador:', response.statusText);
                 alert('No se pudo guardar el ganador.');
@@ -531,9 +540,9 @@ class TournamentView extends HTMLElement {
         localStorage.removeItem('tournamentData');
         history.replaceState(null, '', window.location.href);
         document.querySelector('#new-tournament').addEventListener('click', () => {
-			location.reload();
-		});
-		document.querySelector('#save-winner').addEventListener('click', async () => {
+            location.reload();
+        });
+        document.querySelector('#save-winner').addEventListener('click', async () => {
             const connected = await connectToMetaMask();
             if (!connected) return;
             await saveToBlockchain(this.tournamentData.name, this.tournamentData.date, this.tournamentData.winner.name);

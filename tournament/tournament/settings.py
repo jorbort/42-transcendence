@@ -1,7 +1,7 @@
 from pathlib import Path
 import os
 BASE_DIR = Path(__file__).resolve().parent.parent
-SECRET_KEY = 'django-insecure-s+c6@9ra%surq@)85i%lgvx@f*k$kz-vk1y_4wqeqc^++x0fgs'
+SECRET_KEY = 'django-insecure-$r1_wadruc=$3i$z2ki(@5xg!-baa4*h+3h-&j(-o9w!jx2k@h'
 DEBUG = True
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'https://localhost:3042']
 INSTALLED_APPS = [
@@ -85,6 +85,15 @@ DATABASES = {
 #         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+}
+
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
