@@ -99,7 +99,7 @@ class TournamentView extends HTMLElement {
                 const aiPlayersCount = this.IA ? this.IAplayers : 0;
                 this.tournamentData.players = [
                     { type: 'REAL', name: user },
-                    ...Array.from({ length: realPlayersCount - 1 }, (_, i) => ({ type: 'REAL', name: `GAMER${i + 1}` })),
+                    ...Array.from({ length: realPlayersCount - 1 }, (_, i) => ({ type: 'REAL', name: `GAMER${i + 2}` })),
                     ...Array.from({ length: aiPlayersCount }, (_, i) => ({ type: 'AI', name: `IA${i + 1}` }))
                 ];
                 if (formContainer.querySelector('#chkSpeed').checked) this.addCustom = true;

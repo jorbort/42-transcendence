@@ -3,7 +3,7 @@ up:
 	@if [ ! -d "./postgres/res" ]; then \
 		mkdir "./postgres/res"; \
 	fi
-	docker compose -f docker-compose.yaml up  --build --watch
+	docker compose -f docker-compose.yaml up  --build
 down:
 	docker-compose down
 	@if [ -n "$$(docker image ls -aq)" ]; then \
