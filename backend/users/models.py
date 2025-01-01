@@ -9,11 +9,10 @@ class PongUser(AbstractUser):
 	otp_expiry_time = models.DateTimeField(blank=True, null=True)
 	online_status=models.BooleanField(default=False)
 	avatar= models.ImageField(upload_to='images/',blank=True,null=True)
-	fortytwo_image_url = models.URLField(max_length=200, blank=True, null=True)
+	fortytwo_image_url = models.TextField(blank=True, null=True)
 	class Meta:
 		managed=True
 		db_table='users_ponguser' 
-
 
 class Friendship(models.Model):
 	user1=models.ForeignKey(PongUser, related_name='friendship_user1', on_delete=models.CASCADE)

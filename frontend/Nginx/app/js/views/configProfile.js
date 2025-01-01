@@ -1,8 +1,5 @@
 import { getCookie } from '../webComponents/friendsListComponent.js';
 
-
-const	TWO_MEGABYTES = 2*1024*1024;
-
 class profileconfig extends HTMLElement {
     constructor() {
         super();
@@ -377,18 +374,14 @@ class profileconfig extends HTMLElement {
 		if (actButton) {
 			actButton.addEventListener("click", async () => {
 				actButton.disabled = true;
-				let name = shadow.querySelector("#nombre").value;
-				if (!name)
-				{
-					name = localStorage.getItem('name');
-				}
-				let last_name = shadow.querySelector("#segundoname").value;
-				if (!last_name)
-				{
-					last_name = localStorage.getItem('last_name');
-				}
+				const nameInput = shadow.querySelector("#nombre");
+				const lastNameInput = shadow.querySelector("#segundoname");
 				const profileImage = shadow.querySelector("#profileImage").src;
-				let token = getCookie('access_token');
+
+				const name = nameInput.value || localStorage.getItem("name") || "";
+				const last_name = lastNameInput.value || localStorage.getItem("last_name") || "";
+
+				const token = getCookie("access_token");
 		
 				const formData = new FormData();
 				formData.append('name', name);
@@ -396,7 +389,7 @@ class profileconfig extends HTMLElement {
 				formData.append('img', profileImage)
 
 				try {
-					const response = await fetch("https://localhost:3042/users/upload_avatar", {
+					const response = await fetch("https://localhost:3042/users/upload_avatar/", {
 						method: "POST",
 						headers: {
 							'Authorization': `Bearer ${token}`,
@@ -409,6 +402,7 @@ class profileconfig extends HTMLElement {
 					}
 		
 					const result = await response.json();
+
 					localStorage.setItem('name', name);
 					localStorage.setItem('last_name', last_name);
 					localStorage.setItem('user_img', profileImage);
@@ -424,23 +418,21 @@ class profileconfig extends HTMLElement {
 	loadImage(event) {
 		const file = event.target.files[0];
 		if (file) {
+			const TWO_MEGABYTES = 2 * 1024 * 1024;
 			if (file.size <= TWO_MEGABYTES) {
 				const reader = new FileReader();
 				reader.onload = (e) => {
 					// Cambiar la imagen de perfil con el nuevo archivo
 					const profileImage = this.shadowRoot.querySelector("#profileImage");
 					profileImage.src = e.target.result;
-	
-					// Guardar la imagen en localStorage
-					localStorage.setItem('user_img', e.target.result);
 				};
 				reader.readAsDataURL(file);
 			}
 			else {
+				alert("File size exceeds 2MB limit");
 				// Limpiar el input de archivo si el tamaño es demasiado grande
 				const inputFile = this.shadowRoot.querySelector("#imageUpload");
 				inputFile.value = '';
-				createToast('warning', 'File size too big');
 			}
 		}
 	};
