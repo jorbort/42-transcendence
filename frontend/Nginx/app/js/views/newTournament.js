@@ -389,7 +389,8 @@ class TournamentView extends HTMLElement {
                 return; // Detener la ejecución si hay campos vacíos
             }// Validar nombres únicos
             const uniqueNames = new Set(updatedPlayers.map(player => player.name));
-            if (uniqueNames.size !== updatedPlayers.length) {
+            uniqueNames.add(realPlayers[0].name);
+            if (uniqueNames.size !== updatedPlayers.length + 1) {
                 errorMessageElement.textContent = 'Los nombres de los jugadores deben ser diferentes.';
                 errorMessageElement.style.display = 'block';
                 return; // Detener la ejecución si hay duplicados
