@@ -1,4 +1,4 @@
-import { getTournaments } from './blockchain.js';
+import { getTournaments, connectToMetaMask } from './blockchain.js';
 
 class Hall extends HTMLElement {
     constructor() {
@@ -65,24 +65,29 @@ class Hall extends HTMLElement {
                 }
             </style>
             <div class="container">
-                ${tournaments
+                ${tournaments.length === 0
+                ? `<p>Nothing to see here!</p>`
+                : tournaments
+                    .slice()
+                    .reverse()
                     .map(
                         (tournament) => `
-                    <div class="card">
-                        <div class="card-title">🏆 ${tournament.name}</div>
-                        <div class="card-info">
-                            <p><strong>Winner:</strong> ${tournament.winner}</p>
-                            <p><strong>Date:</strong> ${tournament.date}</p>
+                        <div class="card">
+                            <div class="card-title">🏆 ${tournament.name}</div>
+                            <div class="card-info">
+                                <p><strong>Winner:</strong> ${tournament.winner}</p>
+                                <p><strong>Date:</strong> ${tournament.date.slice(0, 10)}</p>
+                                <p><strong>Time:</strong> ${tournament.date.slice(11) || "top secret"}</p>
+                            </div>
                         </div>
-                    </div>
-                `
+                    `
                     )
                     .join("")}
             </div>
         `;
     }
 
-    disconnectedCallback() {}
+    disconnectedCallback() { }
 }
 
 customElements.define("hall-hall", Hall);
