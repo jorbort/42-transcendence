@@ -11,6 +11,7 @@ class Hall extends HTMLElement {
     }
 
     async render() {
+        await connectToMetaMask();
         const tournaments = await getTournaments();
 
         this.shadowRoot.innerHTML = `
@@ -66,7 +67,7 @@ class Hall extends HTMLElement {
             </style>
             <div class="container">
                 ${tournaments.length === 0
-                ? `<p>Nothing to see here!</p>`
+                ? `<p class="gradient-text">Nothing to see here!</p>`
                 : tournaments
                     .slice()
                     .reverse()
