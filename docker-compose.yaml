@@ -5,7 +5,6 @@ services:
       context: .
       dockerfile: frontend/Nginx/Dockerfile
     ports:
-      - "8080:8080"
       - "3042:3042"
     networks:
       - trascendence

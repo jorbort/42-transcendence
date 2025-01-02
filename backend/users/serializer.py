@@ -39,6 +39,7 @@ class UpdateUserSerializer(serializers.ModelSerializer):
 			instance.set_password(validated_data['password'])
 			validated_data.pop('password')
 		return super().update(instance, validated_data)
+
 class MatcHistorySerializer(serializers.ModelSerializer):
 	player1_username = serializers.SerializerMethodField()
 	player2_username = serializers.SerializerMethodField()
@@ -87,4 +88,4 @@ class FriendshipSerializer(serializers.ModelSerializer):
 class AvatarUploadSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = PongUser
-		fields = ['alias']
+		fields = ['avatar']

@@ -266,13 +266,17 @@ export default class OTPComponent extends HTMLElement{
 				const responseData = await response.json();
                 const accessToken = responseData.access_token;
                 const refreshToken = responseData.refresh_token;
-				const user_img = responseData.avatar;
+				const user_img = responseData.user_img;
+				const first_name = responseData.first_name;
+				const last_name = responseData.last_name;
 				
 				if (user_img){
 					localStorage.setItem('user_img', user_img);
 				}else {
 					localStorage.setItem('user_img', 'images/userPlaceholderImg.webp')
 				}
+				localStorage.setItem('first_name', first_name);
+				localStorage.setItem('last_name', last_name);
 				localStorage.removeItem('pass');
                 document.cookie = `access_token=${accessToken}; path=/`;
                 document.cookie = `refresh_token=${refreshToken}; path=/`;

@@ -338,11 +338,11 @@ class profileconfig extends HTMLElement {
 								</div>
 								<div class="form-row">
 									<label for="nombre" class="form-label">Nombre</label>
-									<input type="nombre" id="nombre" placeholder="${localStorage.getItem('name')}" name="nombre" class="flip-card__input">
+									<input type="nombre" id="nombre" placeholder="${localStorage.getItem('first_name') ? localStorage.getItem('first_name') : 'First Name'}" name="nombre" class="flip-card__input">
 								</div>
 								<div class="form-row">
 									<label for="segundoname" class="form-label">Segundo Nombre</label>
-									<input type="name" id="segundoname" placeholder="${localStorage.getItem('last_name')}" name="segundoname" class="flip-card__input">
+									<input type="name" id="segundoname" placeholder="${localStorage.getItem('last_name') ? localStorage.getItem('last_name') : "Last name"}" name="segundoname" class="flip-card__input">
 								</div>
 								<div class="flip-card__btn" id="intra-button" href="">
 									<a id="act">Actualizar</a>
