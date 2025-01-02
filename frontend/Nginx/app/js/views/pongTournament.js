@@ -44,7 +44,6 @@ class PongGameTournament extends HTMLElement {
         this.pointsPlayer = 0;
         this.reprint("Player X", this.pointsPlayer);
         this.reprint("IA", this.pointsIA);
-        // this.ball = null;
         this.gameStarted = false;
         this.addCustom = false;
         this.addCustom1 = false;
@@ -148,9 +147,9 @@ class PongGameTournament extends HTMLElement {
         this.renderer.render(this.scene, this.camera);
         await this.startCountdown();
         this.initObjects();
-
+        this.gameStarted = true;
         const animate = async () => {
-            if (this.gameStarted) return;
+            if (!this.gameStarted) return false;
             await this.moveBall();
             if (this.IA)
                 this.IntervalIA = setInterval(this.moveAI(this), 1000, this);
@@ -162,10 +161,8 @@ class PongGameTournament extends HTMLElement {
             this.renderer.render(this.scene, this.camera);
             if (!this.checkIfLost(this.ball))
                 requestAnimationFrame(animate);
-            else
-                return false;
+            else return false;
         };
-
         animate();
     }
     moveAI(object) {
