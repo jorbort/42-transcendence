@@ -16,6 +16,27 @@ class Hall extends HTMLElement {
 
         this.shadowRoot.innerHTML = `
             <style>
+                #nothing {
+                    font-family: 'Press Start 2P', cursive;
+                    font-size: 3rem;
+                    color: #ffffff;
+                    text-align: center;
+                    margin-top: 50px;
+                    text-shadow: 2px 2px 4px #000000, 0 0 10px #ff00ff, 0 0 20px #ff00ff, 0 0 30px #ff00ff;
+                    padding: 20px;
+                    border-radius: 10px;
+                    display: inline-block;
+                    animation: blink 1s infinite alternate;
+                }
+                
+                @keyframes blink {
+                    from {
+                        opacity: 1;
+                    }
+                    to {
+                        opacity: 0.5;
+                    }
+                }
                 :host {
                     display: flex;
                     justify-content: center;
@@ -67,7 +88,7 @@ class Hall extends HTMLElement {
             </style>
             <div class="container">
                 ${tournaments.length === 0
-                ? `<p class="gradient-text">Nothing to see here!</p>`
+                ? `<h1 id="nothing">Nothing to see here!</h1>`
                 : tournaments
                     .slice()
                     .reverse()
