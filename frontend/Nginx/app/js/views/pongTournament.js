@@ -66,7 +66,7 @@ class PongGameTournament extends HTMLElement {
         if (this.addCustom)
             this.scene.add(this.Custom);
         const Custom1Geometry = new THREE.IcosahedronGeometry(0.5);
-        const Custom1Material = new THREE.MeshStandardMaterial({ color: 0x00FF00, metalness: 0.5, roughness: 0.5 });
+        const Custom1Material = new THREE.MeshStandardMaterial({ color: 0xA0D7A0, metalness: 0.5, roughness: 0.5 });
         this.Custom1 = new THREE.Mesh(Custom1Geometry, Custom1Material);
         this.Custom1.position.set(-1, 4, 0);
         this.camera.position.set(0, 1, 20);
@@ -80,7 +80,7 @@ class PongGameTournament extends HTMLElement {
         if (this.addCustom2)
             this.scene.add(this.Custom2);
         const paddleGeometry = new THREE.BoxGeometry(0.4, 2, 0.1);
-        const paddleMaterial = new THREE.MeshStandardMaterial({ color: 0xff0000 });
+        const paddleMaterial = new THREE.MeshStandardMaterial({ color: 0xe67e80 });
         this.paddleLeft = new THREE.Mesh(paddleGeometry, paddleMaterial);
         this.paddleLeft.position.x = -14;
         this.paddleLeft.position.y = 2;
@@ -108,13 +108,13 @@ class PongGameTournament extends HTMLElement {
             const loader = new THREE.FontLoader();
             loader.load('https://threejs.org/examples/fonts/helvetiker_bold.typeface.json', (font) => {
                 this.loadfont = font;
-                const playerMaterial1 = new THREE.MeshStandardMaterial({ color: 0xff0000 }); // Rojo para jugador 1
+                const playerMaterial1 = new THREE.MeshStandardMaterial({ color: 0xe67e80 }); // Rojo para jugador 1
                 const playerMaterial2 = new THREE.MeshStandardMaterial({ color: 0x0000FF }); // Azul para jugador 2
                 this.playerText = this.createText(this.player1.name + ": " + this.pointsPlayer, new THREE.Vector3(-15, 9.5, 0), font, playerMaterial1);
                 this.IAText = this.createText(this.player2.name + ": " + this.pointsIA, new THREE.Vector3(8, 9.5, 0), font, playerMaterial2);
                 this.scene.add(this.playerText);
                 this.scene.add(this.IAText);
-                resolve(font); // Resolvemos la promesa con la fuente
+                resolve(font);
             }, undefined, (error) => { console.error("Error loading font:", error); reject(error); }); // Rechazamos la promesa en caso de error     
         });
     }
@@ -137,6 +137,7 @@ class PongGameTournament extends HTMLElement {
         this.camera.position.z = 10;
         this.renderer = new THREE.WebGLRenderer();
         this.renderer.setSize(window.innerWidth, window.innerHeight);
+        this.renderer.setClearColor(0x323b41, 1);
         this.appendChild(this.renderer.domElement);
         const ambientLight = new THREE.AmbientLight(0x404040);
         this.scene.add(ambientLight);
@@ -147,6 +148,7 @@ class PongGameTournament extends HTMLElement {
         this.renderer.render(this.scene, this.camera);
         await this.startCountdown();
         this.initObjects();
+
         const animate = async () => {
             if (this.gameStarted) return;
             await this.moveBall();
@@ -169,8 +171,8 @@ class PongGameTournament extends HTMLElement {
     moveAI(object) {
         const ballSpeedX = (object.ballSpeedX * object.ballDireccionX);
         const ballSpeedY = (object.ballSpeedY * object.ballDireccionY);
-        const minY = -4; // Límite inferior del área de juego
-        const maxY = 8;  // Límite superior del área de juego
+        const minY = -4;
+        const maxY = 8;
         let futureLeft = object.ball.position.y + ((object.paddleLeft.position.x - object.ball.position.x) / ballSpeedX) * ballSpeedY;
         while (futureLeft < minY || futureLeft > maxY) {
             if (futureLeft < minY)
@@ -277,7 +279,7 @@ class PongGameTournament extends HTMLElement {
         }
     }
     reprint(name, points) {
-        const playerMaterial1 = new THREE.MeshStandardMaterial({ color: 0xff0000 }); // Rojo para jugador 1
+        const playerMaterial1 = new THREE.MeshStandardMaterial({ color: 0xe67e80 }); // Rojo para jugador 1
         const playerMaterial2 = new THREE.MeshStandardMaterial({ color: 0x0000FF }); // Azul para jugador 2
 
         if (name == this.player2.name) {
