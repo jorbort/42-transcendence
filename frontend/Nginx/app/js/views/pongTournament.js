@@ -44,7 +44,7 @@ class PongGameTournament extends HTMLElement {
         this.pointsPlayer = 0;
         this.reprint("Player X", this.pointsPlayer);
         this.reprint("IA", this.pointsIA);
-        this.ball = null;
+        // this.ball = null;
         this.gameStarted = false;
         this.addCustom = false;
         this.addCustom1 = false;
