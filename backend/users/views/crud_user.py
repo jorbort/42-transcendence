@@ -76,7 +76,6 @@ def upload_avatar(request):
 		user.fortytwo_image_url = request.POST.get('img')
 		user.save()
 	except Exception as e:
-		logging.info(str(e))
 		return Response({'error': 'Bad request'}, status=400)
 	return Response({'status': 'Ok'}, status=200)
 
@@ -109,7 +108,6 @@ def add_friend(request):
 	if serializer.is_valid():
 		serializer.save()
 		return Response(serializer.data, status=status.HTTP_201_CREATED)
-	logging.info(serializer.errors)
 	return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 

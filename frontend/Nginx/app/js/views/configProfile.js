@@ -408,7 +408,6 @@ class profileconfig extends HTMLElement {
 					localStorage.setItem('user_img', profileImage);
 		
 				} catch (error) {
-					console.error(error);
 				}
 			});
 		}

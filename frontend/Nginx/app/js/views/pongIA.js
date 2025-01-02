@@ -283,7 +283,7 @@ class PongGame extends HTMLElement {
                 this.scene.add(this.IAText);
                 resolve(font);
             }, undefined, (error) => {
-                console.error("Error loading font:", error);
+                
                 reject(error);
             });
         });
@@ -583,7 +583,6 @@ class PongGame extends HTMLElement {
 
             const result = await response.json();
         } catch (error) {
-            console.error(error);
         }
     }
 

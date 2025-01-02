@@ -275,7 +275,6 @@ class torneo extends HTMLElement {
 
 function generarTorneoHTML(numJugadores, container) {
     if (numJugadores < 2 || numJugadores % 2 !== 0) {
-        console.error("El número de jugadores debe ser un número par mayor o igual a 2.");
         return;
     }
 

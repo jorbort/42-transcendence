@@ -23,7 +23,6 @@ class LoginView(generics.GenericAPIView):
 		user = authenticate(request, username=username, password=password)
 
 		if user is not None:
-			print(f"User authenticated: {username}")
 			verification_code = random.randint(100000,999999)
 			user.otp = verification_code
 			user.otp_expiry_time = timezone.now() + timedelta(hours=1)
@@ -38,9 +37,7 @@ class LoginView(generics.GenericAPIView):
 			)
 			request.session['username'] = username
 			request.session.save()
-			logger.debug(f"Username stored in session: {request.session['username']}")
 			return Response({'detail': 'Verification code sent successfully.'}, status=status.HTTP_200_OK)
-		logger.warning(f"Invalid login attempt for username: {username}")
 		return Response({'detail': 'Invalid credentials.'}, status=status.HTTP_401_UNAUTHORIZED)
 	
 

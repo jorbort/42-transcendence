@@ -9,11 +9,11 @@ from users.views.FortyTwoLogin import login_42, callback_42
 from users.views.login_views import  LoginView , OtpVerify, logout_view
 
 urlpatterns = [
-	path('', hello_world),
+	# path('', hello_world),
 	path('create/', addUser), #https://localhost:8000/users/create
-	path('read/<str:pk>', getUser), #https://localhost:8000/users/read
+	# path('read/<str:pk>', getUser), #https://localhost:8000/users/read
 	path('update/', update_user_info),#https://localhost:8000/users/update
-	path('listAll/', getUsers),
+	# path('listAll/', getUsers),
 	path('login/', LoginView.as_view(), name='login'), #https://localhost:8000/users/login
 	path('verify/', OtpVerify), #https://localhost:8000/users/verify
 	path('logout/', logout_view),#https://localhost:8000/users/logout

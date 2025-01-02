@@ -143,7 +143,6 @@ export async function saveToBlockchain(name, date, winner) {
         await contract.methods.addResult(name, date, winner).send({ from: account });
         alert("Tournament details saved to blockchain successfully.");
     } catch (error) {
-        console.error("Error: ", error);
         alert("Error occurred while trying to upload tournament details.");
     }
 }
@@ -171,7 +170,6 @@ export async function getTournaments() {
 
         return tournaments;
     } catch (error) {
-        console.error(error);
         return [];
     }
 }

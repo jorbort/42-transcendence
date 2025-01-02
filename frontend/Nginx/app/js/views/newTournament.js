@@ -523,11 +523,9 @@ class TournamentView extends HTMLElement {
                 body: JSON.stringify(payload),
             });
             if (!response.ok) {
-                console.error('Error al guardar el ganador:', response.statusText);
                 alert('No se pudo guardar el ganador.');
             }
         } catch (error) {
-            console.error('Error en la solicitud:', error);
             alert('Hubo un problema al conectarse con el servidor.');
         }
     }

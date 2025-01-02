@@ -7,10 +7,9 @@ document.getElementById('connectButton').addEventListener('click', function() {
             return response.json();
         })
         .then(data => {
-            console.log(data);
+            
             // Handle the data from the API here
         })
         .catch(error => {
-            console.error('There was a problem with the fetch operation:', error);
         });
 });

@@ -10,7 +10,6 @@ def do():
 		otp_expiry_time__lt=timezone.now(),
            otp__isnull=False
        )
-	logger.info(f"Found {expired_users.count()} users with expired OTPs")
        
 	for user in expired_users:
 		logger.info(f"User {user.id}: OTP={user.otp}, Expiry={user.otp_expiry_time}")

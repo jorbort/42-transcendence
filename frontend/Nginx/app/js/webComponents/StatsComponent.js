@@ -197,7 +197,6 @@ class GameStats extends HTMLElement {
       this.renderBarChart(gamehistory);
       this.renderTournamentsPlayed(tournamentsPlayed);
     } catch (error) {
-      console.error("Error en la peticion", error);
     }
   }
 

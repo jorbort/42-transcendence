@@ -253,7 +253,7 @@ class PongGame extends HTMLElement {
                 this.scene.add(this.sohard);
                 resolve(font);
             }, undefined, (error) => {
-                console.error("Error loading font:", error);
+                
                 reject(error);
             });
         });
