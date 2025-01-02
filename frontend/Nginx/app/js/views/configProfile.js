@@ -338,7 +338,7 @@ class profileconfig extends HTMLElement {
 								</div>
 								<div class="form-row">
 									<label for="nombre" class="form-label">Nombre</label>
-									<input type="nombre" id="nombre" placeholder="${localStorage.getItem('first_name') ? localStorage.getItem('first_name') : 'First Name'}" name="nombre" class="flip-card__input">
+									<input type="nombre" id="nombre" placeholder="${localStorage.getItem('name') ? localStorage.getItem('name') : 'First Name'}" name="nombre" class="flip-card__input">
 								</div>
 								<div class="form-row">
 									<label for="segundoname" class="form-label">Segundo Nombre</label>

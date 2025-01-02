@@ -275,7 +275,7 @@ export default class OTPComponent extends HTMLElement{
 				}else {
 					localStorage.setItem('user_img', 'images/userPlaceholderImg.webp')
 				}
-				localStorage.setItem('first_name', first_name);
+				localStorage.setItem('name', first_name);
 				localStorage.setItem('last_name', last_name);
 				localStorage.removeItem('pass');
                 document.cookie = `access_token=${accessToken}; path=/`;
